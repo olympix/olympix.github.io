@@ -1,0 +1,1 @@
+Our extension is available in the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=Olympixai.olympix). Install it to integrate Olympix features directly into your development environment.

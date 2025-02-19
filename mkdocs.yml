@@ -1,0 +1,46 @@
+site_name: Olympix User Guide
+site_url: https://docs.olympixdevsectools.com
+theme:
+  name: material
+  # custom_dir: overrides
+  logo: assets/olymp-x-logo.png
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: black
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: black
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+   - navigation.instant
+   - navigation.instant.progress
+   - navigation.tabs
+   - navigation.tab.sticky
+   - navigation.top
+  icon:
+    annotation: material/arrow-right-circle
+
+
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji 
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.details
