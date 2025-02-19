@@ -2,7 +2,7 @@ site_name: Olympix User Guide
 site_url: https://olympix.github.io/
 theme:
   name: material
-  # custom_dir: overrides
+  custom_dir: overrides
   logo: assets/olymp-x-logo.png
   palette:
     # Palette toggle for light mode
