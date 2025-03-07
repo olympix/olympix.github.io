@@ -14,7 +14,7 @@ The `.olympix-ignore.json` file follows a structured JSON format as shown below:
         }, ...
     },
     "IgnoredPaths" : [
-        "<PATH1>",
+        "<PATH_PATTERN>",
         ...
     ]
 }
@@ -25,8 +25,11 @@ The `.olympix-ignore.json` file follows a structured JSON format as shown below:
     - **`<DETECTOR-SLUG>`**: A string representing the detector slug, e.g., `abi-encode-packed-dynamic-types`. You can get the slug by running the `olympix show-vulnerabilities` command in the CLI.
     - **`<FILENAME>`**: The path to the file where the vulnerability is ignored.
     - **`[<LINENUM>, ...]`**: An array of line numbers in the specified file where the vulnerability is ignored.
-
-- **`IgnoredPaths`**: An array of filepaths that specify what all paths should the analyzer ignore. If a folder is specified here, all the files and folder (recursively) will be ignored.
+<div class="annotate" markdown>
+- **`IgnoredPaths`**: An array of filepaths that specify what all paths should the analyzer ignore. 
+    - For each of the entries in the array, the analyzer will ignore any filepaths that start with that entry. (1)
+</div>
+1. Each entry can be thought of as the following regex: `^ENTRY.*`, where the string `ENTRY` is replaced with each entry in the provided array. Any file matching any of these regexes would be ignored. Hence, these paths can be partial paths too, the asterisk at the end is implied, no wildcards are allowed. <br>
 
 !!! note
     All paths in this file should be relative from the project root (and should not start with a `/`).
@@ -50,7 +53,7 @@ Here is an example `.olympix-ignore.json` file:
     "IgnoredPaths": [
         "src/contracts/external",
         "src/contracts/vendors",
-        "lib/contracts"
+        "src/contracts2/DontScanMe.sol"
     ]
 }
 ```
