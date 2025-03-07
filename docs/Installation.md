@@ -17,7 +17,7 @@ For example, to install on macOS (ARM64), run the following commands in your ter
     The following versions are available: (osx-arm64, osx-x64, win-x64, win-arm64, linux-x64, linux-arm64)
 
 ```bash
-curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.52/osx-arm64/olympix
+curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.53/osx-arm64/olympix
 chmod +x olympix
 ./olympix login -e user@olympix.ai
 ```
