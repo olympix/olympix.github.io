@@ -47,13 +47,13 @@ When using the `analyze` command, you can customize the analysis with the follow
 
 When generating unit tests, you can use these options:
 
-- **`-w | --workspace-path`**  
-  Defines the root project directory path.  
+- **`-w | --workspace-path`** Defines the root project directory path.  
   *Default:* current directory
 
-- **`-id | --include-dot-env`**  
-  Pass the `.env` file along with smart contracts (for secrets such as private keys, RPC URLs, API keys, etc.).  
-  *Default:* `false`
+- **`-env | --include-dot-env`**: If included, sends the env file data along with smart contracts (This is to pass secrets such as private keys/RPC urls/API keys etc. which are often need for fork testing). To specify a custom env file, include the --env-file argument.
+
+- **`--env-file`**: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
+  *Default*: `.env`
 
 - **`-ca | --confirm-all`**  
   Confirm as 'yes' for all interactive questions.
@@ -76,10 +76,10 @@ When generating mutation tests, you have the following options:
   *Default:* 300 seconds  
   *Allowed Range:* 10 - 500 seconds
 
-- **`-id | --include-dot-env`**  
-  Pass the `.env` file along with smart contracts.  
-  *Default:* `false`
+- **`-env | --include-dot-env`**: If included, sends the env file data along with smart contracts (This is to pass secrets such as private keys/RPC urls/API keys etc. which are often need for fork testing). To specify a custom env file, include the --env-file argument.
 
+- **`--env-file`**: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
+  *Default*: `.env`
 ---
 
 ## Usage Examples
@@ -89,10 +89,10 @@ When generating mutation tests, you have the following options:
 analyze [-w | --workspace-path <workspace directory>] [-p | --path <analysis directory>] [-f | --output-format <output format>] [-o | --output-path <output directory>] [--no-<vulnerability id>]
 
 # Generate unit tests
-generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confirm-all] [-id | --include-dot-env]
+generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confirm-all] [-env | --include-dot-env] [--env-file <env file path>]
 
 # Generate mutation tests
-generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --timeout <timeout>] [-id | --include-dot-env]
+generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --t <timeout>] [-env | --include-dot-env] [--env-file <env file path>]
 
 # Login
 login [-e | --email <user email>]

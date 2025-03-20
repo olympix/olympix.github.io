@@ -16,11 +16,48 @@ For example, to install on macOS (ARM64), run the following commands in your ter
 !!! note 
     The following versions are available: (osx-arm64, osx-x64, win-x64, win-arm64, linux-x64, linux-arm64)
 
-```bash
-curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.53/osx-arm64/olympix
-chmod +x olympix
-./olympix login -e user@olympix.ai
-```
+=== "osx-arm64"
+    ```bash
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.54/osx-arm64/olympix
+    chmod +x olympix
+    ./olympix login -e user@olympix.ai
+    ```
+
+=== "osx-x64"
+    ```bash
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.54/osx-x64/olympix
+    chmod +x olympix
+    ./olympix login -e user@olympix.ai
+    ```
+
+=== "win-arm64"
+    ```bash
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.54/win-arm64/olympix
+    chmod +x olympix
+    ./olympix login -e user@olympix.ai
+    ```
+
+=== "win-x64"
+    ```bash
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.54/win-x64/olympix
+    chmod +x olympix
+    ./olympix login -e user@olympix.ai
+    ```
+
+=== "linux-arm64"
+    ```bash
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.54/linux-arm64/olympix
+    chmod +x olympix
+    ./olympix login -e user@olympix.ai
+    ```
+
+=== "linux-x64"
+    ```bash
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.54/linux-x64/olympix
+    chmod +x olympix
+    ./olympix login -e user@olympix.ai
+    ```
+
 
 !!! tip "Setting Permissions on Unix-like Systems"
     On macOS and Linux, ensure you grant execution permissions to the binary using `chmod +x`. If you receive a warning that the binary is from an unidentified developer, do the following:
@@ -28,17 +65,11 @@ chmod +x olympix
     - Click the **General** tab.
     - Select **Open Anyway** next to the warning message.
 
-### Option 3: Windows users 
-
-For Windows users, download the appropriate binary from the download page and follow these steps:
-- Download the `.exe` binary matching your Windows architecture.
-- Run the binary from the command prompt.
-- If needed, set the executable permissions through file properties.
-- Authenticate using the CLI by running:
-  
-  ```bash
-  olympix login -e user@olympix.ai
-  ```
+!!! tip "Setting Permissions on Windows"
+    For Windows users, download the appropriate binary from the download page and follow these steps:
+    - Download the `.exe` binary matching your Windows architecture.
+    - Run the binary from the command prompt.
+    - If needed, set the executable permissions through file properties.
 
 ---
 
@@ -57,8 +88,6 @@ After downloading and setting up the CLI, authenticate your account by following
 
 !!! info "Need to Register Additional Emails?"
     If you need to register more email addresses for your organization, please email [contact@olympix.ai](mailto:contact@olympix.ai).
-
-*These detailed steps are extracted and synthesized from the Olympix onboarding documentation citeturn0file0.*
 
 ---
 

@@ -104,14 +104,20 @@ This command launches an interactive mode where you can select the contracts for
     - **Credit Consumption:** Remember, using this feature consumes Olympix credits.
 
 ### 5. Review and Utilize the Results
+Once you receive the email:<br>
 
-Once you receive the email:
-- **Examine** the generated unit tests.
-- **Integrate** them into your project.
+- **Examine** the generated unit tests.<br>
+- **Integrate** them into your project.<br>
 - **Iterate** on the tests as needed to improve coverage.
 
 ---
 
+!!! tip "Including env variables"
+    We provide the ability to pass environment variables with your solidity files. If you would like to provide `RPC URLs`, `API keys`, `private keys`, etc. You can do so by using the `-env` flag which will read these parameters from your `.env` file. You can also specify a custom filepath for your `env` file using the `--env-file` flag.
+    Refer here for format guidelines: `https://book.getfoundry.sh/cheatcodes/env-string`.
+
+
+    Note: If you do require passing `env variables` for your `forge` run, this is the recommended way to do it. We encrypt all communication of this file with an extra layer of RSA on top of the regular encryption.
 
 
 ## Need Help?

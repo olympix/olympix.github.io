@@ -1,4 +1,4 @@
-# Solidity Mutation Test Generator
+# Mutation Test Generation
 
 ## Overview
 
@@ -34,12 +34,22 @@ The mutation test generator is designed to be dependency-free and works with any
 generate-mutation-tests [-w <workspace>] [-p <solidity-file>] [-t <timeout>]
 
 Options
-	•	-w, --workspace-path: Root project directory path (default: current directory)
-	•	-p, --path: Solidity file path to mutate (can be specified multiple times)
-	•	-t, --timeout: Timeout in seconds for each mutant test run (default: 300s, range: 10-500s)
+	-w, --workspace-path: Root project directory path (default: current directory)
+	-p, --path: Solidity file path to mutate (can be specified multiple times)
+	-t, --timeout: Timeout in seconds for each mutant test run (default: 300s, range: 10-500s)
+    -env, --include-dot-env: If included, sends the env file data along with smart contracts (This is to pass secrets such as private keys/RPC urls/API keys etc. which are often need for fork testing). To specify a custom env file, include the --env-file argument.
+    --env-file: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
 
 	Tip: The timeout option is crucial as some mutations can cause infinite loops in test execution. Set this to slightly higher than your normal test suite execution time.
 ```
+
+!!! tip "Including env variables"
+    We provide the ability to pass environment variables with your solidity files. If you would like to provide `RPC URLs`, `API keys`, `private keys`, etc. You can do so by using the `-env` flag which will read these parameters from your `.env` file. You can also specify a custom filepath for your `env` file using the `--env-file` flag.
+    Refer here for format guidelines: `https://book.getfoundry.sh/cheatcodes/env-string`.
+
+
+    Note: If you do require passing `env variables` for your `forge` run, this is the recommended way to do it. We encrypt all communication of this file with an extra layer of RSA on top of the regular encryption.
+
 ## Mutation Operators
 
 Our mutation operators are directly inspired by real-world smart contract exploits. Each operator represents a pattern of change that has historically led to security incidents.
