@@ -1,7 +1,14 @@
 # Ignore File
 
 ## Overview
-The `.olympix-ignore.json` file allows users to specify which vulnerabilities should be ignored in specific files and lines within their repository. This file must be placed at the root of the repository to be recognized and applied across all tools.
+The `.olympix-ignore.json` file allows users to specify which vulnerabilities should be ignored in specific files and lines within their repository.
+
+You can have multiple ignore `.olympix-ignore.json` files in each sub directory of the workspace and their ignore setting will be aggregated and applied to the results.
+
+Both hidden and unhidden versions of the ignore file are supported:
+
+- `.olympix-ignore.json`
+- `olympix-ignore.json`
 
 ## File Structure
 The `.olympix-ignore.json` file follows a structured JSON format as shown below:
@@ -59,7 +66,6 @@ Here is an example `.olympix-ignore.json` file:
 ```
 
 !!! info
-    - The file **must** be located at the **workspace root**.
     - It supports multiple **detector slugs**, **files**, and **line numbers**.
     - This ignore file applies **across all Olympix tools**.
 
