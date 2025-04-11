@@ -30,7 +30,7 @@ The mutation test generator is designed to be dependency-free and works with any
 
 ## CLI Usage
 
-```bash
+```none
 generate-mutation-tests [-w <workspace>] [-p <solidity-file>] [-t <timeout>]
 
 Options
@@ -39,7 +39,7 @@ Options
 	-t, --timeout: Timeout in seconds for each mutant test run (default: 300s, range: 10-500s)
     -env, --include-dot-env: If included, sends the env file data along with smart contracts (This is to pass secrets such as private keys/RPC urls/API keys etc. which are often need for fork testing). To specify a custom env file, include the --env-file argument.
     --env-file: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
-
+    -ext, --extension: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions. For example: --extra-extension .json --extra-extension .txt. By default, only .sol/.t.sol and/or foundry.toml files are uploaded.
 	Tip: The timeout option is crucial as some mutations can cause infinite loops in test execution. Set this to slightly higher than your normal test suite execution time.
 ```
 

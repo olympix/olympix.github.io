@@ -55,6 +55,8 @@ When generating unit tests, you can use these options:
 - **`--env-file`**: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
   *Default*: `.env`
 
+- **`-ext, --extension`**: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions. For example: `--extra-extension .json --extra-extension .txt`. By default, only `.sol/.t.sol` and/or `foundry.toml` files are uploaded.
+
 - **`-ca | --confirm-all`**  
   Confirm as 'yes' for all interactive questions.
 
@@ -80,6 +82,7 @@ When generating mutation tests, you have the following options:
 
 - **`--env-file`**: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
   *Default*: `.env`
+- **`-ext, --extension`**: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions. For example: `--extra-extension .json --extra-extension .txt`. By default, only `.sol/.t.sol` and/or `foundry.toml` files are uploaded.
 ---
 
 ## Usage Examples
@@ -89,10 +92,10 @@ When generating mutation tests, you have the following options:
 analyze [-w | --workspace-path <workspace directory>] [-p | --path <analysis directory>] [-f | --output-format <output format>] [-o | --output-path <output directory>] [--no-<vulnerability id>]
 
 # Generate unit tests
-generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confirm-all] [-env | --include-dot-env] [--env-file <env file path>]
+generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confirm-all] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
 
 # Generate mutation tests
-generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --t <timeout>] [-env | --include-dot-env] [--env-file <env file path>]
+generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --t <timeout>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
 
 # Login
 login [-e | --email <user email>]

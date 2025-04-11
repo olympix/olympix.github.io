@@ -34,8 +34,9 @@ Automatically generate mutation tests to evaluate the effectiveness of your unit
 2. **Add the Mutation Test Generator Action:**
       - Include the `olympix/mutation-test-generator` action in your workflow.
 3. **Configure GitHub Access (Optional) (1):**
-      - For additional integration, add a GitHub repository secret with your GitHub personal access token.
-      - Set an environment variable `OLYMPIX_GITHUB_ACCESS_TOKEN` in your workflow with this token.
+      - Install the [Github Notifier service](http://github.com/apps/olympix-notifier/) to your repo. It will ask you to grant it permission to create check runs. This GitHub App enables test result reporting via GitHub Check Runs. It works seamlessly with Olympix’s GitHub Actions—currently supporting the Olympix Mutation Test Generator.
+
+
 </div>
 1. This allows the mutation-tester to access your private GitHub repository.
 
@@ -52,15 +53,15 @@ on:
 
 jobs:
   mutation-test-generation:
-    if: contains(github.event.head_commit.message, 'OPIX-GEN-MUTATION-TESTS')
+    if: contains(github.event.head_commit.message, 'OPIX-GEN-MUTATION-TESTS') # Modify this.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with: 
           submodules: recursive
 
       - name: Install dependencies
-        run: npm install
+        run: npm install # or yarn install or bun etc. whatever your repository requires to setup before being able to call forge test.
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -73,8 +74,16 @@ jobs:
         uses: olympix/mutation-test-generator@main
         env:
           OLYMPIX_API_TOKEN: ${{ secrets.OLYMPIX_API_TOKEN }}
-          OLYMPIX_GITHUB_ACCESS_TOKEN: ${{ secrets.OLYMPIX_GITHUB_TOKEN }}
+          OLYMPIX_FAIL_MUTATION_GHA_THRESHOLD: 30 # optional, provides a threshold(in percentage) below which the check will fail.
+          OLYMPIX_GITHUB_COMMIT_HEAD_SHA: ${{ github.sha }} # optional, marks the commit on which the check run will appear in the repo.
         with:
-          args: -p src/subjectContract1.sol -p src/subjectContract2.sol
+          args: -p src/subjectContract1.sol -p src/subjectContract2.sol # Modify this: List of target contracts (we currently accept a maximum of 5 target contracts.)
 ```
+
+
+
 The workflow will start, and an email with the mutation test results will be sent to the address associated with your API token. The generation time will vary based on the size and complexity of your contracts.
+
+## Github App integration
+
+If you chose to install the `olympix-notifier` GitHub app to your repository, you will receive a check run on this commit with the results as a json object. This check will fail based on the `OLYMPIX_GITHUB_COMMIT_HEAD_SHA` variable. You can choose to script on top of this check run as well. Read more [here](https://docs.github.com/en/rest/checks/runs?apiVersion=2022-11-28).
