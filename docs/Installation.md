@@ -18,42 +18,42 @@ For example, to install on macOS (ARM64), run the following commands in your ter
 
 === "osx-arm64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.61/osx-arm64/olympix
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.70/osx-arm64/olympix
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
 
 === "osx-x64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.61/osx-x64/olympix
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.70/osx-x64/olympix
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
 
 === "win-arm64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.61/win-arm64/olympix
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.70/win-arm64/olympix.exe
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
 
 === "win-x64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.61/win-x64/olympix
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.70/win-x64/olympix.exe
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
 
 === "linux-arm64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.61/linux-arm64/olympix
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.70/linux-arm64/olympix
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
 
 === "linux-x64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.61/linux-x64/olympix
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.9.70/linux-x64/olympix
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
