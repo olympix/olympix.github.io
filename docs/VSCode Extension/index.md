@@ -40,3 +40,23 @@ A **"locked ether"** vulnerability occurs when a contract can receive Ether but 
     
 
 This feature helps you fix vulnerabilities quickly and learn secure coding patterns without leaving your editor.
+
+### Current detectors with Quick Fixes:
+
+- ArbitrarySendEtherDetector.cs
+- AnyTxOriginDetector.cs
+- ArbitraryDelegatecallDetector.cs
+- ArrayParameterLocationDetector.cs
+- DefaultVisibilityDetector.cs
+- EnumConversionOutOfRangeDetector.cs
+- EtherBalanceCheckStrictEqualityDetector.cs
+- LockedEtherDetector.cs
+- LowLevelCallParamsVerifiedDetector.cs
+- NoParameterValidationInConstructorDetector.cs
+- PossibleDivisionByZeroDetector.cs
+- RequiredTxOriginDetector.cs
+- UnboundedPragmaDetector.cs
+- UncheckedLowLevelDetector.cs
+- UncheckedSendDetector.cs
+- UncheckedTokenTransferDetector.cs
+- UninitializedLocalStorageDetector.cs
