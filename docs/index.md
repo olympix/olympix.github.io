@@ -22,7 +22,7 @@ For in-depth information on our vulnerability detectors, check out the [Detector
   Learn about GitHub Actions integrations provided by Olympix.
 
 - [VSCode Extension](./VSCode%20Extension/index.md)  
-  Enhance your testing strategy with mutation testing integrated into your CI/CD pipeline.
+  Learn about Olympix's features integrated directly into your editor, including real-time scanning and automatic quick fixes.
 
 ---
 
