@@ -43,20 +43,36 @@ This feature helps you fix vulnerabilities quickly and learn secure coding patte
 
 ### Current detectors with Quick Fixes:
 
-- ArbitrarySendEtherDetector.cs
-- AnyTxOriginDetector.cs
-- ArbitraryDelegatecallDetector.cs
-- ArrayParameterLocationDetector.cs
-- DefaultVisibilityDetector.cs
-- EnumConversionOutOfRangeDetector.cs
-- EtherBalanceCheckStrictEqualityDetector.cs
-- LockedEtherDetector.cs
-- LowLevelCallParamsVerifiedDetector.cs
-- NoParameterValidationInConstructorDetector.cs
-- PossibleDivisionByZeroDetector.cs
-- RequiredTxOriginDetector.cs
-- UnboundedPragmaDetector.cs
-- UncheckedLowLevelDetector.cs
-- UncheckedSendDetector.cs
-- UncheckedTokenTransferDetector.cs
-- UninitializedLocalStorageDetector.cs
+`arbitrary-send-ether`
+
+`any-tx-origin`
+
+`arbitrary-delegatecall`
+
+`array-parameter-location`
+
+`default-visibility`
+
+`enum-conversion-out-of-range`
+
+`ether-balance-check-strict-equality`
+
+`locked-ether`
+
+`low-level-call-params-verified`
+
+`no-parameter-validation-in-constructor`
+
+`possible-division-by-zero`
+
+`required-tx-origin`
+
+`unbounded-pragma`
+
+`unchecked-low-level`
+
+`unchecked-send`
+
+`unchecked-token-transfer`
+
+`uninitialized-local-storage`
