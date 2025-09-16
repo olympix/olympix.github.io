@@ -43,36 +43,36 @@ This feature helps you fix vulnerabilities quickly and learn secure coding patte
 
 ### Current detectors with Quick Fixes:
 
-`arbitrary-send-ether`
+- `arbitrary-send-ether`
 
-`any-tx-origin`
+- `any-tx-origin`
 
-`arbitrary-delegatecall`
+- `arbitrary-delegatecall`
 
-`array-parameter-location`
+- `array-parameter-location`
 
-`default-visibility`
+- `default-visibility`
 
-`enum-conversion-out-of-range`
+- `enum-conversion-out-of-range`
 
-`ether-balance-check-strict-equality`
+- `ether-balance-check-strict-equality`
 
-`locked-ether`
+- `locked-ether`
 
-`low-level-call-params-verified`
+- `low-level-call-params-verified`
 
-`no-parameter-validation-in-constructor`
+- `no-parameter-validation-in-constructor`
 
-`possible-division-by-zero`
+- `possible-division-by-zero`
 
-`required-tx-origin`
+- `required-tx-origin`
 
-`unbounded-pragma`
+- `unbounded-pragma`
 
-`unchecked-low-level`
+- `unchecked-low-level`
 
-`unchecked-send`
+- `unchecked-send`
 
-`unchecked-token-transfer`
+- `unchecked-token-transfer`
 
-`uninitialized-local-storage`
+- `uninitialized-local-storage`
