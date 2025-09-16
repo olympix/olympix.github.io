@@ -75,6 +75,11 @@ To effectively ignore vulnerabilities, ensure that:
 1. The file is committed to the repository root.
 2. The specified detector slugs, filenames, and line numbers match the vulnerability reports.
 
+## Note
+
+The ignore file will soon be deprecated, plese refer to the `ConfigOptions` section to use the most up to date version.
+
+---
 
 !!! Warning
     Be **extra-confident** before disabling any vulnerabilities, as this could allow bugs to silently pass into production—bugs that might not even exist yet. Ignoring vulnerabilities should only be done after a thorough review to ensure that it does not introduce security risks in the future.
