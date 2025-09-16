@@ -13,14 +13,14 @@ The Olympix VSCode extension brings powerful security analysis right into your e
 
 ---
 
-## 💡 Quick Fixes
+## Quick Fixes
 
 The **Olympix Quick Fix** feature is designed to accelerate your development workflow by providing instant, actionable solutions to detected vulnerabilities. When our analyzer identifies a potential issue, it may also suggest a code snippet that can resolve it.
 
 ### How It Works
 
 1.  **Detection:** When a vulnerability is found, it will be highlighted in the "Problems" tab of VS Code, and a squiggle will appear under the affected code.
-2.  **Action:** A lightbulb icon 💡 will appear next to the highlighted line. Click the icon or use the keyboard shortcut (`Ctrl`+`.` on Windows/Linux, `Cmd`+`.` on macOS).
+2.  **Action:** A lightbulb icon will appear next to the highlighted line. Click the icon or use the keyboard shortcut (`Ctrl`+`.` on Windows/Linux, `Cmd`+`.` on macOS).
 3.  **Apply:** Select the "Apply Olympix Quick Fix" option from the context menu to automatically insert the suggested code change.
 
 ### Example: Locked Ether Vulnerability
