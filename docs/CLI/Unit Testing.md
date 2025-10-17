@@ -68,7 +68,7 @@ pragma solidity ^0.8.0;
 import "../contracts/MyContract.sol";       // Adjust the path as needed
 import "./OlympixUnitTest.sol";
 
-contract MyContractTest is OlympixUnitTest {
+contract MyContractTest is OlympixUnitTest("MyContract") {
     MyContract public myContract;
 
     // setUp() is run before each test
