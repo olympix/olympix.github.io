@@ -43,8 +43,8 @@ Options
 	-p, --path: Solidity file path to fuzz (can be specified multiple times)
 
     -cm, --coverage-mode: Exploration strategies: 
-        - `path`: Explores all distinct paths, including every branch combination
-        - `branch`: Covers all branches using the fewest paths possible
+        `path`: Explores all distinct paths, including every branch combination
+        `branch`: Covers all branches using the fewest paths possible
 
     -cl, --chain-length: Number of sequential function calls per exploration. High values can drastically increase analysis time. Default: 2
 
