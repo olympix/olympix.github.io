@@ -6,13 +6,6 @@ Welcome to the Olympix installation guide! Get started by installing the CLI and
 
 ## CLI Installation
 
-### Option 1: Download the Olympix CLI from the CLI webpage
-
-Visit the [Olympix CLI webpage](https://olympix-download.s3.amazonaws.com/cli/cli_doc.html) and scroll down to the **Download** section. Here, you’ll find precompiled binaries for various platforms, including macOS, Linux, and Windows (both x64 and ARM architectures).
-
-### Option 2: Get it directly from the terminal
-
-For example, to install on macOS (ARM64), run the following commands in your terminal:
 !!! note 
     The following versions are available: (osx-arm64, osx-x64, win-x64, win-arm64, linux-x64, linux-arm64)
 
