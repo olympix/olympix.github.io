@@ -2,7 +2,7 @@
 
 ## Overview
 
-Olympix Fuzz Testing is a specialized security tool designed for smart contracts. The fuzzer integrates an in-house symbolic execution engine to reason about code behavior, explore every possible path and generate precise inputs that trigger specific execution paths. Once paths are explored, the tool applies a set of attack strategies to automatically generate proof-of-concepts for potential exploits.
+Olympix Fuzz Testing is a specialized security tool designed for smart contracts. The fuzzer integrates an in-house symbolic execution engine to reason about code behavior, explore every possible path and uses SMT solving to generate concrete inputs that trigger specific execution paths. Once paths are explored, the tool applies a set of attack strategies to automatically generate proof-of-concepts for potential exploits.
 
 ### Why Fuzz Testing Matters
 
@@ -47,6 +47,8 @@ Options
         `branch`: Covers all branches using the fewest paths possible
 
     -cl, --chain-length: Number of sequential function calls per exploration. High values can drastically increase analysis time. Default: 2
+
+    --no-<attack strategy id>: Defines the attack strategies that may be ignored. It can be used multiple times to ignore each attack strategy
 
 	Tip: Start with `--coverage-mode branch` and `--chain-length 2`(default) for a fast, high-value initial run
 ```
