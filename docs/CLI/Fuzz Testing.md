@@ -21,6 +21,87 @@ The integrated attack strategy engine applies heuristics and exploit templates i
 
 Each generated proof-of-concept provides a concrete demonstration of a potential exploit path, giving teams clear, actionable insight into their contract’s weakest points before deployment.
 
+### How it works
+
+#### Process Flow
+
+<div align="center"">
+``` mermaid
+    flowchart TD
+        %% Styles
+        classDef node fill:#f9f9ff,stroke:#6a0dad,stroke-width:1px;
+        classDef path stroke:#ae6ae0,stroke-width:2px;
+
+        %% Nodes
+        A[**User**]:::node --> B[**Fuzzing Application**]:::node
+        B --> C[**Symbolic Execution Engine**<br/>Performs path exploration over the IR and generates inputs to trigger each path]:::node
+        C --> D[**Exploit Detection**<br/>Apply attack strategies to reproduce exploits]:::node
+        D --> E[**Email Report**]:::node
+
+        %% Paths
+        class A,B,C,D path;
+```   
+</div>
+
+#### Coverage Modes
+
+Take this function as example:
+
+```
+function example(uint256 a, uint256 b) external {
+    if(a > 100) {
+        //Do something
+    }
+
+    if(b > 100) {
+        //Do something
+    }
+}
+```   
+
+**Path Coverage**: 4 paths explored, covering all branch combinations
+
+<div align="center"">
+``` mermaid
+flowchart TD
+    %% Styles
+    classDef node fill:#f9f9ff,stroke:#6a0dad,stroke-width:1px;
+    classDef path stroke:#ae6ae0,stroke-width:2px;
+
+    %% Nodes
+    A([Start]):::node --> B{a > 100}:::node
+    B -->|True| C{b > 100}:::node
+    B -->|False| D{b > 100}:::node
+
+    C -->|True| E([End]):::node
+    C -->|False| F([End]):::node
+    D -->|True| G([End]):::node
+    D -->|False| H([End]):::node
+
+    %% Paths
+    class A,B,C,D,E,F,G,H path;
+```
+</div>
+
+**Branch Coverage**: 1 path explored, covering all branches with minimum number of paths needed
+
+<div align="center"">
+``` mermaid
+flowchart TD
+    %% Styles
+    classDef node fill:#f9f9ff,stroke:#6a0dad,stroke-width:1px;
+    classDef path stroke:#ae6ae0,stroke-width:2px;
+
+    %% Nodes
+    A([Start]):::node --> B{a > 100}:::node
+    B -->|True| C{b > 100}:::node
+    C -->|True| D[End]:::node
+    
+    %% Paths
+    class A,B,C,D path;
+```
+</div>
+
 ---
 
 ## Installation & Requirements

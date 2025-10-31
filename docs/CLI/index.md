@@ -84,6 +84,7 @@ When generating mutation tests, you have the following options:
   *Default*: `.env`
 
 - **`-ext, --extension`**: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions. For example: `--extra-extension .json --extra-extension .txt`. By default, only `.sol/.t.sol` and/or `foundry.toml` files are uploaded.
+
 ---
 
 ## Fuzz Tests Generation Options
