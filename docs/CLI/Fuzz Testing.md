@@ -23,23 +23,35 @@ Each generated proof-of-concept provides a concrete demonstration of a potential
 
 ### How it works
 
-<div align="center"">
-``` mermaid
-    flowchart TD
-        %% Styles
-        classDef node fill:#f9f9ff,stroke:#6a0dad,stroke-width:1px;
-        classDef path stroke:#ae6ae0,stroke-width:2px;
+<div align="center">
 
-        %% Nodes
-        A[**User**]:::node --> B[**Fuzzing Application**]:::node
-        B --> C[**Symbolic Execution Engine**<br/>Performs path exploration over the IR and generates inputs to trigger each path]:::node
-        C --> D[**Exploit Detection**<br/>Apply attack strategies to reproduce exploits]:::node
-        D --> E[**Email Report**]:::node
+```mermaid
+flowchart TD
+    %% Styles
+    classDef node fill:#f9f9ff,stroke:#6a0dad,stroke-width:1px,rx:10,ry:10,color:#000;
+    classDef internal fill:#ffffff,stroke:#ae6ae0,stroke-width:1px,rx:10,ry:10,color:#000;
+    linkStyle default stroke:#ae6ae0,stroke-width:1px;
 
-        %% Paths
-        class A,B,C,D path;
-```   
-</div>
+    %% Nodes
+    A[**User**<br/><i>Submits project</i>]:::node --> 
+    B[**Fuzzing Application**<br/><i>Coordinates the analysis</i>]:::node -.-> Internal
+
+    subgraph Internal["**Internal Workflow**"]
+        direction LR
+        C[**Symbolic Execution**<br/><i>Performs path exploration over the IR and generates inputs to trigger each path</i>]:::internal ---
+        D[**Exploit Detection**<br/><i>Generates test cases using attack strategies to reproduce exploits</i>]:::internal
+    end
+
+    Internal --> E[**Email Report**<br/><i>Sends analysis results to user</i>]:::node
+
+    %% Assign classes
+    class A,B,E node
+    class C,D internal
+
+    %% Hide the internal dotted link
+    linkStyle 2 stroke-width:0px,fill:none;
+```
+</div> 
 
 ### Coverage Modes
 
