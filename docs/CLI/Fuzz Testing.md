@@ -1,4 +1,4 @@
-# Fuzz Testing Generation
+# Fuzz Test Generation
 
 ## Overview
 
@@ -23,8 +23,6 @@ Each generated proof-of-concept provides a concrete demonstration of a potential
 
 ### How it works
 
-#### Process Flow
-
 <div align="center"">
 ``` mermaid
     flowchart TD
@@ -43,7 +41,7 @@ Each generated proof-of-concept provides a concrete demonstration of a potential
 ```   
 </div>
 
-#### Coverage Modes
+### Coverage Modes
 
 Take this function as example:
 
