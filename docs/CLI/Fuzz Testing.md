@@ -33,12 +33,12 @@ flowchart TD
     linkStyle default stroke:#ae6ae0,stroke-width:1px;
 
     %% Nodes
-    A[**User**<br/><i>Submits project</i>]:::node --> 
-    B[**Fuzzing Application**<br/><i>Coordinates the analysis</i>]:::node -.-> Internal
+    A[**User**<br/><i>Submits smart contracts</i>]:::node --> 
+    B[**Fuzzer**<br/><i>Fuzzes smart contracts to identify potential vulnerabilities</i>]:::node -.-> Internal
 
     subgraph Internal["**Internal Workflow**"]
         direction LR
-        C[**Symbolic Execution**<br/><i>Performs path exploration over the IR and generates inputs to trigger each path</i>]:::internal ---
+        C[**Symbolic Execution**<br/><i>Performs path exploration over the IR and generates inputs to trigger each path</i>]:::internal -.->
         D[**Exploit Detection**<br/><i>Generates test cases using attack strategies to reproduce exploits</i>]:::internal
     end
 
@@ -47,9 +47,6 @@ flowchart TD
     %% Assign classes
     class A,B,E node
     class C,D internal
-
-    %% Hide the internal dotted link
-    linkStyle 2 stroke-width:0px,fill:none;
 ```
 </div> 
 
