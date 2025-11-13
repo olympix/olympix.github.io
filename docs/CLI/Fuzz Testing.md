@@ -90,7 +90,7 @@ flowchart TD
 ```
 </div>
 
-**Branch Coverage**: 1 path explored, covering all branches with minimum number of paths needed
+**Branch Coverage**: 1 path explored, covering all branches with minimum number of paths needed. Covers all branches but not all possible true/false combinations
 
 <div align="center"">
 ``` mermaid
