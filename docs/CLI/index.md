@@ -11,6 +11,7 @@ When you run the Olympix CLI, you have access to several commands:
 - **`analyze`**: Perform code analysis  
 - **`generate-unit-tests`**: Generate unit tests  
 - **`generate-mutation-tests`**: Generate mutation tests  
+- **`generate-fuzz-tests`**: Generate fuzz tests  
 - **`login`**: Request access and log in to your account  
 - **`show-vulnerabilities`**: Show the vulnerability types that the analyzer aims to find  
 - **`version`**: Show CLI version
@@ -39,7 +40,6 @@ When using the `analyze` command, you can customize the analysis with the follow
 
 - **`--no-<vulnerability id>`**  
   Defines the vulnerabilities to be ignored. Can be used multiple times.  
-  *Default:* Ignores nothing
 
 ---
 
@@ -82,7 +82,34 @@ When generating mutation tests, you have the following options:
 
 - **`--env-file`**: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
   *Default*: `.env`
+
 - **`-ext, --extension`**: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions. For example: `--extra-extension .json --extra-extension .txt`. By default, only `.sol/.t.sol` and/or `foundry.toml` files are uploaded.
+
+---
+
+## Fuzz Tests Generation Options
+
+When generating fuzz tests, you have the following options:
+
+- **`-w | --workspace-path`**  
+  Defines the root project directory path.  
+  *Default:* current directory
+
+- **`-p | --path`**  
+  Defines the Solidity file path to run the fuzz tests. Can be used multiple times.
+
+- **`-cm | --coverage-mode`**  
+  Exploration strategies:  
+  `path`: Explores all distinct paths, including every branch combination  
+  `branch`: Covers all branches using the fewest paths possible
+
+- **`-cl | --chain-length`**  
+  Number of sequential function calls per exploration. High values can drastically increase analysis time  
+  *Default:* 2
+
+- **`--no-<attack strategy id>`**  
+  Defines the attack strategies to be ignored. Can be used multiple times.  
+
 ---
 
 ## Usage Examples
