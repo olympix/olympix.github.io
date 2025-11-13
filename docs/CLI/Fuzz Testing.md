@@ -69,7 +69,8 @@ function example(uint256 a, uint256 b) external {
 **Path Coverage**: 4 paths explored, covering all branch combinations
 
 <div align="center"">
-``` mermaid
+
+```mermaid
 flowchart TD
     %% Styles
     classDef node fill:#f9f9ff,stroke:#6a0dad,stroke-width:1px;
@@ -88,12 +89,14 @@ flowchart TD
     %% Paths
     class A,B,C,D,E,F,G,H path;
 ```
+
 </div>
 
 **Branch Coverage**: 1 path explored, covering all branches with minimum number of paths needed. Covers all branches but not all possible true/false combinations
 
 <div align="center"">
-``` mermaid
+
+```mermaid
 flowchart TD
     %% Styles
     classDef node fill:#f9f9ff,stroke:#6a0dad,stroke-width:1px;
@@ -107,6 +110,7 @@ flowchart TD
     %% Paths
     class A,B,C,D path;
 ```
+
 </div>
 
 ---
