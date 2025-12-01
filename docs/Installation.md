@@ -1,6 +1,6 @@
 # Installation Guide
 
-Welcome to the Olympix installation guide! Get started by installing the CLI and the VSCode extension to access all of Olympix’s powerful features. This guide covers the full process—from downloading the CLI binaries to authenticating your account.
+This guide covers the complete setup process for the Olympix CLI and VSCode extension, including binary installation and account authentication.
 
 ---
 
@@ -24,17 +24,15 @@ Welcome to the Olympix installation guide! Get started by installing the CLI and
     ```
 
 === "win-arm64"
-    ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.10.12/win-arm64/olympix.exe
-    chmod +x olympix
-    ./olympix login -e user@olympix.ai
+    ```powershell
+    Invoke-WebRequest -Uri "https://olympix-download.s3.amazonaws.com/cli/v0.10.12/win-arm64/olympix.exe" -OutFile "olympix.exe"
+    .\olympix.exe login -e user@olympix.ai
     ```
 
 === "win-x64"
-    ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.10.12/win-x64/olympix.exe
-    chmod +x olympix
-    ./olympix login -e user@olympix.ai
+    ```powershell
+    Invoke-WebRequest -Uri "https://olympix-download.s3.amazonaws.com/cli/v0.10.12/win-x64/olympix.exe" -OutFile "olympix.exe"
+    .\olympix.exe login -e user@olympix.ai
     ```
 
 === "linux-arm64"
@@ -93,6 +91,5 @@ Our extension is available in the [VSCode Marketplace](https://marketplace.visua
 ## Additional Resources
 
 - **Olympix CLI Documentation:** Visit the [CLI documentation page](./CLI/index.md) for complete command reference and troubleshooting tips.
-- **YouTube Tutorial:** For a video walkthrough of the setup and usage, watch our [YouTube tutorial](https://youtu.be/x7Apoq2PgT0).
 
-If you encounter any issues or have questions, feel free to reach out to our support team at [contact@olympix.ai](mailto:contact@olympix.ai).
+For support, contact [contact@olympix.ai](mailto:contact@olympix.ai).

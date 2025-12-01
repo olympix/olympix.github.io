@@ -1,120 +1,265 @@
-# Getting Started 
+# CLI Reference
 
-Welcome to the Olympix CLI usage guide! This guide will help you quickly get started with the command-line interface for the Olympix Static Analyzer and Test Generator.
-
----
-
-## CLI Commands Overview
-
-When you run the Olympix CLI, you have access to several commands:
-
-- **`analyze`**: Perform code analysis  
-- **`generate-unit-tests`**: Generate unit tests  
-- **`generate-mutation-tests`**: Generate mutation tests  
-- **`login`**: Request access and log in to your account  
-- **`show-vulnerabilities`**: Show the vulnerability types that the analyzer aims to find  
-- **`version`**: Show CLI version
+The Olympix CLI provides command-line access to all Olympix tools. This page documents all available commands and their options.
 
 ---
 
-## Analysis Options
+## Installation
 
-When using the `analyze` command, you can customize the analysis with the following options:
-
-- **`-w | --workspace-path`**  
-  Defines the root project directory path. This helps in providing more accurate vulnerability analysis.  
-  *Default:* current directory
-
-- **`-p | --path`**  
-  Defines the Solidity project directory path to be analyzed. Can be used multiple times.  
-  *Default:* `'contracts'` and `'src'` directories if they exist, otherwise the workspace directory
-
-- **`-f | --output-format`**  
-  Defines the result output format. Supported formats: `tree`, `json`, `sarif`, `email`.  
-  *Default:* `tree`
-
-- **`-o | --output-path`**  
-  Defines the result output directory path (enabled only for `json` and `sarif` formats).  
-  *Default:* Results are shown directly in the terminal
-
-- **`--no-<vulnerability id>`**  
-  Defines the vulnerabilities to be ignored. Can be used multiple times.  
-  *Default:* Ignores nothing
+See [Installation Guide](../Installation.md) for download and authentication instructions.
 
 ---
 
-## Unit Tests Generation Options
+## Commands Overview
 
-When generating unit tests, you can use these options:
-
-- **`-w | --workspace-path`** Defines the root project directory path.  
-  *Default:* current directory
-
-- **`-env | --include-dot-env`**: If included, sends the env file data along with smart contracts (This is to pass secrets such as private keys/RPC urls/API keys etc. which are often need for fork testing). To specify a custom env file, include the --env-file argument.
-
-- **`--env-file`**: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
-  *Default*: `.env`
-
-- **`-ext, --extension`**: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions. For example: `--extra-extension .json --extra-extension .txt`. By default, only `.sol/.t.sol` and/or `foundry.toml` files are uploaded.
-
-- **`-ca | --confirm-all`**  
-  Confirm as 'yes' for all interactive questions.
+| Command | Description |
+|---------|-------------|
+| `analyze` | Scan contracts for vulnerabilities |
+| `generate-unit-tests` | Generate unit tests |
+| `generate-mutation-tests` | Run mutation testing |
+| `login` | Authenticate with Olympix |
+| `show-vulnerabilities` | List all vulnerability detectors |
+| `version` | Display CLI version |
 
 ---
 
-## Mutation Tests Generation Options
+## analyze
 
-When generating mutation tests, you have the following options:
+Performs static analysis on your Solidity contracts. See [Static Analysis](../Tools/Static%20Analysis.md) for concepts.
 
-- **`-w | --workspace-path`**  
-  Defines the root project directory path.  
-  *Default:* current directory
-
-- **`-p | --path`**  
-  Defines the Solidity file path to run the mutation tests. Can be used multiple times.
-
-- **`-t | --timeout`**  
-  Sets a timeout (in seconds) for each mutant. This prevents infinite loops or hangs.  
-  *Default:* 300 seconds  
-  *Allowed Range:* 10 - 500 seconds
-
-- **`-env | --include-dot-env`**: If included, sends the env file data along with smart contracts (This is to pass secrets such as private keys/RPC urls/API keys etc. which are often need for fork testing). To specify a custom env file, include the --env-file argument.
-
-- **`--env-file`**: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
-  *Default*: `.env`
-- **`-ext, --extension`**: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions. For example: `--extra-extension .json --extra-extension .txt`. By default, only `.sol/.t.sol` and/or `foundry.toml` files are uploaded.
----
-
-## Usage Examples
+### Usage
 
 ```bash
-# Analyze command
-analyze [-w | --workspace-path <workspace directory>] [-p | --path <analysis directory>] [-f | --output-format <output format>] [-o | --output-path <output directory>] [--no-<vulnerability id>]
+olympix analyze [options]
+```
 
-# Generate unit tests
-generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confirm-all] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
+### Options
 
-# Generate mutation tests
-generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --t <timeout>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-w, --workspace-path <path>` | Root project directory | Current directory |
+| `-p, --path <path>` | Directory to analyze (repeatable) | `contracts/` and `src/` if present |
+| `-f, --output-format <format>` | Output format: `tree`, `json`, `sarif`, `email` | `tree` |
+| `-o, --output-path <path>` | Output directory (for `json`/`sarif`) | Terminal output |
+| `--no-<vulnerability-id>` | Ignore specific detector (repeatable) | None |
 
-# Login
-login [-e | --email <user email>]
+### Examples
+
+```bash
+# Basic scan with tree output
+olympix analyze
+
+# Scan specific directory
+olympix analyze -p src/core
+
+# Output as SARIF for GitHub integration
+olympix analyze -f sarif -o ./reports
+
+# Output as JSON
+olympix analyze -f json -o ./reports
+
+# Ignore specific vulnerabilities
+olympix analyze --no-unbounded-pragma --no-default-visibility
+
+# Multiple directories
+olympix analyze -p src/ -p contracts/
 ```
 
 ---
 
-## Helpful Links
+## generate-unit-tests
 
-- **[Installation](../Installation.md)**  
-  Get started by installing the CLI binaries and the VSCode extension.
+Generates unit tests for your smart contracts. See [Unit Testing](../Tools/Unit%20Testing.md) for setup requirements.
 
-- **[Unit Test Generation](./Unit%20Testing.md)**  
-  Learn how to generate unit tests for your smart contracts using the Olympix Unit Test Generator.
+### Usage
 
-- **[Mutation Tests Generation](./Mutation%20Testing.md)**  
-  Find out how to generate mutation tests to assess your unit test quality.
+```bash
+olympix generate-unit-tests [options]
+```
+
+### Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-w, --workspace-path <path>` | Root project directory | Current directory |
+| `-env, --include-dot-env` | Include `.env` file with request | Disabled |
+| `--env-file <path>` | Custom env file path (requires `-env`) | `.env` |
+| `-ext, --extension <ext>` | Additional file extensions (repeatable) | `.sol`, `.t.sol`, `foundry.toml` |
+| `-ca, --confirm-all` | Skip interactive prompts | Disabled |
+
+### Examples
+
+```bash
+# Interactive mode
+olympix generate-unit-tests -w .
+
+# Non-interactive with env variables
+olympix generate-unit-tests -w . -ca -env
+
+# Include additional file types
+olympix generate-unit-tests -w . -ext .json -ext .txt
+
+# Custom env file
+olympix generate-unit-tests -w . -env --env-file .env.local
+```
+
+### Output
+
+Results are emailed to your registered address, including:
+
+- Generated test files
+- Coverage statistics
+- Credit consumption
 
 ---
 
-With these commands and options at your disposal, you're well-equipped to leverage Olympix for efficient static analysis and robust test generation. If you have any questions, our support team is ready to help at [contact@olympix.ai](mailto:contact@olympix.ai).
+## generate-mutation-tests
 
+Runs mutation testing against your existing test suite. See [Mutation Testing](../Tools/Mutation%20Testing.md) for concepts.
+
+### Usage
+
+```bash
+olympix generate-mutation-tests [options]
+```
+
+### Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-w, --workspace-path <path>` | Root project directory | Current directory |
+| `-p, --path <path>` | Solidity file to mutate (repeatable) | Required |
+| `-t, --timeout <seconds>` | Timeout per mutant (10-500) | 300 |
+| `-env, --include-dot-env` | Include `.env` file with request | Disabled |
+| `--env-file <path>` | Custom env file path (requires `-env`) | `.env` |
+| `-ext, --extension <ext>` | Additional file extensions (repeatable) | `.sol`, `.t.sol`, `foundry.toml` |
+
+### Examples
+
+```bash
+# Single contract
+olympix generate-mutation-tests -p src/Vault.sol
+
+# Multiple contracts
+olympix generate-mutation-tests -p src/Vault.sol -p src/Token.sol
+
+# Custom timeout (for complex tests)
+olympix generate-mutation-tests -p src/Vault.sol -t 500
+
+# With environment variables for fork testing
+olympix generate-mutation-tests -p src/Vault.sol -env
+```
+
+### Output
+
+Results are emailed to your registered address, including:
+
+- Mutation score (killed / total)
+- List of surviving mutants
+- Details for each mutation
+
+---
+
+## login
+
+Authenticates with Olympix and retrieves your API token.
+
+### Usage
+
+```bash
+olympix login -e <email>
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `-e, --email <email>` | Your registered email address |
+
+### Process
+
+1. Run the login command with your email
+2. Check your email for a one-time code
+3. Enter the code when prompted
+4. Your API token is displayed and saved to `~/.opix/config.json`
+
+!!! tip "Save Your Token"
+    The displayed API token is required for GitHub Actions integration. Copy it to a secure location.
+
+---
+
+## show-vulnerabilities
+
+Lists all vulnerability detectors supported by the analyzer.
+
+### Usage
+
+```bash
+olympix show-vulnerabilities
+```
+
+This displays the detector slug (used with `--no-<slug>`) and description for each vulnerability type.
+
+---
+
+## version
+
+Displays the installed CLI version.
+
+### Usage
+
+```bash
+olympix version
+```
+
+---
+
+## Common Options
+
+These options apply to multiple commands:
+
+### Workspace Path (`-w, --workspace-path`)
+
+Specifies the root project directory. This provides context for the analyzer to resolve imports and dependencies.
+
+```bash
+olympix analyze -w /path/to/project
+```
+
+### Path (`-p, --path`)
+
+Specifies which directories or files to process. Can be used multiple times.
+
+```bash
+olympix analyze -p src/ -p contracts/lib/
+```
+
+### Environment Variables (`-env, --include-dot-env`)
+
+Includes your `.env` file with the request. Required for fork testing that needs RPC URLs or API keys.
+
+!!! warning "Security"
+    Environment variable data is encrypted with RSA before transmission. Only use this flag when necessary for fork testing.
+
+### Extension (`-ext, --extension`)
+
+Includes additional file types beyond the defaults (`.sol`, `.t.sol`, `foundry.toml`).
+
+```bash
+olympix generate-unit-tests -ext .json -ext .txt
+```
+
+---
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| 0 | Success |
+| 1 | Error (authentication, network, etc.) |
+
+---
+
+## Configuration File
+
+The CLI stores authentication data in `~/.opix/config.json`. See [Config Options](../ConfigOptions.md) for project-level configuration.

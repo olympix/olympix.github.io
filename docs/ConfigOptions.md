@@ -47,9 +47,8 @@ The `olympix-config.json` file follows the structure below. All paths should be 
 * **`TrustedContracts`**: A dictionary used to mark entire contracts as trusted for a specific detector. This is useful when a contract's design is known to be safe against a particular vulnerability (e.g., a contract that is non-reentrant by design).
 
 ## Example
-Here is an example `olympix-config.json` file demonstrating how to use the different options:
 
-```json
+```json title="olympix-config.json"
 {
   "IgnoredVulnerabilities": {
     "reentrancy" : {
@@ -78,19 +77,25 @@ Here is an example `olympix-config.json` file demonstrating how to use the diffe
 - The settings apply **across all Olympix tools**.
 
 ## Usage
+
 To use these features, ensure that:
 
-1.  The `olympix-config.json`
-2.  The specified detector slugs, filenames, and line numbers match the vulnerability reports.
+1. Your configuration file is placed at the **workspace root** directory.
+2. The specified detector slugs, filenames, and line numbers match the vulnerability reports exactly.
+3. All file paths are relative to the project root.
 
-## Note
+## Supported File Names
 
-The original `.olympix-ignore.json` file is still supported for ignoring vulnerabilities and paths.
+The tools will recognize any of these filenames at your project's root:
 
-If both files are present, their configurations will be merged. The tools will recognize any of these filenames at your project's root:
-* `olympix-config.json`
-* `.olympix-config.json`
-* `.olympix-ignore.json`
+| Filename | Description |
+|----------|-------------|
+| `olympix-config.json` | Recommended config file |
+| `.olympix-config.json` | Hidden config file variant |
+| `olympix-ignore.json` | Legacy ignore file |
+| `.olympix-ignore.json` | Hidden legacy ignore file |
+
+If multiple files are present, their configurations will be merged.
 
 --- 
 
