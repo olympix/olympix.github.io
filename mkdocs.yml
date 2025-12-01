@@ -1,15 +1,20 @@
 site_name: Olympix User Guide
 site_url: https://olympix.github.io/
+repo_url: https://github.com/olympix/olympix.github.io
+repo_name: olympix/olympix.github.io
+edit_uri: edit/main/docs/
+
 theme:
   name: material
   custom_dir: overrides
   logo: assets/olymp-x-logo.png
+  favicon: assets/olymp-x-logo.png
   palette:
     # Palette toggle for light mode
     - scheme: default
       primary: black
       toggle:
-        icon: material/brightness-7 
+        icon: material/brightness-7
         name: Switch to dark mode
 
     # Palette toggle for dark mode
@@ -19,22 +24,66 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   features:
-   - navigation.instant
-   - navigation.instant.progress
-   - navigation.tabs
-   - navigation.tab.sticky
-   - navigation.top
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.action.edit
+    - toc.follow
   icon:
     annotation: material/arrow-right-circle
+    repo: fontawesome/brands/github
 
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
 
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: Installation.md
+    - Quickstart: Quickstart.md
+  - Tools:
+    - Static Analysis: Tools/Static Analysis.md
+    - Unit Testing: Tools/Unit Testing.md
+    - Mutation Testing: Tools/Mutation Testing.md
+  - Interfaces:
+    - CLI Reference: CLI/index.md
+    - GitHub Actions: Github Actions/index.md
+    - VSCode Extension: VSCode Extension/index.md
+  - Configuration:
+    - Config Options: ConfigOptions.md
+    - Ignore Options (Legacy): IgnoreOptions.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/olympix
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/olympaboratories
+  generator: false
+
+extra_css:
+  - stylesheets/extra.css
 
 markdown_extensions:
   - admonition
   - attr_list
   - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
   - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji 
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
@@ -46,3 +95,8 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.keys
+  - pymdownx.mark
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
