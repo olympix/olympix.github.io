@@ -8,11 +8,12 @@ Welcome to the Olympix CLI usage guide! This guide will help you quickly get sta
 
 When you run the Olympix CLI, you have access to several commands:
 
-- **`analyze`**: Perform code analysis  
-- **`generate-unit-tests`**: Generate unit tests  
-- **`generate-mutation-tests`**: Generate mutation tests  
-- **`login`**: Request access and log in to your account  
-- **`show-vulnerabilities`**: Show the vulnerability types that the analyzer aims to find  
+- **`analyze`**: Perform code analysis
+- **`generate-unit-tests`**: Generate unit tests
+- **`generate-mutation-tests`**: Generate mutation tests
+- **`bug-pocer`**: AI-powered vulnerability detection with automated PoC generation
+- **`login`**: Request access and log in to your account
+- **`show-vulnerabilities`**: Show the vulnerability types that the analyzer aims to find
 - **`version`**: Show CLI version
 
 ---
@@ -83,6 +84,24 @@ When generating mutation tests, you have the following options:
 - **`--env-file`**: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
   *Default*: `.env`
 - **`-ext, --extension`**: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions. For example: `--extra-extension .json --extra-extension .txt`. By default, only `.sol/.t.sol` and/or `foundry.toml` files are uploaded.
+
+---
+
+## BugPoCer Options
+
+When using the `bug-pocer` command for AI-powered vulnerability detection and PoC generation:
+
+- **`-w | --workspace-path`**
+  Defines the root project directory path.
+  *Default:* current directory
+
+- **`-env | --include-dot-env`**: If included, sends the env file data along with smart contracts (This is to pass secrets such as private keys/RPC urls/API keys etc. which are often needed for fork testing). To specify a custom env file, include the --env-file argument.
+
+- **`--env-file`**: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
+  *Default*: `.env`
+
+- **`-ext, --extension`**: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions.
+
 ---
 
 ## Usage Examples
@@ -97,6 +116,9 @@ generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confi
 # Generate mutation tests
 generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --t <timeout>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
 
+# BugPoCer - AI-powered vulnerability detection
+bug-pocer [-w | --workspace-path <workspace directory>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
+
 # Login
 login [-e | --email <user email>]
 ```
@@ -105,14 +127,17 @@ login [-e | --email <user email>]
 
 ## Helpful Links
 
-- **[Installation](../Installation.md)**  
+- **[Installation](../Installation.md)**
   Get started by installing the CLI binaries and the VSCode extension.
 
-- **[Unit Test Generation](./Unit%20Testing.md)**  
+- **[Unit Test Generation](./Unit%20Testing.md)**
   Learn how to generate unit tests for your smart contracts using the Olympix Unit Test Generator.
 
-- **[Mutation Tests Generation](./Mutation%20Testing.md)**  
+- **[Mutation Tests Generation](./Mutation%20Testing.md)**
   Find out how to generate mutation tests to assess your unit test quality.
+
+- **[BugPoCer](./BugPoCer.md)**
+  Learn about the AI-powered vulnerability scanner with automated PoC generation.
 
 ---
 
