@@ -11,42 +11,42 @@ Welcome to the Olympix installation guide! Get started by installing the CLI and
 
 === "osx-arm64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.0/osx-arm64/olympix
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.7/osx-arm64/olympix
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
 
 === "osx-x64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.0/osx-x64/olympix
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.7/osx-x64/olympix
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
 
 === "win-arm64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.0/win-arm64/olympix.exe
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.7/win-arm64/olympix.exe
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
 
 === "win-x64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.0/win-x64/olympix.exe
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.7/win-x64/olympix.exe
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
 
 === "linux-arm64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.0/linux-arm64/olympix
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.7/linux-arm64/olympix
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
 
 === "linux-x64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.0/linux-x64/olympix
+    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.7/linux-x64/olympix
     chmod +x olympix
     ./olympix login -e user@olympix.ai
     ```
