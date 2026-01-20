@@ -12,7 +12,8 @@ When you run the Olympix CLI, you have access to several commands:
 - **`generate-unit-tests`**: Generate unit tests
 - **`generate-mutation-tests`**: Generate mutation tests
 - **`bug-pocer`**: AI-powered vulnerability detection with automated PoC generation
-- **`login`**: Request access and log in to your account
+- **`login`**: Log in with email verification code
+- **`login-sso`**: Log in with Okta SSO (enterprise)
 - **`show-vulnerabilities`**: Show the vulnerability types that the analyzer aims to find
 - **`version`**: Show CLI version
 
@@ -119,8 +120,11 @@ generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --pa
 # BugPoCer - AI-powered vulnerability detection
 bug-pocer [-w | --workspace-path <workspace directory>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
 
-# Login
+# Login with email
 login [-e | --email <user email>]
+
+# Login with Okta SSO (enterprise)
+login-sso
 ```
 
 ---
@@ -138,6 +142,9 @@ login [-e | --email <user email>]
 
 - **[BugPoCer](./BugPoCer.md)**
   Learn about the AI-powered vulnerability scanner with automated PoC generation.
+
+- **[SSO Setup](./SSO.md)**
+  Configure Okta Single Sign-On for your organization.
 
 ---
 
