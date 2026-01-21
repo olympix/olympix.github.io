@@ -138,6 +138,11 @@ As an **Organization Admin**, configure SSO using the CLI:
 olympix configure-sso
 ```
 
+**View current configuration** at any time:
+```bash
+olympix show-sso
+```
+
 The command will prompt you for:
 
 | Prompt | Example Value |
@@ -243,9 +248,38 @@ olympix login -e admin@your-company.com
 ```
 
 This allows org admins to:
-- Fix SSO configuration issues
-- Disable SSO if needed
+- Fix SSO configuration issues with `olympix configure-sso`
+- Disable SSO temporarily with `olympix disable-sso`
 - Maintain access during Okta outages
+
+### Disabling SSO
+
+To disable SSO and restore email/code login for all users:
+
+```bash
+# 1. Login as org admin using emergency access
+olympix login -e admin@your-company.com
+
+# 2. Disable SSO (preserves configuration)
+olympix disable-sso
+
+# 3. Check that SSO is disabled but config is saved
+olympix show-sso
+```
+
+**What happens when you disable SSO:**
+- All users can immediately use `olympix login -e` again
+- Your configuration is **preserved** (Okta domain, client ID, email domain, etc.)
+- You can re-enable SSO at any time without re-entering settings
+
+**To re-enable SSO after disabling:**
+```bash
+# Quick re-enable with existing settings
+olympix enable-sso
+
+# Or reconfigure/update settings
+olympix configure-sso
+```
 
 > **Note**: Regular users cannot bypass SSO. Only org admins have emergency access.
 
@@ -267,6 +301,9 @@ This allows org admins to:
 | `olympix login-sso` | Log in using Okta SSO |
 | `olympix login-sso -e user@company.com` | Log in with email hint for organization detection |
 | `olympix configure-sso` | Configure SSO settings (admin only) |
+| `olympix show-sso` | View current SSO configuration (admin only) |
+| `olympix enable-sso` | Enable SSO with saved configuration (admin only) |
+| `olympix disable-sso` | Disable SSO for organization (admin only) |
 
 ---
 

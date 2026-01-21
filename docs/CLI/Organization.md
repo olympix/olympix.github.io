@@ -129,6 +129,55 @@ olympix org-set-admin -u <user-id> --revoke
 
 ## SSO Configuration
 
+### View SSO Configuration
+
+Check your current SSO settings:
+
+```bash
+olympix show-sso
+```
+
+**Output when enabled:**
+```
+SSO Configuration
+Organization: Acme Corp
+
+Status: ✓ Enabled
+
+SSO Provider: okta
+Email Domain: acme-corp.com
+JWT Expiration: 24 hours
+
+Okta Configuration:
+Okta Domain: acme-corp.okta.com
+Client ID: 0oa1234567abcdefg
+
+Management:
+  • Update settings: olympix configure-sso
+  • Disable SSO: olympix disable-sso
+```
+
+**Output when disabled (but previously configured):**
+```
+SSO Configuration
+Organization: Acme Corp
+
+Status: Disabled
+
+SSO Provider: okta
+Email Domain: acme-corp.com
+JWT Expiration: 24 hours
+
+Okta Configuration:
+Okta Domain: acme-corp.okta.com
+Client ID: 0oa1234567abcdefg
+
+Management:
+  • Re-enable SSO: olympix enable-sso
+```
+
+### Configure SSO
+
 Configure Single Sign-On for your organization:
 
 ```bash
@@ -136,6 +185,46 @@ olympix configure-sso
 ```
 
 See the [SSO Setup Guide](./SSO.md) for detailed instructions.
+
+### Enable SSO
+
+Re-enable SSO using your saved configuration (after it was disabled):
+
+```bash
+olympix enable-sso
+```
+
+**When to use:**
+- You previously disabled SSO and want to turn it back on
+- Your SSO configuration is already saved
+- Quick way to re-enable without re-entering settings
+
+**Notes:**
+- Requires organization admin privileges
+- Uses existing Okta domain, client ID, and email domain
+- Users with matching email domains will immediately be required to use SSO
+- To update settings while enabling, use `olympix configure-sso` instead
+
+### Disable SSO
+
+If SSO is causing issues or you need to switch back to email/code authentication:
+
+```bash
+olympix disable-sso
+```
+
+**When to use:**
+- SSO provider is down or misconfigured
+- Need to temporarily restore email/code login for all users
+- Switching to a different SSO provider
+
+**Notes:**
+- Requires organization admin privileges
+- All users will immediately be able to use `olympix login -e` again
+- **Configuration is preserved** - your Okta settings, email domain, etc. are saved
+- Re-enable quickly with `olympix configure-sso` (will use existing settings)
+- Org admins can always use email/code login, even when SSO is enabled
+- Check saved configuration anytime with `olympix show-sso`
 
 ---
 

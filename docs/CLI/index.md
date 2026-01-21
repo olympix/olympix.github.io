@@ -22,6 +22,9 @@ When you run the Olympix CLI, you have access to several commands:
 
 **Organization Management** (admin only):
 - **`configure-sso`**: Configure Okta SSO for your organization
+- **`show-sso`**: View current SSO configuration
+- **`enable-sso`**: Enable SSO with existing configuration
+- **`disable-sso`**: Disable SSO for your organization
 - **`org-seats`**: View organization seat usage
 - **`org-list-users`**: List all users in your organization
 - **`org-invite-user`**: Invite a user to your organization
@@ -147,6 +150,9 @@ org-invite-user [-e | --email <user email>]
 org-remove-user [-u | --user-id <user id>]
 org-set-admin [-u | --user-id <user id>] [--grant | --revoke]
 configure-sso
+show-sso
+enable-sso
+disable-sso
 ```
 
 ---
