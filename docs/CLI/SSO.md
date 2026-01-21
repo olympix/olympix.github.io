@@ -15,7 +15,7 @@ Olympix supports **Okta SSO** authentication, allowing your team to:
 
 ## Prerequisites
 
-- **Premium account** - Contact our sales team at [contact@olympix.ai](mailto:contact@olympix.ai) to upgrade
+- **Premium account** - Contact our Customer Success team at [contact@olympix.ai](mailto:contact@olympix.ai) to upgrade
 - **Okta administrator access** for your organization
 - **Organization Admin role** in Olympix (first user is automatically org admin)
 
@@ -23,19 +23,21 @@ Olympix supports **Okta SSO** authentication, allowing your team to:
 
 ## User Enrollment
 
-### Account Setup by Sales Team
+### Account Setup
 
-1. Contact [contact@olympix.ai](mailto:contact@olympix.ai) to set up your premium account
-2. Sales will create your organization and assign seats
+1. Contact our **Customer Success team** at [contact@olympix.ai](mailto:contact@olympix.ai) to set up your premium account
+2. Customer Success will create your organization and assign seats
 3. The **first user** becomes the **Organization Admin** by default
 
 ### Organization Admin Capabilities
 
 As an org admin, you can:
 - Configure SSO for your organization
-- Invite team members
+- Invite team members via `olympix org-invite-user`
 - Manage seats and user access
-- Promote other users to admin
+- Promote other users to admin via `olympix org-set-admin`
+
+See the [Organization Management Guide](./Organization.md) for detailed instructions on user management.
 
 ### Self-Enrollment for Team Members
 
@@ -136,18 +138,31 @@ As an **Organization Admin**, configure SSO using the CLI:
 olympix configure-sso
 ```
 
-The command will automatically detect your organization and prompt you for:
+The command will prompt you for:
 
 | Prompt | Example Value |
 |--------|---------------|
-| Enable SSO? | `y` |
-| SSO Provider | `okta` (press Enter for default) |
 | Okta Domain | `your-company.okta.com` |
 | Okta Client ID | `0oa1234567abcdefg` |
-| Okta Issuer | Press Enter for default |
-| Okta Audience | Press Enter for default |
 | Email Domain | `your-company.com` |
-| JWT Expiration Hours | `24` (default, range: 1-720) |
+
+Example:
+```
+Configure SSO for your organization
+Organization: 5c15e765-571b-4a1a-8ef2-1b768ada8485
+
+Okta Domain (e.g., your-domain.okta.com): acme-corp.okta.com
+Okta Client ID: 0oa1234567abcdefg
+Email Domain (e.g., company.com): acme-corp.com
+
+Configuring SSO... Done!
+✓ SSO configured successfully!
+Okta Domain: acme-corp.okta.com
+Client ID: 0oa1234567abcdefg
+Email Domain: acme-corp.com
+```
+
+> **Note**: The email domain is used to enforce SSO for all users with matching email addresses (e.g., `@acme-corp.com`).
 
 > **Note**: You must be logged in as an org admin to configure SSO.
 
@@ -194,9 +209,10 @@ To control which users can access Olympix:
 ### "SSO is not configured for your organization"
 
 Your organization's SSO configuration hasn't been activated yet. Ensure:
-1. Your account is **premium** (contact sales if not)
-2. Okta configuration was submitted to Olympix
-3. Contact [contact@olympix.ai](mailto:contact@olympix.ai) if issues persist
+1. Your account is **premium** (contact Customer Success if not)
+2. Okta configuration was completed via `olympix configure-sso`
+3. The **email domain** matches your login email (e.g., `company.com` for `user@company.com`)
+4. Contact [contact@olympix.ai](mailto:contact@olympix.ai) if issues persist
 
 ### "You must be an organization admin"
 
@@ -218,11 +234,47 @@ Check the **Assignments** tab in your Okta application to ensure users are assig
 
 ---
 
+## Emergency Access for Org Admins
+
+If SSO is misconfigured or Okta is unavailable, **org admins can still log in** using the standard email/code flow:
+
+```bash
+olympix login -e admin@your-company.com
+```
+
+This allows org admins to:
+- Fix SSO configuration issues
+- Disable SSO if needed
+- Maintain access during Okta outages
+
+> **Note**: Regular users cannot bypass SSO. Only org admins have emergency access.
+
+---
+
 ## Security Best Practices
 
 1. **Use groups for access control** - Assign Olympix to an Okta group rather than individual users
 2. **Enable MFA** - Configure multi-factor authentication in your Okta policies
 3. **Review access regularly** - Audit who has access to the Olympix application
+4. **Limit org admins** - Only essential personnel should have org admin status
+
+---
+
+## SSO Commands Reference
+
+| Command | Description |
+|---------|-------------|
+| `olympix login-sso` | Log in using Okta SSO |
+| `olympix login-sso -e user@company.com` | Log in with email hint for organization detection |
+| `olympix configure-sso` | Configure SSO settings (admin only) |
+
+---
+
+## Related Documentation
+
+- **[Organization Management](./Organization.md)** - Manage users, seats, and admin roles
+- **[CLI Overview](./index.md)** - All CLI commands and options
+- **[Installation](../Installation.md)** - Install the Olympix CLI
 
 ---
 

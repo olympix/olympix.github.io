@@ -8,13 +8,27 @@ Welcome to the Olympix CLI usage guide! This guide will help you quickly get sta
 
 When you run the Olympix CLI, you have access to several commands:
 
+**Analysis Commands:**
 - **`analyze`**: Perform code analysis
 - **`generate-unit-tests`**: Generate unit tests
 - **`generate-mutation-tests`**: Generate mutation tests
 - **`bug-pocer`**: AI-powered vulnerability detection with automated PoC generation
+- **`show-vulnerabilities`**: Show the vulnerability types that the analyzer aims to find
+
+**Authentication:**
 - **`login`**: Log in with email verification code
 - **`login-sso`**: Log in with Okta SSO (enterprise)
-- **`show-vulnerabilities`**: Show the vulnerability types that the analyzer aims to find
+- **`generate-api-token`**: Generate an API token for CI/CD
+
+**Organization Management** (admin only):
+- **`configure-sso`**: Configure Okta SSO for your organization
+- **`org-seats`**: View organization seat usage
+- **`org-list-users`**: List all users in your organization
+- **`org-invite-user`**: Invite a user to your organization
+- **`org-remove-user`**: Remove a user from your organization
+- **`org-set-admin`**: Promote or demote organization admin
+
+**Utility:**
 - **`version`**: Show CLI version
 
 ---
@@ -124,7 +138,15 @@ bug-pocer [-w | --workspace-path <workspace directory>] [-env | --include-dot-en
 login [-e | --email <user email>]
 
 # Login with Okta SSO (enterprise)
-login-sso
+login-sso [-e | --email <user email>]
+
+# Organization management (admin only)
+org-seats
+org-list-users
+org-invite-user [-e | --email <user email>]
+org-remove-user [-u | --user-id <user id>]
+org-set-admin [-u | --user-id <user id>] [--grant | --revoke]
+configure-sso
 ```
 
 ---
@@ -145,6 +167,9 @@ login-sso
 
 - **[SSO Setup](./SSO.md)**
   Configure Okta Single Sign-On for your organization.
+
+- **[Organization Management](./Organization.md)**
+  Manage users, seats, and admin roles for your organization.
 
 ---
 
