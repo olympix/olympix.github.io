@@ -64,7 +64,7 @@ jane@company.com           jane          No       e5f6g7h8-...
 
 ### Invite a User
 
-Invite a new team member to your organization (admin only):
+Send a welcome email to a new team member (admin only):
 
 ```bash
 olympix org-invite-user -e new.user@company.com
@@ -75,10 +75,19 @@ olympix org-invite-user -e new.user@company.com
 |--------|-------------|
 | `-e, --email` | Email address of the user to invite |
 
+**What happens:**
+1. User receives a **welcome email** with:
+   - CLI installation instructions
+   - Documentation links
+   - Login command (either `olympix login -e` or `olympix login-sso` depending on your org setup)
+2. User downloads the Olympix CLI
+3. User logs in with the command provided in the email
+4. User is **automatically added** to your organization during login
+
 **Notes:**
-- Invitations expire after 7 days
-- Invited users receive an email with instructions
-- Users are automatically linked to your organization upon accepting
+- No manual invitation acceptance needed - users are auto-linked when they log in
+- If no seats are available, users are linked to the org but **cannot use premium features** until seats become available
+- The invitation email is informational - users could also self-enroll by downloading the CLI and logging in directly
 
 ---
 
@@ -251,24 +260,34 @@ olympix org-list-users  # Error: Organization admin commands require interactive
 ### Initial Setup
 
 1. **Contact Customer Success** at [contact@olympix.ai](mailto:contact@olympix.ai)
-2. Customer Success creates your organization and initial admin account
+2. Customer Success creates your organization with:
+   - Initial admin account (the first user)
+   - Email domain configuration (e.g., `company.com`)
+   - Seat allocation for your team
 3. The **first user** becomes the **Organization Admin** by default
 
 ### Adding Team Members
 
-**Option 1: Admin Invitation**
+**Option 1: Admin Invitation (Recommended)**
 ```bash
 olympix org-invite-user -e teammate@company.com
 ```
-- User receives email invitation
-- Accepts invitation and creates account
-- Automatically linked to organization
+- User receives welcome email with download instructions
+- User downloads CLI and logs in
+- Automatically linked to organization based on email domain
 
-**Option 2: SSO Self-Enrollment** (if SSO is configured)
-1. User visits [app.olympixdevsectools.com](https://app.olympixdevsectools.com)
-2. Clicks "Sign in with SSO"
-3. Authenticates with corporate credentials
-4. Account automatically created and linked
+**Option 2: Self-Service**
+- User downloads CLI following the [Installation Guide](../Installation.md)
+- User runs `olympix login -e user@company.com` or `olympix login-sso`
+- Automatically added to organization if email domain matches
+
+**How auto-linking works:**
+- Your organization has an **email domain** (e.g., `company.com`) configured by Customer Success during org setup
+- Any user with a matching email domain is **automatically added** to your organization when they log in
+- Works for both SSO (`olympix login-sso`) and regular email/code login (`olympix login -e`)
+- Existing standalone users with matching domain are automatically linked to your org when they next log in
+- New users are auto-linked during their first login
+- Users are linked to the organization regardless of seat availability, but **need an available seat** to use premium features
 
 ---
 
@@ -301,7 +320,11 @@ olympix org-remove-user -u <your-user-id>
 
 ### "Seat limit exceeded"
 
-Your organization has reached its maximum seats. Contact [contact@olympix.ai](mailto:contact@olympix.ai) to upgrade.
+Your organization has reached its maximum seats. Users will be added to the organization but **cannot use premium features** until:
+- An existing user is removed (freeing up a seat), or
+- You contact [contact@olympix.ai](mailto:contact@olympix.ai) to purchase additional seats
+
+Use `olympix org-seats` to check current seat usage and `olympix org-list-users` to see all organization members.
 
 ---
 

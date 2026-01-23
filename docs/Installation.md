@@ -79,8 +79,10 @@ After downloading and setting up the CLI, authenticate your account by following
 3. **Capture your API token:**  
    Once authenticated, your Olympix API token is displayed. Save it securely as it is required for integration with other services, such as GitHub Actions. (This token is also automatically stored in `~/.opix/config.json` )
 
-!!! info "Need to Register Additional Emails?"
-    If you need to register more email addresses for your organization, please email [contact@olympix.ai](mailto:contact@olympix.ai).
+!!! info "Adding Team Members"
+    **For organization users:** Organization admins can invite team members using `olympix org-invite-user -e user@company.com`. See the [Organization Management Guide](./CLI/Organization.md) for details.
+    
+    **For standalone accounts:** If you need to register additional standalone email addresses (not part of an organization), email [contact@olympix.ai](mailto:contact@olympix.ai).
 
 ---
 

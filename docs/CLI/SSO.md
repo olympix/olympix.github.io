@@ -26,7 +26,10 @@ Olympix supports **Okta SSO** authentication, allowing your team to:
 ### Account Setup
 
 1. Contact our **Customer Success team** at [contact@olympix.ai](mailto:contact@olympix.ai) to set up your premium account
-2. Customer Success will create your organization and assign seats
+2. Customer Success will create your organization and configure:
+   - Email domain for auto-linking (e.g., `company.com`)
+   - Initial seat allocation
+   - First admin user account
 3. The **first user** becomes the **Organization Admin** by default
 
 ### Organization Admin Capabilities
@@ -39,16 +42,37 @@ As an org admin, you can:
 
 See the [Organization Management Guide](./Organization.md) for detailed instructions on user management.
 
-### Self-Enrollment for Team Members
+### Team Member Enrollment
 
-Once SSO is configured, team members can self-enroll:
+Team members can join your organization in two ways:
 
-1. Visit [app.olympixdevsectools.com](https://app.olympixdevsectools.com)
-2. Click **Sign in with SSO**
-3. Authenticate with your corporate Okta credentials
-4. Account is automatically created and linked to your organization
+**Method 1: Admin Invitation (Recommended)**
+```bash
+# Admin sends invitation
+olympix org-invite-user -e teammate@company.com
+```
+- User receives a welcome email with setup instructions and the appropriate login command
+- User downloads CLI and runs the login command from the email
+- User is automatically added to the organization
 
-> **Note**: Users must be assigned to the Olympix app in Okta to self-enroll.
+**Method 2: Self-Service Login**
+```bash
+# For SSO-enabled organizations
+olympix login-sso -e user@company.com
+
+# For organizations using email/code authentication
+olympix login -e user@company.com
+```
+
+**What happens during login:**
+1. User downloads Olympix CLI following the [Installation Guide](../Installation.md)
+2. User logs in with their email using the appropriate method
+3. System detects email domain matches your organization (configured by Customer Success)
+4. User is **automatically added** to your organization
+5. If seats are available, user gains immediate access to premium features
+6. If seats are full, user is linked to the org but must wait for seat availability
+
+> **Note**: For SSO login, users must be assigned to the Olympix app in Okta.
 
 ---
 
@@ -132,7 +156,7 @@ Okta Domain: acme-corp.okta.com
 
 ## Step 4: Configure SSO in Olympix
 
-As an **Organization Admin**, configure SSO using the CLI:
+As an **Organization Admin**, configure your Okta SSO provider using the CLI:
 
 ```bash
 olympix configure-sso
@@ -145,11 +169,11 @@ olympix show-sso
 
 The command will prompt you for:
 
-| Prompt | Example Value |
-|--------|---------------|
-| Okta Domain | `your-company.okta.com` |
-| Okta Client ID | `0oa1234567abcdefg` |
-| Email Domain | `your-company.com` |
+| Prompt | Example Value | Description |
+|--------|---------------|-------------|
+| Okta Domain | `your-company.okta.com` | Your Okta organization domain |
+| Okta Client ID | `0oa1234567abcdefg` | Client ID from Step 3 |
+| Email Domain | `your-company.com` | Your organization's email domain (pre-configured by Customer Success) |
 
 Example:
 ```
@@ -167,7 +191,7 @@ Client ID: 0oa1234567abcdefg
 Email Domain: acme-corp.com
 ```
 
-> **Note**: The email domain is used to enforce SSO for all users with matching email addresses (e.g., `@acme-corp.com`).
+> **Note**: The email domain was set by Customer Success when your organization was created. Configuring SSO will enforce SSO login for all users with matching email addresses (e.g., `@acme-corp.com`), while org admins can still use `olympix login -e` as a backup.
 
 > **Note**: You must be logged in as an org admin to configure SSO.
 
