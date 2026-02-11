@@ -1,0 +1,2166 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://olympix.github.io/CLI/SSO/">
+      
+      
+        <link rel="prev" href="../Organization/">
+      
+      
+        <link rel="next" href="../Unit%20Testing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Single Sign-On (SSO) Setup - Olympix User Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+  
+  
+  
+  
+  <style>:root{--md-annotation-icon:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M22%2012a10%2010%200%200%201-10%2010A10%2010%200%200%201%202%2012%2010%2010%200%200%201%2012%202a10%2010%200%200%201%2010%2010M6%2013h8l-3.5%203.5%201.42%201.42L17.84%2012l-5.92-5.92L10.5%207.5%2014%2011H6z%22/%3E%3C/svg%3E');}</style>
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#single-sign-on-sso-setup" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Olympix User Guide" class="md-header__button md-logo" aria-label="Olympix User Guide" data-md-component="logo">
+      
+  <img src="../../assets/olymp-x-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Olympix User Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Single Sign-On (SSO) Setup
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Olympix
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../ConfigOptions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Configuration and Ignore Options
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../IgnoreOptions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Ignore File
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Installation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Installation Guide
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  CLI
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Github%20Actions/integrated-security/" class="md-tabs__link">
+          
+  
+  
+  Github Actions
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../VSCode%20Extension/" class="md-tabs__link">
+          
+  
+  
+  VSCode Extension
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Olympix User Guide" class="md-nav__button md-logo" aria-label="Olympix User Guide" data-md-component="logo">
+      
+  <img src="../../assets/olymp-x-logo.png" alt="logo">
+
+    </a>
+    Olympix User Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Olympix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ConfigOptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration and Ignore Options
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../IgnoreOptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ignore File
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../BugPoCer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BugPoCer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Mutation%20Testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mutation Test Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Organization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Organization Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Single Sign-On (SSO) Setup
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Single Sign-On (SSO) Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#user-enrollment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User Enrollment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="User Enrollment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#account-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Account Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#organization-admin-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Organization Admin Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#team-member-enrollment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Team Member Enrollment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-create-okta-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Create Okta Application
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-configure-application-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Configure Application Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 2: Configure Application Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        General Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grant-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grant Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign-in-redirect-uris" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sign-in Redirect URIs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign-out-redirect-uris-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sign-out Redirect URIs (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controlled-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controlled Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-copy-your-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Copy Your Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-configure-sso-in-olympix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Configure SSO in Olympix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-test-sso-login" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Test SSO Login
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assigning-users-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assigning Users (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sso-is-not-configured-for-your-organization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "SSO is not configured for your organization"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#you-must-be-an-organization-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "You must be an organization admin"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#failed-to-initiate-device-authorization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Failed to initiate device authorization"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authorization-pending-timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Authorization pending" timeout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#users-cant-access-olympix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Users can't access Olympix
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emergency-access-for-org-admins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Emergency Access for Org Admins
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Emergency Access for Org Admins">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disabling-sso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disabling SSO
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sso-commands-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSO Commands Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Support
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Unit%20Testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Test Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Github Actions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Github Actions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Github%20Actions/integrated-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integrated Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Github%20Actions/mutation-test-generator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mutation Test Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Github%20Actions/unit-test-generator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Test Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VSCode Extension
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    VSCode Extension
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../VSCode%20Extension/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VSCode Extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#user-enrollment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User Enrollment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="User Enrollment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#account-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Account Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#organization-admin-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Organization Admin Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#team-member-enrollment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Team Member Enrollment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-create-okta-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Create Okta Application
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-configure-application-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Configure Application Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 2: Configure Application Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        General Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grant-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grant Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign-in-redirect-uris" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sign-in Redirect URIs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign-out-redirect-uris-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sign-out Redirect URIs (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controlled-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controlled Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-copy-your-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Copy Your Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-configure-sso-in-olympix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Configure SSO in Olympix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-test-sso-login" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Test SSO Login
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assigning-users-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assigning Users (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sso-is-not-configured-for-your-organization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "SSO is not configured for your organization"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#you-must-be-an-organization-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "You must be an organization admin"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#failed-to-initiate-device-authorization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Failed to initiate device authorization"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authorization-pending-timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Authorization pending" timeout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#users-cant-access-olympix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Users can't access Olympix
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emergency-access-for-org-admins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Emergency Access for Org Admins
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Emergency Access for Org Admins">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disabling-sso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disabling SSO
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sso-commands-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSO Commands Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Support
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="single-sign-on-sso-setup">Single Sign-On (SSO) Setup</h1>
+<p>Enable Okta SSO for your organization to authenticate with Olympix CLI using your corporate identity provider.</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>Olympix supports <strong>Okta SSO</strong> authentication, allowing your team to:
+- Log in using corporate credentials
+- Enforce security policies through your identity provider
+- Centrally manage access to Olympix tools</p>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li><strong>Premium account</strong> - Contact our Customer Success team at <a href="mailto:contact@olympix.ai">contact@olympix.ai</a> to upgrade</li>
+<li><strong>Okta administrator access</strong> for your organization</li>
+<li><strong>Organization Admin role</strong> in Olympix (first user is automatically org admin)</li>
+</ul>
+<hr />
+<h2 id="user-enrollment">User Enrollment</h2>
+<h3 id="account-setup">Account Setup</h3>
+<ol>
+<li>Contact our <strong>Customer Success team</strong> at <a href="mailto:contact@olympix.ai">contact@olympix.ai</a> to set up your premium account</li>
+<li>Customer Success will create your organization and configure:</li>
+<li>Email domain for auto-linking (e.g., <code>company.com</code>)</li>
+<li>Initial seat allocation</li>
+<li>First admin user account</li>
+<li>The <strong>first user</strong> becomes the <strong>Organization Admin</strong> by default</li>
+</ol>
+<h3 id="organization-admin-capabilities">Organization Admin Capabilities</h3>
+<p>As an org admin, you can:
+- Configure SSO for your organization
+- Invite team members via <code>olympix org-invite-user</code>
+- Manage seats and user access
+- Promote other users to admin via <code>olympix org-set-admin</code></p>
+<p>See the <a href="../Organization/">Organization Management Guide</a> for detailed instructions on user management.</p>
+<h3 id="team-member-enrollment">Team Member Enrollment</h3>
+<p>Team members can join your organization in two ways:</p>
+<p><strong>Method 1: Admin Invitation (Recommended)</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Admin sends invitation</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>olympix<span class="w"> </span>org-invite-user<span class="w"> </span>-e<span class="w"> </span>teammate@company.com
+</span></code></pre></div>
+- User receives a welcome email with setup instructions and the appropriate login command
+- User downloads CLI and runs the login command from the email
+- User is automatically added to the organization</p>
+<p><strong>Method 2: Self-Service Login</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># For SSO-enabled organizations</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>olympix<span class="w"> </span>login-sso<span class="w"> </span>-e<span class="w"> </span>user@company.com
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># For organizations using email/code authentication</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>olympix<span class="w"> </span>login<span class="w"> </span>-e<span class="w"> </span>user@company.com
+</span></code></pre></div></p>
+<p><strong>What happens during login:</strong>
+1. User downloads Olympix CLI following the <a href="../../Installation/">Installation Guide</a>
+2. User logs in with their email using the appropriate method
+3. System detects email domain matches your organization (configured by Customer Success)
+4. User is <strong>automatically added</strong> to your organization
+5. If seats are available, user gains immediate access to premium features
+6. If seats are full, user is linked to the org but must wait for seat availability</p>
+<blockquote>
+<p><strong>Note</strong>: For SSO login, users must be assigned to the Olympix app in Okta.</p>
+</blockquote>
+<hr />
+<h2 id="step-1-create-okta-application">Step 1: Create Okta Application</h2>
+<ol>
+<li><strong>Log in to Okta Admin Console</strong></li>
+<li>
+<p>Navigate to: <code>Applications</code> → <code>Applications</code></p>
+</li>
+<li>
+<p><strong>Create New App Integration</strong></p>
+</li>
+<li>Click: <code>Create App Integration</code></li>
+<li><strong>Sign-in method</strong>: Select <code>OIDC - OpenID Connect</code></li>
+<li><strong>Application type</strong>: Select <code>Native Application</code></li>
+<li>Click: <code>Next</code></li>
+</ol>
+<hr />
+<h2 id="step-2-configure-application-settings">Step 2: Configure Application Settings</h2>
+<h3 id="general-settings">General Settings</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>App integration name</strong></td>
+<td><code>Olympix</code></td>
+</tr>
+<tr>
+<td><strong>Proof of possession</strong></td>
+<td>Leave unchecked</td>
+</tr>
+</tbody>
+</table>
+<h3 id="grant-type">Grant Type</h3>
+<p>Select the following grant types:</p>
+<table>
+<thead>
+<tr>
+<th>Grant Type</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Authorization Code</strong></td>
+<td>☑ Check</td>
+<td>Required</td>
+</tr>
+<tr>
+<td><strong>Refresh Token</strong></td>
+<td>☐ Leave unchecked</td>
+<td>Olympix handles refresh internally</td>
+</tr>
+<tr>
+<td><strong>Device Authorization</strong></td>
+<td>☑ <strong>Check</strong></td>
+<td><strong>Required for CLI authentication</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>Important</strong>: You must enable <strong>Device Authorization</strong> for the Olympix CLI to work.</p>
+</blockquote>
+<h3 id="sign-in-redirect-uris">Sign-in Redirect URIs</h3>
+<p>Add the following URI:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>com.okta.{your-okta-subdomain}:/callback
+</span></code></pre></div>
+<h3 id="sign-out-redirect-uris-optional">Sign-out Redirect URIs (Optional)</h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>com.okta.{your-okta-subdomain}:/
+</span></code></pre></div>
+<h3 id="controlled-access">Controlled Access</h3>
+<p>Choose who in your organization can use Olympix:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Allow everyone in your organization</strong></td>
+<td>Recommended for most teams</td>
+</tr>
+<tr>
+<td><strong>Limit access to selected groups</strong></td>
+<td>Restrict to specific Okta groups</td>
+</tr>
+</tbody>
+</table>
+<p>Click <strong>Save</strong> to create the application.</p>
+<hr />
+<h2 id="step-3-copy-your-configuration">Step 3: Copy Your Configuration</h2>
+<p>After saving, you'll see your application's settings. Copy these values:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Where to Find</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Client ID</strong></td>
+<td>On the application's General tab</td>
+</tr>
+<tr>
+<td><strong>Okta Domain</strong></td>
+<td>Your Okta URL (e.g., <code>your-company.okta.com</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Example:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Client ID: 0oa1234567abcdefg
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Okta Domain: acme-corp.okta.com
+</span></code></pre></div></p>
+<hr />
+<h2 id="step-4-configure-sso-in-olympix">Step 4: Configure SSO in Olympix</h2>
+<p>As an <strong>Organization Admin</strong>, configure your Okta SSO provider using the CLI:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>olympix<span class="w"> </span>configure-sso
+</span></code></pre></div>
+<p><strong>View current configuration</strong> at any time:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>olympix<span class="w"> </span>show-sso
+</span></code></pre></div></p>
+<p>The command will prompt you for:</p>
+<table>
+<thead>
+<tr>
+<th>Prompt</th>
+<th>Example Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Okta Domain</td>
+<td><code>your-company.okta.com</code></td>
+<td>Your Okta organization domain</td>
+</tr>
+<tr>
+<td>Okta Client ID</td>
+<td><code>0oa1234567abcdefg</code></td>
+<td>Client ID from Step 3</td>
+</tr>
+<tr>
+<td>Email Domain</td>
+<td><code>your-company.com</code></td>
+<td>Your organization's email domain (pre-configured by Customer Success)</td>
+</tr>
+</tbody>
+</table>
+<p>Example:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Configure SSO for your organization
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Organization: 5c15e765-571b-4a1a-8ef2-1b768ada8485
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>Okta Domain (e.g., your-domain.okta.com): acme-corp.okta.com
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>Okta Client ID: 0oa1234567abcdefg
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>Email Domain (e.g., company.com): acme-corp.com
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>Configuring SSO... Done!
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>✓ SSO configured successfully!
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>Okta Domain: acme-corp.okta.com
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>Client ID: 0oa1234567abcdefg
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>Email Domain: acme-corp.com
+</span></code></pre></div></p>
+<blockquote>
+<p><strong>Note</strong>: The email domain was set by Customer Success when your organization was created. Configuring SSO will enforce SSO login for all users with matching email addresses (e.g., <code>@acme-corp.com</code>), while org admins can still use <code>olympix login -e</code> as a backup.</p>
+<p><strong>Note</strong>: You must be logged in as an org admin to configure SSO.</p>
+</blockquote>
+<hr />
+<h2 id="step-5-test-sso-login">Step 5: Test SSO Login</h2>
+<p>Once Olympix confirms your SSO is configured:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>olympix<span class="w"> </span>login-sso
+</span></code></pre></div>
+<p>Expected flow:
+1. CLI displays a verification URL and code
+2. Open the URL in your browser
+3. Authenticate with your Okta credentials
+4. CLI automatically completes login</p>
+<p>Example output:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Initiating Okta SSO login... Done!
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>Please authenticate in your browser:
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  https://your-company.okta.com/activate?user_code=ABCD-EFGH
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>Waiting for authentication... Success!
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>✓ SSO authentication successful!
+</span></code></pre></div></p>
+<hr />
+<h2 id="assigning-users-optional">Assigning Users (Optional)</h2>
+<p>To control which users can access Olympix:</p>
+<ol>
+<li>In Okta Admin Console, go to your Olympix application</li>
+<li>Click the <strong>Assignments</strong> tab</li>
+<li>Assign users or groups</li>
+</ol>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="sso-is-not-configured-for-your-organization">"SSO is not configured for your organization"</h3>
+<p>Your organization's SSO configuration hasn't been activated yet. Ensure:
+1. Your account is <strong>premium</strong> (contact Customer Success if not)
+2. Okta configuration was completed via <code>olympix configure-sso</code>
+3. The <strong>email domain</strong> matches your login email (e.g., <code>company.com</code> for <code>user@company.com</code>)
+4. Contact <a href="mailto:contact@olympix.ai">contact@olympix.ai</a> if issues persist</p>
+<h3 id="you-must-be-an-organization-admin">"You must be an organization admin"</h3>
+<p>Only org admins can configure SSO. The first user in an organization is automatically an admin. Contact your org admin or <a href="mailto:contact@olympix.ai">contact@olympix.ai</a> for assistance.</p>
+<h3 id="failed-to-initiate-device-authorization">"Failed to initiate device authorization"</h3>
+<p>Verify that:
+- <strong>Device Authorization</strong> grant type is enabled in your Okta app
+- Your Client ID was correctly provided to Olympix</p>
+<h3 id="authorization-pending-timeout">"Authorization pending" timeout</h3>
+<p>The login code expires after 15 minutes. Run <code>olympix login-sso</code> again to get a new code.</p>
+<h3 id="users-cant-access-olympix">Users can't access Olympix</h3>
+<p>Check the <strong>Assignments</strong> tab in your Okta application to ensure users are assigned.</p>
+<hr />
+<h2 id="emergency-access-for-org-admins">Emergency Access for Org Admins</h2>
+<p>If SSO is misconfigured or Okta is unavailable, <strong>org admins can still log in</strong> using the standard email/code flow:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>olympix<span class="w"> </span>login<span class="w"> </span>-e<span class="w"> </span>admin@your-company.com
+</span></code></pre></div>
+<p>This allows org admins to:
+- Fix SSO configuration issues with <code>olympix configure-sso</code>
+- Disable SSO temporarily with <code>olympix disable-sso</code>
+- Maintain access during Okta outages</p>
+<h3 id="disabling-sso">Disabling SSO</h3>
+<p>To disable SSO and restore email/code login for all users:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># 1. Login as org admin using emergency access</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>olympix<span class="w"> </span>login<span class="w"> </span>-e<span class="w"> </span>admin@your-company.com
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># 2. Disable SSO (preserves configuration)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>olympix<span class="w"> </span>disable-sso
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="c1"># 3. Check that SSO is disabled but config is saved</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>olympix<span class="w"> </span>show-sso
+</span></code></pre></div>
+<p><strong>What happens when you disable SSO:</strong>
+- All users can immediately use <code>olympix login -e</code> again
+- Your configuration is <strong>preserved</strong> (Okta domain, client ID, email domain, etc.)
+- You can re-enable SSO at any time without re-entering settings</p>
+<p><strong>To re-enable SSO after disabling:</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Quick re-enable with existing settings</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>olympix<span class="w"> </span>enable-sso
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Or reconfigure/update settings</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>olympix<span class="w"> </span>configure-sso
+</span></code></pre></div></p>
+<blockquote>
+<p><strong>Note</strong>: Regular users cannot bypass SSO. Only org admins have emergency access.</p>
+</blockquote>
+<hr />
+<h2 id="security-best-practices">Security Best Practices</h2>
+<ol>
+<li><strong>Use groups for access control</strong> - Assign Olympix to an Okta group rather than individual users</li>
+<li><strong>Enable MFA</strong> - Configure multi-factor authentication in your Okta policies</li>
+<li><strong>Review access regularly</strong> - Audit who has access to the Olympix application</li>
+<li><strong>Limit org admins</strong> - Only essential personnel should have org admin status</li>
+</ol>
+<hr />
+<h2 id="sso-commands-reference">SSO Commands Reference</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>olympix login-sso</code></td>
+<td>Log in using Okta SSO</td>
+</tr>
+<tr>
+<td><code>olympix login-sso -e user@company.com</code></td>
+<td>Log in with email hint for organization detection</td>
+</tr>
+<tr>
+<td><code>olympix configure-sso</code></td>
+<td>Configure SSO settings (admin only)</td>
+</tr>
+<tr>
+<td><code>olympix show-sso</code></td>
+<td>View current SSO configuration (admin only)</td>
+</tr>
+<tr>
+<td><code>olympix enable-sso</code></td>
+<td>Enable SSO with saved configuration (admin only)</td>
+</tr>
+<tr>
+<td><code>olympix disable-sso</code></td>
+<td>Disable SSO for organization (admin only)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><strong><a href="../Organization/">Organization Management</a></strong> - Manage users, seats, and admin roles</li>
+<li><strong><a href="../">CLI Overview</a></strong> - All CLI commands and options</li>
+<li><strong><a href="../../Installation/">Installation</a></strong> - Install the Olympix CLI</li>
+</ul>
+<hr />
+<h2 id="support">Support</h2>
+<p>For SSO configuration assistance:
+- Email: <a href="mailto:contact@olympix.ai">contact@olympix.ai</a>
+- Include your organization name and Okta domain</p>
+<p>For Okta-specific questions:
+- <a href="https://developer.okta.com/docs/">Okta Developer Documentation</a>
+- <a href="https://developer.okta.com/docs/guides/device-authorization-grant/">Device Authorization Flow Guide</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tabs", "navigation.tab.sticky", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
