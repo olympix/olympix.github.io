@@ -25,16 +25,14 @@ Welcome to the Olympix installation guide! Get started by installing the CLI and
 
 === "win-arm64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.65/win-arm64/olympix.exe
-    chmod +x olympix
-    ./olympix login -e user@olympix.ai
+    curl.exe -o olympix.exe https://olympix-download.s3.amazonaws.com/cli/v0.11.65/win-arm64/olympix.exe
+    .\olympix.exe login -e user@olympix.ai
     ```
 
 === "win-x64"
     ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.65/win-x64/olympix.exe
-    chmod +x olympix
-    ./olympix login -e user@olympix.ai
+    curl.exe -o olympix.exe https://olympix-download.s3.amazonaws.com/cli/v0.11.65/win-x64/olympix.exe
+    .\olympix.exe login -e user@olympix.ai
     ```
 
 === "linux-arm64"
