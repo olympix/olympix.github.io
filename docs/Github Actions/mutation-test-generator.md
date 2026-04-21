@@ -44,7 +44,11 @@ Automatically generate mutation tests to evaluate the effectiveness of your unit
 
 ## Usage Example
 
-Below is an example workflow that triggers on each commit containing the string `OPIX-GEN-MUTATION-TESTS`. This workflow installs the necessary dependencies with `npm install` and `forge install` , and then triggers the mutation test generator with the required paths for each target Solidity contract.
+Below are example workflows for **Foundry** and **Hardhat** projects.
+
+### Foundry example
+
+This workflow triggers on each commit containing the string `OPIX-GEN-MUTATION-TESTS`. It installs dependencies with `npm install` and `forge install`, then triggers the mutation test generator with the required paths for each target Solidity contract.
 
 ```yaml
 name: Mutation Test Generation Workflow
@@ -78,6 +82,40 @@ jobs:
           OLYMPIX_GITHUB_COMMIT_HEAD_SHA: ${{ github.sha }} # optional, marks the commit on which the check run will appear in the repo.
         with:
           args: -p src/subjectContract1.sol -p src/subjectContract2.sol # Modify this: List of target contracts (we currently accept a maximum of 5 target contracts.)
+```
+
+### Hardhat example
+
+This workflow triggers on each commit containing the string `OPIX-GEN-MUTATION-TESTS` for a Hardhat-based project. It installs Node.js dependencies and then triggers the mutation test generator.
+
+```yaml
+name: Mutation Test Generation Workflow (Hardhat)
+on:
+  push
+
+jobs:
+  mutation-test-generation:
+    if: contains(github.event.head_commit.message, 'OPIX-GEN-MUTATION-TESTS') # Modify this.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install # or yarn install, pnpm install, bun install
+
+      - name: Mutation Test Generator
+        uses: olympix/mutation-test-generator@main
+        env:
+          OLYMPIX_API_TOKEN: ${{ secrets.OLYMPIX_API_TOKEN }}
+          OLYMPIX_FAIL_MUTATION_GHA_THRESHOLD: 30 # optional, provides a threshold(in percentage) below which the check will fail.
+          OLYMPIX_GITHUB_COMMIT_HEAD_SHA: ${{ github.sha }} # optional, marks the commit on which the check run will appear in the repo.
+        with:
+          args: -p contracts/Contract1.sol -p contracts/Contract2.sol # Modify this: List of target contracts (we currently accept a maximum of 5 target contracts.)
 ```
 
 
