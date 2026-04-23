@@ -81,6 +81,16 @@ documentation without accidentally firing them.
 This workflow runs BugPocer only when a reviewer posts `/bugpocer scan` on a PR comment, or when
 a commit pushed to the PR contains `/bugpocer scan` in its message.
 
+!!! warning "Workflow file must live on the default branch"
+    GitHub only fires `issue_comment` events for workflow files that exist on the
+    repository's **default branch** (usually `main`). If you place this workflow on a
+    feature branch and open a PR from that branch, slash commands posted as PR
+    comments will be silently ignored — only `pull_request` events from pushes will
+    trigger the workflow. Merge the workflow file to the default branch before relying on
+    `/bugpocer scan|cancel|help` from PR comments. See
+    [GitHub's documentation](https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#issue_comment)
+    for details.
+
 ```yaml
 name: BugPocer Security Analysis (manual)
 on:
@@ -234,10 +244,19 @@ The job's `permissions` block must include:
 
 ## Troubleshooting
 
-**Nothing happens after I post `/bugpocer scan`.**
-Check that `OLYMPIX_GITHUB_TRIGGER_MODE` is set to `"manual"` (not `"every-commit"`) and that the
-job ran. The trigger parser is case-insensitive on the prefix and subcommand, but the command
-must be on its own (unquoted, non-code-block) line.
+**Nothing happens after I post `/bugpocer scan` (or `cancel` / `help`).**
+First check the Actions tab — does posting the comment trigger a workflow run at all?
+
+- **No run at all:** the workflow file isn't on the repository's default branch. GitHub only
+  fires `issue_comment` events for workflows that exist on the default branch (usually `main`).
+  Push events from a feature branch will still trigger the workflow on that branch, but PR
+  comments won't. Merge the workflow file to the default branch and retest on a fresh PR.
+- **Run starts but exits with "No '/bugpocer' trigger found":** the parser couldn't find the
+  command in the comment / commit body. The trigger parser is case-insensitive on the prefix and
+  subcommand, but the command must be on its own (unquoted, non-code-block) line.
+- **Run starts but exits with a `OLYMPIX_GITHUB_TRIGGER_MODE` error:** set
+  `OLYMPIX_GITHUB_TRIGGER_MODE` to `"manual"` (or `"every-commit"`) in the workflow's `env:`
+  block.
 
 **A scan started on every push, even without a `/bugpocer scan` trigger.**
 You're probably in `every-commit` mode. Set `OLYMPIX_GITHUB_TRIGGER_MODE` to `"manual"`.
