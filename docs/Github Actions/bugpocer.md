@@ -27,8 +27,7 @@ The action supports two trigger modes:
 - **Manual mode** (recommended): scans only fire when a reviewer posts `/bugpocer scan` (or
   includes the same trigger in a commit message). This keeps your CI minutes focused on the PRs
   you actually want analyzed.
-- **Every-commit mode** (legacy): scans every push to a PR, the same way previous BugPocer
-  workflows behaved.
+- **Every-commit mode**: scans every push to a PR.
 
 ---
 
@@ -152,7 +151,7 @@ jobs:
           args: -w . -ca
 ```
 
-### Example 2: Every-commit mode (legacy)
+### Example 2: Every-commit mode
 
 This workflow runs BugPocer automatically on every commit pushed to a PR, with no slash-command
 gate. Use this if you want the previous behavior where every push triggered a fresh scan.
@@ -204,7 +203,7 @@ jobs:
 |---|---|---|
 | `OLYMPIX_API_TOKEN` | Yes | Your Olympix API token. Store as a repository secret. |
 | `OLYMPIX_GITHUB_PR_MODE` | Yes | Set to `"true"` to enable PR mode. |
-| `OLYMPIX_GITHUB_TRIGGER_MODE` | Yes | `"manual"` (slash-command gate) or `"every-commit"` (legacy auto-scan). |
+| `OLYMPIX_GITHUB_TRIGGER_MODE` | Yes | `"manual"` (slash-command gate) or `"every-commit"`. |
 | `OLYMPIX_GITHUB_COMMIT_HEAD_SHA` | Yes | The PR head commit SHA the scan should analyze. |
 | `GITHUB_PR_NUMBER` | Yes | The PR number being scanned. Resolved differently for `pull_request` vs `issue_comment` events — see Example 1. |
 | `GITHUB_REPOSITORY_ID` | Yes | The numeric repository ID (`${{ github.repository_id }}`). |
