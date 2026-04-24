@@ -83,6 +83,8 @@ When generating unit tests, you can use these options:
 
 ## Mutation Tests Generation Options
 
+Mutation testing supports both **Foundry** and **Hardhat** projects. The framework is auto-detected based on your project configuration.
+
 When generating mutation tests, you have the following options:
 
 - **`-w | --workspace-path`**  

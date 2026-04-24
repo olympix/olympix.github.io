@@ -21,10 +21,20 @@ In blockchain and smart contract development, mutation testing is particularly c
 
 ## Installation & Requirements
 
-The mutation test generator is designed to be dependency-free and works with any Forge project. The only prerequisite is having a Forge project with unit tests.
+The mutation test generator is designed to be dependency-free and works with both **Foundry** and **Hardhat** projects.
+
+### Foundry projects
 
 :white_check_mark: No external dependencies  
-:white_check_mark: Works with standard Forge unit tests out of the box.
+:white_check_mark: Works with standard Forge unit tests out of the box
+
+### Hardhat projects
+
+:white_check_mark: Works with Hardhat projects using Mocha-based test suites  
+:white_check_mark: Requires npm and a `hardhat.config.{js,ts}` file at the project root
+
+!!! warning "npm install must succeed"
+    When you submit a Hardhat project for mutation testing, `npm install` runs server-side to install your dependencies. If this step fails (e.g., due to missing packages, private registries, or incompatible Node versions), the entire mutation test run will fail. Make sure your `package.json` and lock file are committed and that `npm install` succeeds in a clean environment before running mutation tests.
 
 ---
 
@@ -217,6 +227,20 @@ address(0xbbbbbbbbbbbbbbbbbbbbb).call(); // where 0xbbbbbbbbbbbbbbbbbbbbb is ano
 12.	State Variable Initialization Changes: Mutates state variable initial values based on type.
 13.	Modifier Removal Mutations: Removes function modifiers.
 14.	Address Swap Mutations: Swaps addresses in function calls.
+
+## Quick Fixes
+
+When a mutant survives — meaning your existing tests didn't catch the mutation — the mutation test generator can automatically generate a test that kills it. This feature is called **Quick Fixes**.
+
+Quick fixes use an AI-powered agentic loop to produce ready-to-use test files that target the survived mutants. The results include:
+
+- **Quick fix test files** — generated `.t.sol` files you can drop into your test suite
+- **Score with quick fixes** — an updated mutation score showing what your coverage would be if you adopt the generated tests
+
+!!! tip "Enabling Quick Fixes"
+    Quick fixes are generated automatically when supported by your project. The results email will include the generated test files alongside the standard mutation testing report.
+
+---
 
 ## Security Foundation
 
