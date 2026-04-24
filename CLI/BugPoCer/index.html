@@ -1,0 +1,2499 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://olympix.github.io/CLI/BugPoCer/">
+      
+      
+        <link rel="prev" href="../Analysis/">
+      
+      
+        <link rel="next" href="../Mutation%20Testing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>BugPoCer - Olympix User Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+  
+  
+  
+  
+  <style>:root{--md-annotation-icon:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M22%2012a10%2010%200%200%201-10%2010A10%2010%200%200%201%202%2012%2010%2010%200%200%201%2012%202a10%2010%200%200%201%2010%2010M6%2013h8l-3.5%203.5%201.42%201.42L17.84%2012l-5.92-5.92L10.5%207.5%2014%2011H6z%22/%3E%3C/svg%3E');}</style>
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#bugpocer" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Olympix User Guide" class="md-header__button md-logo" aria-label="Olympix User Guide" data-md-component="logo">
+      
+  <img src="../../assets/olymp-x-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Olympix User Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              BugPoCer
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Olympix
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../ConfigOptions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Configuration and Ignore Options
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../IgnoreOptions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Ignore File
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Installation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Installation Guide
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  CLI
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Github%20Actions/bugpocer/" class="md-tabs__link">
+          
+  
+  
+  Github Actions
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../VSCode%20Extension/" class="md-tabs__link">
+          
+  
+  
+  VSCode Extension
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Olympix User Guide" class="md-nav__button md-logo" aria-label="Olympix User Guide" data-md-component="logo">
+      
+  <img src="../../assets/olymp-x-logo.png" alt="logo">
+
+    </a>
+    Olympix User Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Olympix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ConfigOptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration and Ignore Options
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../IgnoreOptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ignore File
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BugPoCer
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BugPoCer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pipeline-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI Command
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-picker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session Picker
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session Picker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#session-status-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session status reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scope-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope Selection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scope Selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scope-and-ignore-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope and ignore config
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scope and ignore config">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default-ignore-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default ignore list
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-project-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Project Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Context Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-gets-validated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What gets validated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-item-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-item actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#editing-the-project-context-directly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editing the project context directly
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reviewing-findings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reviewing Findings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reviewing Findings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verdict-terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict terminology
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-findings-pager-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive findings pager ([1])
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporting Results
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exporting Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#markdown-3-lightweight-per-category-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Markdown ([3]) — lightweight per-category report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pdf-2-full-audit-style-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PDF ([2]) — full audit-style report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pocs-4-solidity-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PoCs ([4]) — Solidity files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactive-qa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Q&amp;A
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scan-report-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scan Report Fields
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scan Report Fields">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vulnerability-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vulnerability Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exploit-demonstration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploit Demonstration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#need-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Need Help?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Mutation%20Testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mutation Test Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Organization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Organization Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SSO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Single Sign-On (SSO) Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Unit%20Testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Test Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Github Actions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Github Actions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Github%20Actions/bugpocer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BugPocer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Github%20Actions/integrated-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integrated Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Github%20Actions/mutation-test-generator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mutation Test Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Github%20Actions/unit-test-generator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unit Test Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VSCode Extension
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    VSCode Extension
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../VSCode%20Extension/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VSCode Extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pipeline-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI Command
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-picker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session Picker
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session Picker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#session-status-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session status reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scope-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope Selection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scope Selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scope-and-ignore-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope and ignore config
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scope and ignore config">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default-ignore-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default ignore list
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-project-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Project Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Context Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-gets-validated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What gets validated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-item-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-item actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#editing-the-project-context-directly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Editing the project context directly
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reviewing-findings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reviewing Findings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reviewing Findings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verdict-terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verdict terminology
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-findings-pager-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive findings pager ([1])
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporting Results
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exporting Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#markdown-3-lightweight-per-category-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Markdown ([3]) — lightweight per-category report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pdf-2-full-audit-style-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PDF ([2]) — full audit-style report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pocs-4-solidity-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PoCs ([4]) — Solidity files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactive-qa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Q&amp;A
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scan-report-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scan Report Fields
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scan Report Fields">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vulnerability-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vulnerability Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exploit-demonstration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploit Demonstration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#need-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Need Help?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="bugpocer">BugPoCer</h1>
+<p>BugPoCer is an AI-powered internal audit tool that automates end-to-end vulnerability exploitation for smart contracts — moving beyond static warnings to deliver <strong>concrete, verifiable Proof-of-Concept (PoC) exploits</strong>.</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>Built on Olympix's proprietary Intermediate Representation (IR) and symbolic execution engine, BugPoCer combines results from multiple analysis engines to identify <strong>confirmed</strong> security issues. For each vulnerability, it automatically generates a <strong>ready-to-run Foundry-format PoC test</strong> that reproduces the exploit under realistic attack conditions.</p>
+<h3 id="key-capabilities">Key Capabilities</h3>
+<ul>
+<li><strong>Automated Vulnerability Detection</strong> — AI-driven protocol scanning</li>
+<li><strong>Project Context and Invariant Building</strong> — Approve inferred project context</li>
+<li><strong>PoC Generation</strong> — Automatically creates Foundry test files that demonstrate exploits</li>
+<li><strong>Interactive Analysis</strong> — Ask follow-up questions about findings</li>
+</ul>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<div class="admonition info">
+<p class="admonition-title">Project Requirements</p>
+<ul>
+<li>A Foundry project that builds and where <code>forge test</code> succeeds</li>
+<li>An Olympix account — log in with <code>olympix login -e &lt;email&gt;</code> (or <code>olympix login-sso -e &lt;email&gt;</code> if your organization uses SSO) before starting a scan (see <a href="../../Installation/">Installation</a>)</li>
+</ul>
+</div>
+<hr />
+<h2 id="pipeline-overview">Pipeline Overview</h2>
+<p>BugPoCer runs as a multi-stage pipeline. The analysis itself happens server-side, so most stages are asynchronous — you can close the CLI between stages and reconnect whenever an email tells you it's your turn again.</p>
+<style>
+.pipeline-wrap table { table-layout: fixed; width: 100%; }
+.pipeline-wrap th:nth-child(1), .pipeline-wrap td:nth-child(1) { width: 4%; }
+.pipeline-wrap th:nth-child(2), .pipeline-wrap td:nth-child(2) { width: 13%; }
+.pipeline-wrap th:nth-child(3), .pipeline-wrap td:nth-child(3) { width: 43%; }
+.pipeline-wrap th:nth-child(4), .pipeline-wrap td:nth-child(4) { width: 17%; }
+.pipeline-wrap th:nth-child(5), .pipeline-wrap td:nth-child(5) { width: 23%; }
+</style>
+
+<div class="pipeline-wrap">
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Stage</th>
+<th>What happens</th>
+<th>Session state</th>
+<th>Email sent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Start session</strong></td>
+<td>You run <code>olympix bug-pocer</code>, pick a project, name the session, select scope, and optionally attach additional documentation. Nothing is committed server-side until you press <code>Enter</code> to submit the documentation step — at that point the session is created, transitions to <code>ChatStarted</code>, and the <em>Scan Started</em> email fires. Cancelling during scope selection or the documentation step leaves no session behind.</td>
+<td>— → <code>ChatStarted</code></td>
+<td><em>BugPoCer Scan Started</em></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Context building</strong></td>
+<td>Server scans your uploaded code (including any documentation found in the repo) and infers project identity, intent, core functions, design goals, patterns, invariants, and security assumptions.</td>
+<td><code>ChatStarted</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Context validation</strong></td>
+<td>You review and correct the inferences the engine isn't confident about.</td>
+<td><code>ValidationRequested</code></td>
+<td><em>[Action Required] Validate Project Context</em> (or the <em>…(Partial)</em> variant if some context agents fell short). You have 72 hours to respond; if you don't, reminder emails fire inside the window and the session is killed when it expires.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Initial scan</strong></td>
+<td>Validated context is fed into the vulnerability scan and PoC generation.</td>
+<td><code>ValidationCompleted</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Findings review</strong></td>
+<td>Reconnect, browse findings, mark verdicts, export reports.</td>
+<td><code>InitialScanCompleted</code></td>
+<td><em>BugPoCer Initial Scan Complete</em></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>After the initial scan you can also ask follow-up questions, which cycles the session between <code>QuestionReceived</code> and <code>QuestionAnswered</code>.</p>
+<hr />
+<h2 id="quick-start">Quick Start</h2>
+<ol>
+<li><strong>Log in</strong> (once): <code>olympix login -e &lt;email&gt;</code> — or <code>olympix login-sso -e &lt;email&gt;</code> for SSO orgs.</li>
+<li><strong>Start a scan</strong> from your project root: <code>olympix bug-pocer</code> → <em>Start new session</em> → name it → pick scope → (optionally) attach documentation → press <code>Enter</code> to submit. Your session is created at submission.</li>
+<li><strong>Wait for the validation email</strong> (subject: <em>[Action Required] Validate Project Context</em>).</li>
+<li><strong>Validate</strong>: run <code>olympix bug-pocer</code> again, reopen the session, confirm or correct each inference, then submit.</li>
+<li><strong>Wait for the scan-complete email</strong> (subject: <em>BugPoCer Initial Scan Complete</em>).</li>
+<li><strong>Review</strong> findings, record your verdicts, and export results (Markdown / PDF / PoC <code>.sol</code> files).</li>
+</ol>
+<hr />
+<h2 id="cli-command">CLI Command</h2>
+<p>From your project root:</p>
+<div class="admonition tip">
+<p class="admonition-title">Quick Start</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>olympix<span class="w"> </span>bug-pocer
+</span></code></pre></div>
+</div>
+<p><strong>Available options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-w, --workspace-path</code></td>
+<td>Root project directory path (default: current directory)</td>
+</tr>
+<tr>
+<td><code>-env, --include-dot-env</code></td>
+<td>Include <code>.env</code> file for fork testing secrets (RPC URLs, API keys, etc.)</td>
+</tr>
+<tr>
+<td><code>--env-file</code></td>
+<td>Path to a custom <code>.env</code> file (requires <code>-env</code>)</td>
+</tr>
+<tr>
+<td><code>-ext, --extension</code></td>
+<td>Additional file extensions to include (can be used multiple times)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Including env variables</p>
+<p>If your Foundry tests need <code>RPC URLs</code>, <code>API keys</code>, <code>private keys</code>, etc., pass them with <code>-env</code> (reads from <code>.env</code>) or <code>--env-file &lt;path&gt;</code> for a custom file. Format: see <code>https://book.getfoundry.sh/cheatcodes/env-string</code>.</p>
+<p>This is the recommended way to pass env variables — the file is encrypted in transit with an extra RSA layer on top of the regular channel encryption.</p>
+</div>
+<hr />
+<h2 id="session-picker">Session Picker</h2>
+<p>Running <code>olympix bug-pocer</code> on a project with existing sessions shows the session picker:</p>
+<ul>
+<li><strong>Start a new session</strong> — begin a fresh scan.</li>
+<li><strong>Return to an active session</strong> — continue an in-progress scan.</li>
+<li><strong>Reconnect to a past session</strong> — review results from a completed scan.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>↑</code> / <code>↓</code></td>
+<td>Navigate sessions</td>
+</tr>
+<tr>
+<td><code>Enter</code></td>
+<td>Open the selected session</td>
+</tr>
+<tr>
+<td><code>n</code></td>
+<td>New session</td>
+</tr>
+<tr>
+<td><code>r</code></td>
+<td>Refresh</td>
+</tr>
+<tr>
+<td><code>q</code></td>
+<td>Quit</td>
+</tr>
+</tbody>
+</table>
+<h3 id="session-status-reference">Session status reference</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ChatStarted</code></td>
+<td>Session created, context building in progress</td>
+</tr>
+<tr>
+<td><code>ValidationRequested</code></td>
+<td>Waiting for you to validate project context</td>
+</tr>
+<tr>
+<td><code>ValidationCompleted</code></td>
+<td>Context approved, initial scan running</td>
+</tr>
+<tr>
+<td><code>InitialScanCompleted</code></td>
+<td>Scan finished, findings available for review</td>
+</tr>
+<tr>
+<td><code>QuestionReceived</code></td>
+<td>Processing a follow-up question</td>
+</tr>
+<tr>
+<td><code>QuestionAnswered</code></td>
+<td>Response ready</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="scope-selection">Scope Selection</h2>
+<p>When you start a new session, the CLI displays an interactive scope picker so you can decide which files BugPoCer analyzes. The tree is pre-filtered by the default ignore list (see <a href="#scope-and-ignore-config">Scope and ignore config</a>) and by any <code>BugPocerScopePaths</code> / <code>BugPocerIgnorePaths</code> in your <code>olympix-config.json</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Enter</code></td>
+<td>Expand/collapse the selected item</td>
+</tr>
+<tr>
+<td><code>i</code></td>
+<td>Include item</td>
+</tr>
+<tr>
+<td><code>x</code></td>
+<td>Exclude item</td>
+</tr>
+<tr>
+<td><code>Space</code></td>
+<td>Toggle include/exclude</td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td>Search</td>
+</tr>
+<tr>
+<td><code>a</code></td>
+<td>Expand all</td>
+</tr>
+<tr>
+<td><code>z</code></td>
+<td>Collapse all</td>
+</tr>
+<tr>
+<td><code>h</code></td>
+<td>Hide/show excluded items</td>
+</tr>
+<tr>
+<td><code>e</code></td>
+<td>Exclude all</td>
+</tr>
+<tr>
+<td><code>u</code></td>
+<td>Include all</td>
+</tr>
+<tr>
+<td><code>b</code></td>
+<td>Browse more (add items not shown by default)</td>
+</tr>
+<tr>
+<td><code>s</code></td>
+<td>Save and continue</td>
+</tr>
+<tr>
+<td><code>Esc</code></td>
+<td>Cancel</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scope-and-ignore-config">Scope and ignore config</h3>
+<p>In addition to the interactive picker, you can pre-seed scope with a config file at the project root:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">&quot;BugPocerScopePaths&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="s2">&quot;src/core/&quot;</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="s2">&quot;src/vaults/vault.sol&quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="p">],</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nt">&quot;BugPocerIgnorePaths&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="s2">&quot;src/examples/&quot;</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="s2">&quot;src/mocks/mock.sol&quot;</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">]</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BugPocerScopePaths</code></td>
+<td><strong>Positive scoping</strong> — if defined, BugPoCer will ONLY consider files whose paths start with one of these entries. Leave empty or omit to consider all files.</td>
+</tr>
+<tr>
+<td><code>BugPocerIgnorePaths</code></td>
+<td>Paths to exclude. Any file whose path starts with one of these entries is ignored.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">How scope and ignore interact</p>
+<ol>
+<li>If <code>BugPocerScopePaths</code> is defined and non-empty, only files matching a scope path are considered.</li>
+<li>From the scoped files, any matching <code>BugPocerIgnorePaths</code> are excluded.</li>
+<li>If <code>BugPocerScopePaths</code> is empty or omitted, all files are in scope (minus ignores).</li>
+<li>The interactive scope picker starts from this config — you can further refine it there.</li>
+</ol>
+</div>
+<h4 id="default-ignore-list">Default ignore list</h4>
+<p>BugPoCer automatically excludes common non-production paths. Files whose path contains any of the following are always ignored:</p>
+<p><code>node_modules</code>, <code>test</code>, <code>mock</code>, <code>example</code>, <code>dependencies</code>, <code>forge-std</code>, <code>openzeppelin</code>, <code>solmate</code>, <code>solady</code>, <code>prb-math</code>, <code>prb-test</code>, <code>murky</code>, <code>permit2</code>, <code>v3-core</code>, <code>v3-periphery</code>, <code>v2-core</code>, <code>v2-periphery</code></p>
+<div class="admonition note">
+<p class="admonition-title">Difference from other Olympix tools</p>
+<p>BugPoCer does <strong>not</strong> use the general <code>IgnoredPaths</code>, <code>TrustedPaths</code>, <code>TrustedVariables</code>, or <code>TrustedContracts</code> options. Use <code>BugPocerScopePaths</code> and <code>BugPocerIgnorePaths</code> instead.</p>
+</div>
+<hr />
+<h2 id="adding-project-documentation">Adding Project Documentation</h2>
+<p>After you save scope, BugPoCer gives you a chance to attach <strong>additional</strong> documentation — material that lives outside the repository and wouldn't otherwise reach the engine.</p>
+<div class="admonition note">
+<p class="admonition-title">BugPoCer already reads in-repo docs automatically</p>
+<p>During context building, the server ingests documentation it finds in your codebase on its own: <code>README.md</code> and <code>AGENTS.md</code> at the project root, every <code>*.md</code> file under <code>docs/</code>, and other <code>.md</code> files elsewhere in the tree (truncated for very long ones). You don't need to re-paste any of that here.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>n</code></td>
+<td>Add free-text notes</td>
+</tr>
+<tr>
+<td><code>l</code></td>
+<td>Add a documentation link (URL)</td>
+</tr>
+<tr>
+<td><code>f</code></td>
+<td>Load a local file (any readable text file — common picks: <code>.md</code>, <code>.sol</code>, <code>.txt</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">What to add here</p>
+<p>Think <em>private</em> or <em>external</em> context: internal design docs, threat models, audit scopes, Notion pages, architecture diagrams exported to text, protocol specs hosted elsewhere, trust assumptions that aren't written down in the repo. Anything that explains how the system is <em>supposed</em> to behave but doesn't live in a <code>.md</code> file in the codebase. This material is one of the biggest levers on result quality — the engine can read your code but it cannot read your whiteboard.</p>
+</div>
+<p>All attached documentation shares a combined budget of roughly 100,000 tokens; the UI shows how much headroom is left as you add items.</p>
+<p>Press <code>Enter</code> to submit. This is the point at which your session is created server-side (<code>ChatStarted</code>) and the <em>BugPoCer Scan Started</em> email fires. If you quit before this step, no session is created.</p>
+<hr />
+<h2 id="context-validation">Context Validation</h2>
+<p>Once the server has built its understanding of your project, you'll receive the <em>[Action Required] Validate Project Context</em> email. Reconnect with <code>olympix bug-pocer</code>, open the session, and walk through the items the engine wants you to confirm.</p>
+<h3 id="what-gets-validated">What gets validated</h3>
+<p>BugPoCer infers seven categories of context:</p>
+<ul>
+<li><strong>Identity</strong> — what the project is (name, type)</li>
+<li><strong>Intent / Description</strong> — what the project does</li>
+<li><strong>Core Functions</strong> — each key piece of functionality (one item per function)</li>
+<li><strong>Design Goals</strong> — each intended design goal (one item per goal)</li>
+<li><strong>Patterns</strong> — architectural and code patterns detected</li>
+<li><strong>Invariants</strong> — properties that must always hold (one item per invariant)</li>
+<li><strong>Security Assumptions</strong> — trust boundaries and assumptions about external entities</li>
+</ul>
+<p>Inferences the engine is already confident about are auto-confirmed and don't appear in the validation queue. You only see the items the engine is unsure of.</p>
+<h3 id="per-item-actions">Per-item actions</h3>
+<p>Each validation item shows the engine's inference, a confidence score, and up to three suggested alternatives.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>y</code></td>
+<td>Confirm the inference is correct</td>
+</tr>
+<tr>
+<td><code>n</code></td>
+<td>Reject — then enter a custom replacement</td>
+</tr>
+<tr>
+<td><code>1</code> – <code>3</code></td>
+<td>Pick one of the suggested alternatives</td>
+</tr>
+<tr>
+<td><code>0</code></td>
+<td>Enter a custom answer from scratch</td>
+</tr>
+<tr>
+<td><code>e</code></td>
+<td>Expand / collapse the alternative options</td>
+</tr>
+<tr>
+<td><code>←</code> / <code>→</code></td>
+<td>Navigate between items</td>
+</tr>
+<tr>
+<td><code>d</code></td>
+<td>Download the context as Markdown</td>
+</tr>
+<tr>
+<td><code>Enter</code></td>
+<td>Submit all validations (enabled once every item has an answer)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="editing-the-project-context-directly">Editing the project context directly</h3>
+<p>Alongside the per-item TUI, BugPoCer writes the full project context object to your workspace so you can read or edit the whole thing in one place:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.opix/project-context.json</code></td>
+<td>The complete context object — identity, intent, patterns, invariants, security assumptions, etc. Edit this file directly to mutate the context; your edits are picked up next time you open the session.</td>
+</tr>
+<tr>
+<td><code>.opix/.project-context-state.json</code></td>
+<td>Validation progress for the current request (which items you've confirmed, selected alternatives, custom values).</td>
+</tr>
+</tbody>
+</table>
+<p>Both files persist across CLI restarts. If you close the CLI mid-validation, the next time you open the session within the 72-hour window you'll see a <em>"Found existing validation progress (X of Y items validated). Resume?"</em> prompt and pick up exactly where you left off. If you've already answered every item, you'll drop straight into the final review phase before submission.</p>
+<div class="admonition info">
+<p class="admonition-title">Why validation matters</p>
+<p>Your feedback tells the engine what's intentional vs. what might be a vulnerability. Accurate context means more real findings and fewer false positives. Treat validation as part of the scan, not paperwork after it.</p>
+</div>
+<p>Once you submit, the session transitions to <code>ValidationCompleted</code> and the initial scan begins. You can close the CLI — the <em>BugPoCer Initial Scan Complete</em> email will tell you when results are ready.</p>
+<hr />
+<h2 id="reviewing-findings">Reviewing Findings</h2>
+<p>When the scan completes, reopen the session from the picker. You'll land on a menu:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[0]</code></td>
+<td>Display Initial Report</td>
+</tr>
+<tr>
+<td><code>[1]</code></td>
+<td>Display Findings (interactive pager)</td>
+</tr>
+<tr>
+<td><code>[2]</code></td>
+<td>Generate and Save PDF Report</td>
+</tr>
+<tr>
+<td><code>[3]</code></td>
+<td>Save Findings (Markdown)</td>
+</tr>
+<tr>
+<td><code>[4]</code></td>
+<td>Save PoCs (individual <code>.sol</code> files)</td>
+</tr>
+<tr>
+<td><code>[5]</code></td>
+<td>Back to Sessions</td>
+</tr>
+</tbody>
+</table>
+<h3 id="verdict-terminology">Verdict terminology</h3>
+<p>There are two distinct classifications attached to every finding: what the <strong>engine</strong> thinks, and what <strong>you</strong> think.</p>
+<p><strong>Engine classification</strong> — determined by the engine and whether it could machine-verify the exploit:</p>
+<ul>
+<li><strong>True Positive (TP)</strong> — the engine confirmed the bug <em>and</em> its generated PoC compiled and reproduced the exploit.</li>
+<li><strong>Unverified</strong> — the engine flagged the issue but the PoC did not compile (or the Foundry build failed). Exploitability isn't machine-verified, so these still warrant a human look.</li>
+<li><strong>False Positive</strong> — the PoC compiled but did not reproduce the bug.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">TP vs Non-TP in the CLI display</p>
+<p>The interactive findings pager (<code>[1]</code>) collapses this into a binary badge: <strong><code>TP</code></strong> (green) for confirmed true positives, <strong><code>NON-TP</code></strong> (yellow) for everything else. Unverified findings are folded into <code>NON-TP</code> in the pager — you can tell them apart by reading the finding's PoC summary. The <strong>exported reports</strong> (PDF and Markdown) break out all three categories separately.</p>
+</div>
+<p><strong>User verdict</strong> — your own verdict on each finding, displayed beside the engine badge in the pager as <code>VERDICT: TP</code> / <code>VERDICT: NON-TP</code> / <code>VERDICT: —</code> (unset). User verdicts are stored independently of the engine's classification.</p>
+<div class="admonition tip">
+<p class="admonition-title">Record your verdicts</p>
+<p>Taking the time to mark each finding pays off twice. Your verdicts show up in every export (so the PDF/Markdown you hand off is already triaged), and they feed back into BugPoCer to improve your future scans on similar code.</p>
+</div>
+<h3 id="interactive-findings-pager-1">Interactive findings pager (<code>[1]</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>↑</code> / <code>↓</code></td>
+<td>Navigate findings / page</td>
+</tr>
+<tr>
+<td><code>←</code> / <code>→</code></td>
+<td>Previous / next page</td>
+</tr>
+<tr>
+<td><code>Enter</code></td>
+<td>Expand / collapse a finding</td>
+</tr>
+<tr>
+<td><code>o</code></td>
+<td>View the generated PoC full-screen</td>
+</tr>
+<tr>
+<td><code>y</code></td>
+<td>Mark as true positive (prompts for an optional reason)</td>
+</tr>
+<tr>
+<td><code>n</code></td>
+<td>Mark as false positive (prompts for an optional reason)</td>
+</tr>
+<tr>
+<td><code>Space</code></td>
+<td>Cycle user verdict</td>
+</tr>
+<tr>
+<td><code>Backspace</code></td>
+<td>Clear user verdict</td>
+</tr>
+<tr>
+<td><code>t</code></td>
+<td>Toggle TP-only filter</td>
+</tr>
+<tr>
+<td><code>v</code></td>
+<td>Toggle filter source (engine verdict vs. user verdict)</td>
+</tr>
+<tr>
+<td><code>d</code></td>
+<td>Download currently displayed findings / context as Markdown</td>
+</tr>
+<tr>
+<td><code>b</code></td>
+<td>Back to menu</td>
+</tr>
+<tr>
+<td><code>q</code></td>
+<td>Quit the findings view</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="exporting-results">Exporting Results</h2>
+<p>Every export option (<code>[2]</code>, <code>[3]</code>, and <code>[4]</code>) walks you through a two-stage filter dialog first.</p>
+<p><strong>Stage 1 — finding category</strong> (Space toggles, Enter confirms):</p>
+<ul>
+<li><strong>True Positives</strong> <em>(default: on)</em></li>
+<li><strong>Unverified</strong> <em>(default: on)</em></li>
+<li><strong>False Positives</strong> <em>(default: off)</em></li>
+</ul>
+<p><strong>Stage 2 — severity</strong> (Space toggles, Enter confirms):</p>
+<ul>
+<li><strong>High</strong> <em>(default: on)</em></li>
+<li><strong>Medium</strong> <em>(default: on)</em></li>
+<li><strong>Low</strong> <em>(default: on)</em></li>
+</ul>
+<p>At least one category and at least one severity must be selected.</p>
+<h3 id="markdown-3-lightweight-per-category-report">Markdown (<code>[3]</code>) — lightweight per-category report</h3>
+<p><code>[3]</code> is a <strong>stripped-down</strong> export, not the full audit report. It's meant for sharing a filtered list of findings without the full methodology/scope/invariants/assumptions wrapper.</p>
+<p>It writes <strong>one file per selected category</strong> (so you may get up to three files in a single export):</p>
+<ul>
+<li><code>true_positives_&lt;sessionId&gt;_&lt;timestamp&gt;.md</code></li>
+<li><code>unverified_&lt;sessionId&gt;_&lt;timestamp&gt;.md</code></li>
+<li><code>false_positives_&lt;sessionId&gt;_&lt;timestamp&gt;.md</code></li>
+</ul>
+<p>Each file contains:</p>
+<ul>
+<li>A title and scan metadata (session ID, scan start/complete times, report generation time, repository, commit short SHA, branch)</li>
+<li>Total finding count and a Foundry-build-failure disclaimer if relevant</li>
+<li>Per-finding blocks ordered by severity, each with the severity badge, vulnerability name, unit name, location, description, your user verdict (if set) with optional reason, and the PoC summary</li>
+</ul>
+<p>The <strong>PoC code itself is not inlined</strong> in the Markdown export — use <code>[4]</code> to get the PoCs as <code>.sol</code> files, or use the PDF export for a single document that includes everything. Files are written to your current working directory.</p>
+<h3 id="pdf-2-full-audit-style-report">PDF (<code>[2]</code>) — full audit-style report</h3>
+<p><code>[2]</code> produces an audit-style PDF suitable for handing to stakeholders or clients. It's generated server-side from the same underlying scan data and includes everything the Markdown export leaves out.</p>
+<p>The PDF contains:</p>
+<ul>
+<li><strong>Cover page</strong> — Olympix branding, repository org (when available), and the scan's completed/partial status</li>
+<li><strong>Table of contents</strong> — auto-generated</li>
+<li><strong>About</strong> — methodology, disclaimer (with a Foundry-build-failure note if relevant), and project overview drawn from your validated context</li>
+<li><strong>Scope</strong> — repository, commit short SHA, branch, scanned-unit count, and the list of units analyzed</li>
+<li><strong>Summary</strong> — scan start/complete/generation times, a High/Medium/Low severity table for true positives, a pie chart of TP findings by severity, and severity-level definitions</li>
+<li><strong>True Positive Findings</strong>, grouped by severity, each with vulnerability name, unit, location, description, your user verdict + reason (if set), PoC summary, and the <strong>full PoC Solidity code</strong> with syntax highlighting</li>
+<li><strong>Unverified Findings</strong>, same structure, for engine-flagged issues whose PoC didn't compile</li>
+<li><strong>False Positive Findings</strong>, same structure</li>
+</ul>
+<p>Saved to your current working directory as <code>BugPoCer_&lt;sessionId&gt;_&lt;timestamp&gt;.pdf</code>.</p>
+<h3 id="pocs-4-solidity-files">PoCs (<code>[4]</code>) — Solidity files</h3>
+<p>One <code>.sol</code> file per finding that has a compilable PoC, written under your workspace so you can drop them straight into your Foundry test suite.</p>
+<hr />
+<h2 id="interactive-qa">Interactive Q&amp;A</h2>
+<p>There is no "Ask a question" menu option. To reach the Q&amp;A prompt:</p>
+<ol>
+<li>From the post-scan menu, choose <code>[1] Display Findings</code>.</li>
+<li>Navigate the findings pager as usual, then exit the pager (press <code>q</code>).</li>
+<li>
+<p>The CLI prints:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>You can ask questions to BugPocer or enter nothing to exit:&gt;
+</span></code></pre></div>
+</li>
+<li>
+<p>Type your question and press <code>Enter</code>. Press <code>Enter</code> on an empty line to finish.</p>
+</li>
+</ol>
+<p>Example questions:</p>
+<ul>
+<li>"Explain the reentrancy vulnerability in more detail"</li>
+<li>"How can I fix the access control issue in Vault.sol?"</li>
+<li>"Are there any other functions affected by this pattern?"</li>
+</ul>
+<p>Questions cycle the session through <code>QuestionReceived</code> → <code>QuestionAnswered</code>.</p>
+<hr />
+<h2 id="scan-report-fields">Scan Report Fields</h2>
+<p>Each finding in the BugPoCer scan report includes:</p>
+<h3 id="vulnerability-details">Vulnerability Details</h3>
+<ul>
+<li><strong>Description</strong> — what the vulnerability is and how it can be exploited</li>
+<li><strong>Severity</strong> — risk level (High, Medium, or Low)</li>
+<li><strong>Location</strong> — affected file and line numbers</li>
+</ul>
+<h3 id="exploit-demonstration">Exploit Demonstration</h3>
+<ul>
+<li><strong>PoC Test</strong> — a ready-to-run Foundry test that reliably triggers the issue</li>
+<li><strong>Test Location</strong> — path to the generated test file</li>
+<li><strong>Summary</strong> — explanation of how the PoC demonstrates the vulnerability</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Processing Time</p>
+<p>Scan duration depends on project size and complexity. Larger projects with more complex logic will take longer to analyze.</p>
+</div>
+<hr />
+<h2 id="need-help">Need Help?</h2>
+<p>If you encounter any issues or have questions, reach out:</p>
+<p><strong>Email:</strong> <a href="mailto:contact@olympix.ai">contact@olympix.ai</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tabs", "navigation.tab.sticky", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
