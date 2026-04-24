@@ -33,6 +33,9 @@ The mutation test generator is designed to be dependency-free and works with bot
 :white_check_mark: Works with Hardhat projects using Mocha-based test suites  
 :white_check_mark: Requires npm and a `hardhat.config.{js,ts}` file at the project root
 
+!!! warning "npm install must succeed"
+    When you submit a Hardhat project for mutation testing, `npm install` runs server-side to install your dependencies. If this step fails (e.g., due to missing packages, private registries, or incompatible Node versions), the entire mutation test run will fail. Make sure your `package.json` and lock file are committed and that `npm install` succeeds in a clean environment before running mutation tests.
+
 ---
 
 ## CLI Usage
