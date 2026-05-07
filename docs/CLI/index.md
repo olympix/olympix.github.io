@@ -8,12 +8,24 @@ Welcome to the Olympix CLI usage guide! This guide will help you quickly get sta
 
 When you run the Olympix CLI, you have access to several commands:
 
-**Analysis Commands:**
+**Interactive Mode (TUI):**
+- **`olympix`** (no arguments): Launch the [interactive tool selection menu](./Interactive%20Mode.md) — pick any tool, monitor live sessions, reconnect to results
+- **`static-analysis`**: Interactive static analysis — file selection, scan, results
+- **`unit-testing`**: Unit test session manager — list, reconnect, or start new
+- **`mutation-testing`**: Mutation test session manager — list, reconnect, or start new
+- **`fuzz-testing`**: Interactive fuzz test generator
+- **`bug-pocer`**: BugPocer session manager — start, reconnect, review findings
+
+**Direct Commands (non-interactive, for scripting/CI):**
 - **`analyze`**: Perform code analysis
 - **`generate-unit-tests`**: Generate unit tests
 - **`generate-mutation-tests`**: Generate mutation tests
-- **`bug-pocer`**: AI-powered vulnerability detection with automated PoC generation
+- **`generate-fuzz-tests`**: Generate fuzz tests
 - **`show-vulnerabilities`**: Show the vulnerability types that the analyzer aims to find
+
+**Agent Mode (AI integrations):**
+- **`--agent`** (or `-am`): Run any command in [agent mode](./Agent%20Mode.md) — structured JSON protocol over stdin/stdout for AI coding assistants
+- **`sessions --agent`**: List all active sessions across all services
 
 **Authentication:**
 - **`login`**: Log in with email verification code
@@ -125,34 +137,43 @@ When using the `bug-pocer` command for AI-powered vulnerability detection and Po
 ## Usage Examples
 
 ```bash
-# Analyze command
-analyze [-w | --workspace-path <workspace directory>] [-p | --path <analysis directory>] [-f | --output-format <output format>] [-o | --output-path <output directory>] [--no-<vulnerability id>]
+# Interactive mode (TUI) — launch tool selection menu
+olympix
 
-# Generate unit tests
-generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confirm-all] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
+# Interactive tool commands
+olympix static-analysis [-w | --workspace-path <workspace directory>]
+olympix unit-testing [-w | --workspace-path <workspace directory>]
+olympix mutation-testing [-w | --workspace-path <workspace directory>]
+olympix fuzz-testing [-w | --workspace-path <workspace directory>]
+olympix bug-pocer [-w | --workspace-path <workspace directory>]
 
-# Generate mutation tests
-generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --t <timeout>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
+# Direct commands (non-interactive, for scripting/CI)
+olympix analyze [-w | --workspace-path <workspace directory>] [-p | --path <analysis directory>] [-f | --output-format <output format>] [-o | --output-path <output directory>] [--no-<vulnerability id>]
+olympix generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confirm-all] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
+olympix generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --t <timeout>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
+olympix generate-fuzz-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-cm | --coverage-mode <path|branch>] [-cl | --chain-length <length>]
 
-# BugPoCer - AI-powered vulnerability detection
-bug-pocer [-w | --workspace-path <workspace directory>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
+# Agent mode (AI integrations)
+olympix bug-pocer --agent
+olympix unit-testing --agent
+olympix sessions --agent
 
 # Login with email
-login [-e | --email <user email>]
+olympix login [-e | --email <user email>]
 
 # Login with Okta SSO (enterprise)
-login-sso [-e | --email <user email>]
+olympix login-sso [-e | --email <user email>]
 
 # Organization management (admin only)
-org-seats
-org-list-users
-org-invite-user [-e | --email <user email>]
-org-remove-user [-u | --user-id <user id>]
-org-set-admin [-u | --user-id <user id>] [--grant | --revoke]
-configure-sso
-show-sso
-enable-sso
-disable-sso
+olympix org-seats
+olympix org-list-users
+olympix org-invite-user [-e | --email <user email>]
+olympix org-remove-user [-u | --user-id <user id>]
+olympix org-set-admin [-u | --user-id <user id>] [--grant | --revoke]
+olympix configure-sso
+olympix show-sso
+olympix enable-sso
+olympix disable-sso
 ```
 
 ---
@@ -161,6 +182,12 @@ disable-sso
 
 - **[Installation](../Installation.md)**
   Get started by installing the CLI binaries and the VSCode extension.
+
+- **[Interactive Mode (TUI)](./Interactive%20Mode.md)**
+  Launch the interactive tool selection menu and session manager.
+
+- **[Agent Mode](./Agent%20Mode.md)**
+  Drive the CLI programmatically with a structured JSON protocol for AI coding assistants.
 
 - **[Unit Test Generation](./Unit%20Testing.md)**
   Learn how to generate unit tests for your smart contracts using the Olympix Unit Test Generator.
@@ -179,5 +206,5 @@ disable-sso
 
 ---
 
-With these commands and options at your disposal, you're well-equipped to leverage Olympix for efficient static analysis and robust test generation. If you have any questions, our support team is ready to help at [contact@olympix.ai](mailto:contact@olympix.ai).
+If you have any questions, our support team is ready to help at [contact@olympix.ai](mailto:contact@olympix.ai).
 
