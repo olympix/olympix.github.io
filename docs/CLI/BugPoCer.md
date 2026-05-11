@@ -1,12 +1,12 @@
 # BugPoCer
 
-BugPoCer is an AI-powered internal audit tool that automates end-to-end vulnerability exploitation for smart contracts — moving beyond static warnings to deliver **concrete, verifiable Proof-of-Concept (PoC) exploits**.
+BugPoCer is an AI-powered internal audit tool that automates end-to-end vulnerability exploitation for smart contracts on Solidity, Rust (Anchor/Solana), and Cairo (StarkNet) — moving beyond static warnings to deliver **concrete, verifiable Proof-of-Concept (PoC) exploits**.
 
 ---
 
 ## Overview
 
-Built on Olympix's proprietary Intermediate Representation (IR) and symbolic execution engine, BugPoCer combines results from multiple analysis engines to identify **confirmed** security issues. For each vulnerability, it automatically generates a **ready-to-run Foundry-format PoC test** that reproduces the exploit under realistic attack conditions.
+Built on Olympix's proprietary Intermediate Representation (IR) and symbolic execution engine, BugPoCer combines results from multiple analysis engines to identify **confirmed** security issues. For each vulnerability, it automatically generates a **ready-to-run PoC test in the project's native framework** — Foundry (`.t.sol`), Rust `cargo test` (`.rs`), or Starknet Foundry `snforge` (`.cairo`) — that reproduces the exploit under realistic attack conditions.
 
 ### Key Capabilities
 
@@ -20,7 +20,10 @@ Built on Olympix's proprietary Intermediate Representation (IR) and symbolic exe
 ## Prerequisites
 
 !!! info "Project Requirements"
-    - A Foundry project that builds and where `forge test` succeeds
+    - A project in one of the supported stacks that **builds and tests locally** before you start a scan. BugPoCer ships your locally-built artifacts and vendored dependencies in the upload, so the build must succeed on your machine first:
+        - **Solidity** — Foundry project where `forge test` succeeds (run `forge install` locally first).
+        - **Rust / Anchor (Solana)** — a `Cargo.toml` (with `solana` / `anchor-lang` / `solana-program` dependencies) or `Anchor.toml` project. Run `anchor build` (or `cargo-build-sbf`) locally so `target/deploy/*.so` is on disk. For private crates, run `cargo vendor` locally so `vendor/` ships with the upload. TypeScript-tested Anchor projects also need `yarn install` (or equivalent) locally first so `node_modules/` ships.
+        - **Cairo / StarkNet** — a `Scarb.toml` project. Run `scarb build` and `snforge test` locally first. For private packages, vendor under `vendor_cairo/` locally.
     - An Olympix account — log in with `olympix login -e <email>` (or `olympix login-sso -e <email>` if your organization uses SSO) before starting a scan (see [Installation](../Installation.md))
 
 ---
@@ -84,7 +87,7 @@ From your project root:
 | `-ext, --extension` | Additional file extensions to include (can be used multiple times) |
 
 !!! tip "Including env variables"
-    If your Foundry tests need `RPC URLs`, `API keys`, `private keys`, etc., pass them with `-env` (reads from `.env`) or `--env-file <path>` for a custom file. Format: see `https://book.getfoundry.sh/cheatcodes/env-string`.
+    If your tests need `RPC URLs`, `API keys`, `private keys`, etc., pass them with `-env` (reads from `.env`) or `--env-file <path>` for a custom file. Use whatever `.env` format your project's test framework already reads (e.g. `KEY=value` lines).
 
     This is the recommended way to pass env variables — the file is encrypted in transit with an extra RSA layer on top of the regular channel encryption.
 
@@ -169,9 +172,11 @@ In addition to the interactive picker, you can pre-seed scope with a config file
 
 #### Default ignore list
 
-BugPoCer automatically excludes common non-production paths. Files whose path contains any of the following are always ignored:
+BugPoCer automatically excludes common non-production paths. For Solidity projects, files whose path contains any of the following are always ignored:
 
 `node_modules`, `test`, `mock`, `example`, `dependencies`, `forge-std`, `openzeppelin`, `solmate`, `solady`, `prb-math`, `prb-test`, `murky`, `permit2`, `v3-core`, `v3-periphery`, `v2-core`, `v2-periphery`
+
+Rust and Cairo projects use language-specific exclusion sets instead (typical directories like `tests`, `target`, `vendor`, `.snfoundry_cache`, `fixtures`, `benches`, `examples`).
 
 !!! note "Difference from other Olympix tools"
     BugPoCer does **not** use the general `IgnoredPaths`, `TrustedPaths`, `TrustedVariables`, or `TrustedContracts` options. Use `BugPocerScopePaths` and `BugPocerIgnorePaths` instead.
@@ -206,7 +211,7 @@ Once the server has built its understanding of your project, you'll receive the 
 
 ### What gets validated
 
-BugPoCer infers seven categories of context:
+BugPoCer infers eight categories of context:
 
 - **Identity** — what the project is (name, type)
 - **Intent / Description** — what the project does
@@ -214,6 +219,7 @@ BugPoCer infers seven categories of context:
 - **Design Goals** — each intended design goal (one item per goal)
 - **Patterns** — architectural and code patterns detected
 - **Invariants** — properties that must always hold (one item per invariant)
+- **Design Decisions** — documented intentional behaviors and known limitations (one item per decision)
 - **Security Assumptions** — trust boundaries and assumptions about external entities
 
 Inferences the engine is already confident about are auto-confirmed and don't appear in the validation queue. You only see the items the engine is unsure of.
@@ -257,12 +263,11 @@ When the scan completes, reopen the session from the picker. You'll land on a me
 
 | Option | Action |
 |--------|--------|
-| `[0]` | Display Initial Report |
-| `[1]` | Display Findings (interactive pager) |
-| `[2]` | Generate and Save PDF Report |
-| `[3]` | Save Findings (Markdown) |
-| `[4]` | Save PoCs (individual `.sol` files) |
-| `[5]` | Back to Sessions |
+| `[0]` | Display Findings (interactive pager) |
+| `[1]` | Generate and Save PDF Report |
+| `[2]` | Save Findings (Markdown) |
+| `[3]` | Save PoCs (one file per finding) |
+| `[4]` | Back to Sessions |
 
 ### Verdict terminology
 
@@ -275,14 +280,14 @@ There are two distinct classifications attached to every finding: what the **eng
 - **False Positive** — the PoC compiled but did not reproduce the bug.
 
 !!! warning "TP vs Non-TP in the CLI display"
-    The interactive findings pager (`[1]`) collapses this into a binary badge: **`TP`** (green) for confirmed true positives, **`NON-TP`** (yellow) for everything else. Unverified findings are folded into `NON-TP` in the pager — you can tell them apart by reading the finding's PoC summary. The **exported reports** (PDF and Markdown) break out all three categories separately.
+    The interactive findings pager (`[0]`) collapses this into a binary badge: **`TP`** (green) for confirmed true positives, **`NON-TP`** (yellow) for everything else. Unverified findings are folded into `NON-TP` in the pager — you can tell them apart by reading the finding's PoC summary. The **exported reports** (PDF and Markdown) break out all three categories separately.
 
 **User verdict** — your own verdict on each finding, displayed beside the engine badge in the pager as `VERDICT: TP` / `VERDICT: NON-TP` / `VERDICT: —` (unset). User verdicts are stored independently of the engine's classification.
 
 !!! tip "Record your verdicts"
     Taking the time to mark each finding pays off twice. Your verdicts show up in every export (so the PDF/Markdown you hand off is already triaged), and they feed back into BugPoCer to improve your future scans on similar code.
 
-### Interactive findings pager (`[1]`)
+### Interactive findings pager (`[0]`)
 
 | Key | Action |
 |-----|--------|
@@ -304,7 +309,7 @@ There are two distinct classifications attached to every finding: what the **eng
 
 ## Exporting Results
 
-Every export option (`[2]`, `[3]`, and `[4]`) walks you through a two-stage filter dialog first.
+Every export option (`[1]`, `[2]`, and `[3]`) walks you through a two-stage filter dialog first.
 
 **Stage 1 — finding category** (Space toggles, Enter confirms):
 
@@ -320,9 +325,9 @@ Every export option (`[2]`, `[3]`, and `[4]`) walks you through a two-stage filt
 
 At least one category and at least one severity must be selected.
 
-### Markdown (`[3]`) — lightweight per-category report
+### Markdown (`[2]`) — lightweight per-category report
 
-`[3]` is a **stripped-down** export, not the full audit report. It's meant for sharing a filtered list of findings without the full methodology/scope/invariants/assumptions wrapper.
+`[2]` is a **stripped-down** export, not the full audit report. It's meant for sharing a filtered list of findings without the full methodology/scope/invariants/assumptions wrapper.
 
 It writes **one file per selected category** (so you may get up to three files in a single export):
 
@@ -336,11 +341,11 @@ Each file contains:
 - Total finding count and a Foundry-build-failure disclaimer if relevant
 - Per-finding blocks ordered by severity, each with the severity badge, vulnerability name, unit name, location, description, your user verdict (if set) with optional reason, and the PoC summary
 
-The **PoC code itself is not inlined** in the Markdown export — use `[4]` to get the PoCs as `.sol` files, or use the PDF export for a single document that includes everything. Files are written to your current working directory.
+The **PoC code itself is not inlined** in the Markdown export — use `[3]` to get the PoCs as standalone files, or use the PDF export for a single document that includes everything. Files are written to your current working directory.
 
-### PDF (`[2]`) — full audit-style report
+### PDF (`[1]`) — full audit-style report
 
-`[2]` produces an audit-style PDF suitable for handing to stakeholders or clients. It's generated server-side from the same underlying scan data and includes everything the Markdown export leaves out.
+`[1]` produces an audit-style PDF suitable for handing to stakeholders or clients. It's generated server-side from the same underlying scan data and includes everything the Markdown export leaves out.
 
 The PDF contains:
 
@@ -355,9 +360,9 @@ The PDF contains:
 
 Saved to your current working directory as `BugPoCer_<sessionId>_<timestamp>.pdf`.
 
-### PoCs (`[4]`) — Solidity files
+### PoCs (`[3]`) — PoC test files
 
-One `.sol` file per finding that has a compilable PoC, written under your workspace so you can drop them straight into your Foundry test suite.
+One file per finding that has a compilable PoC, written under your workspace so you can drop it straight into your test suite. Extension is inferred from the PoC contents: `.t.sol` for Foundry tests, `.rs` for Rust / Anchor tests, `.cairo` for Starknet Foundry tests.
 
 ---
 
@@ -365,7 +370,7 @@ One `.sol` file per finding that has a compilable PoC, written under your worksp
 
 There is no "Ask a question" menu option. To reach the Q&A prompt:
 
-1. From the post-scan menu, choose `[1] Display Findings`.
+1. From the post-scan menu, choose `[0] Display Findings`.
 2. Navigate the findings pager as usual, then exit the pager (press `q`).
 3. The CLI prints:
 

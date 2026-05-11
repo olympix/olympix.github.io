@@ -227,7 +227,7 @@ The action accepts a single `args` input that is forwarded to the Olympix CLI. T
 flags are:
 
 - **`-w | --workspace-path`** — Project root directory. *Default:* current directory.
-- **`-ca | --context-aware`** — Use the BugPocer agent (required when running in PR mode).
+- **`-ca | --confirm-all-questions`** — Skip the interactive scope-review and additional-docs prompts. Optional in CI (the non-TTY environment already suppresses prompts), but harmless to leave in the example workflows.
 
 ---
 
