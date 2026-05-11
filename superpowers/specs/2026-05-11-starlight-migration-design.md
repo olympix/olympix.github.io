@@ -116,8 +116,31 @@ Applied to every file:
    - `./Github%20Actions/integrated-security.md` → `/github-actions/integrated-security/`
    - Drop `.md` extensions, lowercase, hyphenate spaces.
 4. **Rewrite image refs:** `assets/olymp-x-logo.png` → `/olymp-x-logo.png`.
-5. **Strip emojis** from headings and prose. Run a scan (`grep -rP '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' docs/`) during implementation to catch any beyond the known `💡` on the VSCode page.
-6. **Code blocks, external links, mailto links:** unchanged.
+5. **Convert Material admonitions to Starlight asides.** There are 30 admonitions across 11 files. Asides work in plain `.md` (no need to bump to `.mdx`). Mapping:
+
+   | Material syntax | Starlight aside |
+   |---|---|
+   | `!!! note` | `:::note` |
+   | `!!! note "Title"` | `:::note[Title]` |
+   | `!!! tip "Title"` | `:::tip[Title]` |
+   | `!!! info "Title"` | `:::note[Title]` (Starlight has no `info`; `note` is the closest) |
+   | `!!! warning "Title"` / `!!! Warning` | `:::caution[Title]` |
+
+   Material indents the body 4 spaces under the directive; Starlight uses a closing `:::` and no indent:
+
+   ```
+   !!! tip "Quick Start"
+       Run `olympix analyze` in your repo.
+   ```
+   becomes
+   ```
+   :::tip[Quick Start]
+   Run `olympix analyze` in your repo.
+   :::
+   ```
+
+6. **Strip emojis** from headings and prose. Run a scan (`grep -rP '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' docs/`) during implementation to catch any beyond the known `💡` on the VSCode page.
+7. **Code blocks, external links, mailto links:** unchanged.
 
 ### Component upgrades (`.mdx` files only)
 
