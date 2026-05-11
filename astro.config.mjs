@@ -14,15 +14,15 @@ export default defineConfig({
         { label: 'Ignore Options', link: '/ignore-options/' },
         {
           label: 'CLI',
-          autogenerate: { directory: 'cli' },
+          items: [{ autogenerate: { directory: 'cli' } }],
         },
         {
           label: 'GitHub Actions',
-          autogenerate: { directory: 'github-actions' },
+          items: [{ autogenerate: { directory: 'github-actions' } }],
         },
         {
           label: 'VSCode Extension',
-          autogenerate: { directory: 'vscode-extension' },
+          items: [{ autogenerate: { directory: 'vscode-extension' } }],
         },
       ],
     }),

@@ -17,53 +17,46 @@
 }
 
 .starlight-aside {
-  border-inline-start-width: 3px;
+  border-inline-start-width: 0;
+  border-radius: 12px;
 }
 
 .starlight-aside--note {
-  background: linear-gradient(135deg, hsl(184 70% 96%) 0%, hsl(0 0% 100%) 70%);
-  border-inline-start-color: hsl(184 55% 55%);
+  background: hsl(184 35% 95%);
 }
 .starlight-aside--note .starlight-aside__title { color: hsl(184 55% 28%); }
 
 .starlight-aside--tip {
-  background: linear-gradient(135deg, hsl(150 55% 95%) 0%, hsl(0 0% 100%) 70%);
-  border-inline-start-color: hsl(150 50% 45%);
+  background: hsl(150 30% 95%);
 }
 .starlight-aside--tip .starlight-aside__title { color: hsl(150 50% 25%); }
 
 .starlight-aside--caution {
-  background: linear-gradient(135deg, hsl(35 90% 94%) 0%, hsl(0 0% 100%) 70%);
-  border-inline-start-color: hsl(32 88% 55%);
+  background: hsl(35 55% 94%);
 }
 .starlight-aside--caution .starlight-aside__title { color: hsl(28 80% 35%); }
 
 .starlight-aside--danger {
-  background: linear-gradient(135deg, hsl(4 85% 95%) 0%, hsl(0 0% 100%) 70%);
-  border-inline-start-color: hsl(4 75% 55%);
+  background: hsl(4 55% 95%);
 }
 .starlight-aside--danger .starlight-aside__title { color: hsl(0 65% 40%); }
 
 :root[data-theme='dark'] .starlight-aside--note {
-  background: linear-gradient(135deg, hsl(184 35% 12%) 0%, hsl(220 15% 10%) 70%);
-  border-inline-start-color: hsl(184 50% 55%);
+  background: hsl(184 25% 14%);
 }
 :root[data-theme='dark'] .starlight-aside--note .starlight-aside__title { color: hsl(184 60% 70%); }
 
 :root[data-theme='dark'] .starlight-aside--tip {
-  background: linear-gradient(135deg, hsl(150 35% 11%) 0%, hsl(220 15% 10%) 70%);
-  border-inline-start-color: hsl(150 50% 50%);
+  background: hsl(150 22% 14%);
 }
 :root[data-theme='dark'] .starlight-aside--tip .starlight-aside__title { color: hsl(150 55% 65%); }
 
 :root[data-theme='dark'] .starlight-aside--caution {
-  background: linear-gradient(135deg, hsl(32 45% 13%) 0%, hsl(220 15% 10%) 70%);
-  border-inline-start-color: hsl(32 80% 55%);
+  background: hsl(32 30% 15%);
 }
 :root[data-theme='dark'] .starlight-aside--caution .starlight-aside__title { color: hsl(32 80% 70%); }
 
 :root[data-theme='dark'] .starlight-aside--danger {
-  background: linear-gradient(135deg, hsl(4 45% 14%) 0%, hsl(220 15% 10%) 70%);
-  border-inline-start-color: hsl(4 70% 60%);
+  background: hsl(4 30% 15%);
 }
 :root[data-theme='dark'] .starlight-aside--danger .starlight-aside__title { color: hsl(4 75% 72%); }
