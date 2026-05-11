@@ -8,14 +8,23 @@ export default defineConfig({
       title: 'Olympix Documentation',
       logo: { src: './public/olymp-x-logo.png', replacesTitle: true },
       customCss: ['./src/styles/custom.css'],
-      favicon: '/olymp-x-logo.png',
+      favicon: '/favicon-32.png',
       head: [
         {
           tag: 'link',
           attrs: {
             rel: 'icon',
             type: 'image/png',
-            href: '/olymp-x-logo.png',
+            sizes: '32x32',
+            href: '/favicon-32.png',
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'apple-touch-icon',
+            sizes: '180x180',
+            href: '/apple-touch-icon.png',
           },
         },
       ],
