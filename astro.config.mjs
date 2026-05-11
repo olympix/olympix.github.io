@@ -6,7 +6,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Olympix',
-      // logo: { src: './public/olymp-x-logo.png' }, // Task 3 moves the logo file here
+      logo: { src: './public/olymp-x-logo.png' },
     }),
   ],
 });
