@@ -6,7 +6,8 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Olympix',
-      logo: { src: './public/olymp-x-logo.png' },
+      logo: { src: './public/olymp-x-logo.png', replacesTitle: true },
+      customCss: ['./src/styles/custom.css'],
       sidebar: [
         { label: 'Installation', link: '/installation/' },
         { label: 'Config Options', link: '/config-options/' },
