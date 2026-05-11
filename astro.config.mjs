@@ -7,6 +7,23 @@ export default defineConfig({
     starlight({
       title: 'Olympix',
       logo: { src: './public/olymp-x-logo.png' },
+      sidebar: [
+        { label: 'Installation', link: '/installation/' },
+        { label: 'Config Options', link: '/config-options/' },
+        { label: 'Ignore Options', link: '/ignore-options/' },
+        {
+          label: 'CLI',
+          autogenerate: { directory: 'cli' },
+        },
+        {
+          label: 'GitHub Actions',
+          autogenerate: { directory: 'github-actions' },
+        },
+        {
+          label: 'VSCode Extension',
+          autogenerate: { directory: 'vscode-extension' },
+        },
+      ],
     }),
   ],
 });
