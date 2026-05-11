@@ -3,6 +3,8 @@ title: Organization Management
 description: Manage users, seats, and admin roles for your organization.
 ---
 
+import { Steps } from '@astrojs/starlight/components';
+
 Manage your Olympix organization, users, and seats through the CLI.
 
 ---
@@ -79,13 +81,21 @@ olympix org-invite-user -e new.user@company.com
 | `-e, --email` | Email address of the user to invite |
 
 **What happens:**
+
+<Steps>
+
 1. User receives a **welcome email** with:
    - CLI installation instructions
    - Documentation links
    - Login command (either `olympix login -e` or `olympix login-sso` depending on your org setup)
+
 2. User downloads the Olympix CLI
+
 3. User logs in with the command provided in the email
+
 4. User is **automatically added** to your organization during login
+
+</Steps>
 
 **Notes:**
 - No manual invitation acceptance needed - users are auto-linked when they log in

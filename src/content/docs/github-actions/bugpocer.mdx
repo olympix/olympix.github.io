@@ -3,6 +3,8 @@ title: BugPoCer GitHub Action
 description: Run BugPoCer in CI on pull requests.
 ---
 
+import { Steps } from '@astrojs/starlight/components';
+
 The Olympix BugPocer action runs Olympix's AI-powered agentic security analysis on Solidity smart
 contracts directly inside your pull-request workflow. BugPocer reasons about your code the way a
 human auditor would — building a project context, ranking the highest-impact functions, and
@@ -45,6 +47,8 @@ The action supports two trigger modes:
 
 ## Getting Started
 
+<Steps>
+
 1. **Set up your repository secret:**
       - Add a GitHub repository secret named `OLYMPIX_API_TOKEN` with your Olympix API token.
 
@@ -57,6 +61,8 @@ The action supports two trigger modes:
 4. **(Manual mode only) Trigger a scan:**
       - Post `/bugpocer scan` as a PR comment, or include `/bugpocer scan` in a commit message
         and push the commit.
+
+</Steps>
 
 ---
 

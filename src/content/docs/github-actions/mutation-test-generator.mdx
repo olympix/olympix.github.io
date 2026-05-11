@@ -3,6 +3,8 @@ title: Mutation Test Generator
 description: Generate mutation tests in CI.
 ---
 
+import { Steps } from '@astrojs/starlight/components';
+
 The Olympix Mutation Test Generation action allows you to integrate mutation testing into your CI/CD workflows on GitHub. This action automates the creation of mutation tests for your Solidity projects, helping ensure that your existing unit tests are robust and capable of catching code mutations.
 
 ---
@@ -30,6 +32,8 @@ Automatically generate mutation tests to evaluate the effectiveness of your unit
 
 ## Getting Started
 
+<Steps>
+
 1. **Set Up API Token:**
       - Add a GitHub repository secret with your Olympix API token.
       - Set an environment variable `OLYMPIX_API_TOKEN` in your workflow using this secret.
@@ -39,6 +43,8 @@ Automatically generate mutation tests to evaluate the effectiveness of your unit
 
 3. **Configure GitHub Access (Optional):**
       - Install the [Github Notifier service](http://github.com/apps/olympix-notifier/) to your repo. It will ask you to grant it permission to create check runs. This GitHub App enables test result reporting via GitHub Check Runs. It works seamlessly with Olympix's GitHub Actions—currently supporting the Olympix Mutation Test Generator.
+
+</Steps>
 
 :::note
 This allows the mutation-tester to access your private GitHub repository.

@@ -3,6 +3,8 @@ title: BugPoCer
 description: AI-powered vulnerability detection with automated PoC generation.
 ---
 
+import { Steps } from '@astrojs/starlight/components';
+
 BugPoCer is an AI-powered internal audit tool that automates end-to-end vulnerability exploitation for smart contracts on Solidity, Rust (Anchor/Solana), and Cairo (StarkNet) — moving beyond static warnings to deliver **concrete, verifiable Proof-of-Concept (PoC) exploits**.
 
 ---
@@ -36,14 +38,14 @@ Built on Olympix's proprietary Intermediate Representation (IR) and symbolic exe
 
 BugPoCer runs as a multi-stage pipeline. The analysis itself happens server-side, so most stages are asynchronous — you can close the CLI between stages and reconnect whenever an email tells you it's your turn again.
 
-<style>
+<style dangerouslySetInnerHTML={{__html: `
 .pipeline-wrap table { table-layout: fixed; width: 100%; }
 .pipeline-wrap th:nth-child(1), .pipeline-wrap td:nth-child(1) { width: 4%; }
 .pipeline-wrap th:nth-child(2), .pipeline-wrap td:nth-child(2) { width: 13%; }
 .pipeline-wrap th:nth-child(3), .pipeline-wrap td:nth-child(3) { width: 43%; }
 .pipeline-wrap th:nth-child(4), .pipeline-wrap td:nth-child(4) { width: 17%; }
 .pipeline-wrap th:nth-child(5), .pipeline-wrap td:nth-child(5) { width: 23%; }
-</style>
+`}} />
 
 <div class="pipeline-wrap" markdown="1">
 
@@ -63,12 +65,21 @@ After the initial scan you can also ask follow-up questions, which cycles the se
 
 ## Quick Start
 
+<Steps>
+
 1. **Log in** (once): `olympix login -e <email>` — or `olympix login-sso -e <email>` for SSO orgs.
+
 2. **Start a scan** from your project root: `olympix bug-pocer` → *Start new session* → name it → pick scope → (optionally) attach documentation → press `Enter` to submit. Your session is created at submission.
+
 3. **Wait for the validation email** (subject: *[Action Required] Validate Project Context*).
+
 4. **Validate**: run `olympix bug-pocer` again, reopen the session, confirm or correct each inference, then submit.
+
 5. **Wait for the scan-complete email** (subject: *BugPoCer Initial Scan Complete*).
+
 6. **Review** findings, record your verdicts, and export results (Markdown / PDF / PoC `.sol` files).
+
+</Steps>
 
 ---
 
@@ -383,8 +394,12 @@ One file per finding that has a compilable PoC, written under your workspace so 
 
 There is no "Ask a question" menu option. To reach the Q&A prompt:
 
+<Steps>
+
 1. From the post-scan menu, choose `[0] Display Findings`.
+
 2. Navigate the findings pager as usual, then exit the pager (press `q`).
+
 3. The CLI prints:
 
     ```
@@ -392,6 +407,8 @@ There is no "Ask a question" menu option. To reach the Q&A prompt:
     ```
 
 4. Type your question and press `Enter`. Press `Enter` on an empty line to finish.
+
+</Steps>
 
 Example questions:
 

@@ -5,20 +5,74 @@
 :root {
   --sl-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --sl-color-accent-low: #e5e5e5;
-  --sl-color-accent: #1a1a1a;
-  --sl-color-accent-high: #000000;
+  --sl-color-accent-low: #ece4ff;
+  --sl-color-accent: #a279ff;
+  --sl-color-accent-high: #5b3acc;
+
+  --sl-content-width: 56rem;
 }
 
 :root[data-theme='dark'] {
-  --sl-color-accent-low: #2a2a2a;
-  --sl-color-accent: #d4d4d4;
-  --sl-color-accent-high: #ffffff;
+  --sl-color-accent-low: #261f3d;
+  --sl-color-accent: #a279ff;
+  --sl-color-accent-high: #d8c8ff;
 }
 
 .starlight-aside {
   border-inline-start-width: 0;
   border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+.starlight-aside__title {
+  margin-bottom: 0.75rem;
+}
+.starlight-aside__content > :first-child {
+  margin-top: 0;
+}
+.starlight-aside__content > :last-child {
+  margin-bottom: 0;
+}
+.starlight-aside code:not(pre code) {
+  background: hsl(0 0% 100% / 0.5);
+  font-weight: 400;
+  border: 1px solid hsl(0 0% 0% / 0.06);
+}
+:root[data-theme='dark'] .starlight-aside code:not(pre code) {
+  background: hsl(0 0% 100% / 0.06);
+  border: 1px solid hsl(0 0% 100% / 0.08);
+}
+
+.sl-markdown-content table th,
+.sl-markdown-content table td {
+  padding: 0.6rem 0.85rem;
+}
+
+.sl-markdown-content ol {
+  list-style: decimal outside;
+  padding-inline-start: 1.5rem;
+}
+.sl-markdown-content ul {
+  list-style: disc outside;
+  padding-inline-start: 1.5rem;
+}
+.sl-markdown-content li::marker {
+  color: var(--sl-color-gray-3);
+}
+
+starlight-toc h2,
+mobile-starlight-toc h2 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sl-color-gray-2);
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 72rem) {
+  .right-sidebar-panel {
+    max-width: 13rem;
+  }
 }
 
 .starlight-aside--note {

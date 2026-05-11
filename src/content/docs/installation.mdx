@@ -3,7 +3,7 @@ title: Installation Guide
 description: Install the Olympix CLI and VSCode extension and authenticate your account.
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem, Steps } from '@astrojs/starlight/components';
 
 Welcome to the Olympix installation guide! Get started by installing the CLI and the VSCode extension to access all of Olympix's powerful features. This guide covers the full process—from downloading the CLI binaries to authenticating your account.
 
@@ -74,9 +74,15 @@ For Windows users, download the appropriate binary from the download page and fo
 
 After downloading and setting up the CLI, authenticate your account by following these steps:
 
+<Steps>
+
 1. **Run the login command:** Execute `./olympix login -e your_email@domain.com` in your terminal.
+
 2. **Enter the one-time code:** You will receive a one-time code on your email. Enter it in the terminal prompt to complete authentication.
+
 3. **Capture your API token:** Once authenticated, your Olympix API token is displayed. Save it securely as it is required for integration with other services, such as GitHub Actions. (This token is also automatically stored in `~/.opix/config.json`.)
+
+</Steps>
 
 :::note[Adding Team Members]
 **For organization users:** Organization admins can invite team members using `olympix org-invite-user -e user@company.com`. See the [Organization Management Guide](/cli/organization/) for details.

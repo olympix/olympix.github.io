@@ -3,6 +3,8 @@ title: SSO Setup
 description: Configure Okta Single Sign-On for your organization.
 ---
 
+import { Steps } from '@astrojs/starlight/components';
+
 Enable Okta SSO for your organization to authenticate with Olympix CLI using your corporate identity provider.
 
 ---
@@ -68,18 +70,30 @@ olympix login -e user@company.com
 ```
 
 **What happens during login:**
+
+<Steps>
+
 1. User downloads Olympix CLI following the [Installation Guide](/installation/)
+
 2. User logs in with their email using the appropriate method
+
 3. System detects email domain matches your organization (configured by Customer Success)
+
 4. User is **automatically added** to your organization
+
 5. If seats are available, user gains immediate access to premium features
+
 6. If seats are full, user is linked to the org but must wait for seat availability
+
+</Steps>
 
 > **Note**: For SSO login, users must be assigned to the Olympix app in Okta.
 
 ---
 
 ## Step 1: Create Okta Application
+
+<Steps>
 
 1. **Log in to Okta Admin Console**
    - Navigate to: `Applications` → `Applications`
@@ -89,6 +103,8 @@ olympix login -e user@company.com
    - **Sign-in method**: Select `OIDC - OpenID Connect`
    - **Application type**: Select `Native Application`
    - Click: `Next`
+
+</Steps>
 
 ---
 
@@ -211,10 +227,18 @@ olympix login-sso
 ```
 
 Expected flow:
+
+<Steps>
+
 1. CLI displays a verification URL and code
+
 2. Open the URL in your browser
+
 3. Authenticate with your Okta credentials
+
 4. CLI automatically completes login
+
+</Steps>
 
 Example output:
 ```
@@ -232,9 +256,15 @@ Waiting for authentication... Success!
 
 To control which users can access Olympix:
 
+<Steps>
+
 1. In Okta Admin Console, go to your Olympix application
+
 2. Click the **Assignments** tab
+
 3. Assign users or groups
+
+</Steps>
 
 ---
 

@@ -3,6 +3,8 @@ title: Integrated Security
 description: Olympix integrated security GitHub Action.
 ---
 
+import { Steps } from '@astrojs/starlight/components';
+
 The Olympix Integrated Security action enables you to incorporate Olympix's vulnerability analysis directly into your GitHub workflows. This powerful integration allows you to scan your Solidity code for vulnerabilities as part of your CI process, with results reported in various formats to fit your needs.
 You can access this action from the [Github Marketplace](https://github.com/marketplace/actions/olympix-integrated-security) or visit the [GitHub repository](https://github.com/olympix/integrated-security).
 
@@ -28,6 +30,8 @@ The Olympix Integrated Security action performs code analysis on Solidity projec
 
 ## Getting Started
 
+<Steps>
+
 1. **Set Up Repository Secret:**
       - Add a GitHub repository secret named `OLYMPIX_API_TOKEN` with your Olympix API token as the value.
 
@@ -36,6 +40,8 @@ The Olympix Integrated Security action performs code analysis on Solidity projec
 
 3. **(Optional) Customize Scanning Rules:**
       - Use the `args` input to pass custom options for your vulnerability scan.
+
+</Steps>
 
 ---
 
