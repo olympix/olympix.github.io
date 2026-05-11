@@ -302,7 +302,7 @@ There are two distinct classifications attached to every finding: what the **eng
 - **False Positive** — the PoC compiled but did not reproduce the bug.
 
 :::caution[TP vs Non-TP in the CLI display]
-The interactive findings pager (`[0]`) collapses this into a binary badge: **`TP`** (green) for confirmed true positives, **`NON-TP`** (yellow) for everything else. Unverified findings are folded into `NON-TP` in the pager — you can tell them apart by reading the finding's PoC summary. The **exported reports** (PDF and Markdown) break out all three categories separately.
+The [interactive findings pager](#interactive-findings-pager) collapses this into a binary badge: **`TP`** (green) for confirmed true positives, **`NON-TP`** (yellow) for everything else. Unverified findings are folded into `NON-TP` in the pager — you can tell them apart by reading the finding's PoC summary. The **exported reports** (PDF and Markdown) break out all three categories separately.
 :::
 
 **User verdict** — your own verdict on each finding, displayed beside the engine badge in the pager as `VERDICT: TP` / `VERDICT: NON-TP` / `VERDICT: —` (unset). User verdicts are stored independently of the engine's classification.
@@ -311,7 +311,7 @@ The interactive findings pager (`[0]`) collapses this into a binary badge: **`TP
 Taking the time to mark each finding pays off twice. Your verdicts show up in every export (so the PDF/Markdown you hand off is already triaged), and they feed back into BugPoCer to improve your future scans on similar code.
 :::
 
-### Interactive findings pager (`[0]`)
+### Interactive findings pager
 
 | Key | Action |
 |-----|--------|
@@ -333,7 +333,7 @@ Taking the time to mark each finding pays off twice. Your verdicts show up in ev
 
 ## Exporting Results
 
-Every export option (`[1]`, `[2]`, and `[3]`) walks you through a two-stage filter dialog first.
+Every export option (the [PDF](#pdf-export--full-audit-style-report), [Markdown](#markdown-export--lightweight-per-category-report), and [PoC files](#poc-test-files) exports) walks you through a two-stage filter dialog first.
 
 **Stage 1 — finding category** (Space toggles, Enter confirms):
 
@@ -349,9 +349,9 @@ Every export option (`[1]`, `[2]`, and `[3]`) walks you through a two-stage filt
 
 At least one category and at least one severity must be selected.
 
-### Markdown (`[2]`) — lightweight per-category report
+### Markdown export — lightweight per-category report
 
-`[2]` is a **stripped-down** export, not the full audit report. It's meant for sharing a filtered list of findings without the full methodology/scope/invariants/assumptions wrapper.
+The Markdown export is a **stripped-down** version, not the full audit report. It's meant for sharing a filtered list of findings without the full methodology/scope/invariants/assumptions wrapper.
 
 It writes **one file per selected category** (so you may get up to three files in a single export):
 
@@ -365,11 +365,11 @@ Each file contains:
 - Total finding count and a Foundry-build-failure disclaimer if relevant
 - Per-finding blocks ordered by severity, each with the severity badge, vulnerability name, unit name, location, description, your user verdict (if set) with optional reason, and the PoC summary
 
-The **PoC code itself is not inlined** in the Markdown export — use `[3]` to get the PoCs as standalone files, or use the PDF export for a single document that includes everything. Files are written to your current working directory.
+The **PoC code itself is not inlined** in the Markdown export — use the [PoC export](#poc-test-files) to get the PoCs as standalone files, or use the PDF export for a single document that includes everything. Files are written to your current working directory.
 
-### PDF (`[1]`) — full audit-style report
+### PDF export — full audit-style report
 
-`[1]` produces an audit-style PDF suitable for handing to stakeholders or clients. It's generated server-side from the same underlying scan data and includes everything the Markdown export leaves out.
+This export produces an audit-style PDF suitable for handing to stakeholders or clients. It's generated server-side from the same underlying scan data and includes everything the Markdown export leaves out.
 
 The PDF contains:
 
@@ -384,7 +384,7 @@ The PDF contains:
 
 Saved to your current working directory as `BugPoCer_<sessionId>_<timestamp>.pdf`.
 
-### PoCs (`[3]`) — PoC test files
+### PoC test files
 
 One file per finding that has a compilable PoC, written under your workspace so you can drop it straight into your test suite. Extension is inferred from the PoC contents: `.t.sol` for Foundry tests, `.rs` for Rust / Anchor tests, `.cairo` for Starknet Foundry tests.
 
@@ -396,7 +396,7 @@ There is no "Ask a question" menu option. To reach the Q&A prompt:
 
 <Steps>
 
-1. From the post-scan menu, choose `[0] Display Findings`.
+1. From the post-scan menu, choose **Display Findings**.
 
 2. Navigate the findings pager as usual, then exit the pager (press `q`).
 

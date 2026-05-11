@@ -47,7 +47,7 @@
   padding: 0.6rem 0.85rem;
 }
 
-.sl-markdown-content ol {
+.sl-markdown-content ol:not(.sl-steps) {
   list-style: decimal outside;
   padding-inline-start: 1.5rem;
 }
@@ -55,7 +55,8 @@
   list-style: disc outside;
   padding-inline-start: 1.5rem;
 }
-.sl-markdown-content li::marker {
+.sl-markdown-content ol:not(.sl-steps) > li::marker,
+.sl-markdown-content ul > li::marker {
   color: var(--sl-color-gray-3);
 }
 
