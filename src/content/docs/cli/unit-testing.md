@@ -14,7 +14,9 @@ The Olympix Unit Test Generator works in tandem with the [Foundry](https://book.
 - **Unit tests** for your contracts
 - **Mutation tests** to assess the quality of your existing tests
 
-> 💡 **Tip:** Running the test generator consumes Olympix credits. The credit usage details will be included in the email with your test results.
+:::tip
+Running the test generator consumes Olympix credits. The credit usage details will be included in the email with your test results.
+:::
 
 ---
 
@@ -134,4 +136,4 @@ If you encounter any issues or have questions, feel free to reach out:
 
 **Email:** [contact@olympix.ai](mailto:contact@olympix.ai)
 
-Happy testing! 🎉
+Happy testing!

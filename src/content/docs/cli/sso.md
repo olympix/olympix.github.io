@@ -111,7 +111,9 @@ Select the following grant types:
 | **Refresh Token** | ☐ Leave unchecked | Olympix handles refresh internally |
 | **Device Authorization** | ☑ **Check** | **Required for CLI authentication** |
 
-> ⚠️ **Important**: You must enable **Device Authorization** for the Olympix CLI to work.
+:::caution[Important]
+You must enable **Device Authorization** for the Olympix CLI to work.
+:::
 
 ### Sign-in Redirect URIs
 
