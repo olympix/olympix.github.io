@@ -3,6 +3,7 @@ import starlight from '@astrojs/starlight';
 
 export default defineConfig({
   site: 'https://olympix.github.io',
+  prefetch: true,
   integrations: [
     starlight({
       title: 'Olympix Documentation',
