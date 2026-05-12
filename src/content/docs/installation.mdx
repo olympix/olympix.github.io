@@ -3,7 +3,8 @@ title: Installation Guide
 description: Install the Olympix CLI and VSCode extension and authenticate your account.
 ---
 
-import { Tabs, TabItem, Steps } from '@astrojs/starlight/components';
+import { Tabs, TabItem, Steps, Code } from '@astrojs/starlight/components';
+import { CLI_BINARIES } from '../../data/cli-version';
 
 Welcome to the Olympix installation guide! Get started by installing the CLI and the VSCode extension to access all of Olympix's powerful features. This guide covers the full process—from downloading the CLI binaries to authenticating your account.
 
@@ -15,44 +16,32 @@ The following versions are available: osx-arm64, osx-x64, win-x64, win-arm64, li
 
 <Tabs>
   <TabItem label="osx-arm64">
-    ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.72/osx-arm64/olympix
-    chmod +x olympix
-    ./olympix login -e user@olympix.ai
-    ```
+    <Code lang="bash" code={`curl -o olympix ${CLI_BINARIES['osx-arm64'].url}
+chmod +x olympix
+./olympix login -e user@olympix.ai`} />
   </TabItem>
   <TabItem label="osx-x64">
-    ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.72/osx-x64/olympix
-    chmod +x olympix
-    ./olympix login -e user@olympix.ai
-    ```
+    <Code lang="bash" code={`curl -o olympix ${CLI_BINARIES['osx-x64'].url}
+chmod +x olympix
+./olympix login -e user@olympix.ai`} />
   </TabItem>
   <TabItem label="win-arm64">
-    ```bash
-    curl.exe -o olympix.exe https://olympix-download.s3.amazonaws.com/cli/v0.11.72/win-arm64/olympix.exe
-    ./olympix.exe login -e user@olympix.ai
-    ```
+    <Code lang="bash" code={`curl.exe -o olympix.exe ${CLI_BINARIES['win-arm64'].url}
+./olympix.exe login -e user@olympix.ai`} />
   </TabItem>
   <TabItem label="win-x64">
-    ```bash
-    curl.exe -o olympix.exe https://olympix-download.s3.amazonaws.com/cli/v0.11.72/win-x64/olympix.exe
-    ./olympix.exe login -e user@olympix.ai
-    ```
+    <Code lang="bash" code={`curl.exe -o olympix.exe ${CLI_BINARIES['win-x64'].url}
+./olympix.exe login -e user@olympix.ai`} />
   </TabItem>
   <TabItem label="linux-arm64">
-    ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.72/linux-arm64/olympix
-    chmod +x olympix
-    ./olympix login -e user@olympix.ai
-    ```
+    <Code lang="bash" code={`curl -o olympix ${CLI_BINARIES['linux-arm64'].url}
+chmod +x olympix
+./olympix login -e user@olympix.ai`} />
   </TabItem>
   <TabItem label="linux-x64">
-    ```bash
-    curl -o olympix https://olympix-download.s3.amazonaws.com/cli/v0.11.72/linux-x64/olympix
-    chmod +x olympix
-    ./olympix login -e user@olympix.ai
-    ```
+    <Code lang="bash" code={`curl -o olympix ${CLI_BINARIES['linux-x64'].url}
+chmod +x olympix
+./olympix login -e user@olympix.ai`} />
   </TabItem>
 </Tabs>
 
