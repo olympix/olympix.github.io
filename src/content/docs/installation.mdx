@@ -45,6 +45,27 @@ chmod +x olympix
   </TabItem>
 </Tabs>
 
+### Verify your download
+
+Each binary's SHA-256 is published in the release manifest. After downloading, confirm the file matches:
+
+<Code lang="bash" code={`# macOS / Linux
+shasum -a 256 olympix
+
+# Windows (PowerShell)
+Get-FileHash olympix.exe -Algorithm SHA256`} />
+
+Expected values for the current release:
+
+| Platform | SHA-256 |
+| --- | --- |
+| `osx-arm64`   | <code>{CLI_BINARIES['osx-arm64'].sha256}</code> |
+| `osx-x64`     | <code>{CLI_BINARIES['osx-x64'].sha256}</code> |
+| `linux-arm64` | <code>{CLI_BINARIES['linux-arm64'].sha256}</code> |
+| `linux-x64`   | <code>{CLI_BINARIES['linux-x64'].sha256}</code> |
+| `win-arm64`   | <code>{CLI_BINARIES['win-arm64'].sha256}</code> |
+| `win-x64`     | <code>{CLI_BINARIES['win-x64'].sha256}</code> |
+
 :::tip[Setting Permissions on Unix-like Systems]
 On macOS and Linux, ensure you grant execution permissions to the binary using `chmod +x`. If you receive a warning that the binary is from an unidentified developer, do the following:
 - Open **System Preferences** → **Security & Privacy**.
