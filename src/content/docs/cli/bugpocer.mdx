@@ -101,12 +101,46 @@ olympix bug-pocer
 | `-env, --include-dot-env` | Include `.env` file for fork testing secrets (RPC URLs, API keys, etc.) |
 | `--env-file` | Path to a custom `.env` file (requires `-env`) |
 | `-ext, --extension` | Additional file extensions to include (can be used multiple times) |
+| `-rc, --rebuild-context` | Force a fresh project-context build, ignoring the [context cache](#context-cache) |
+| `-sp, --skip-preflight` | Skip the local [pre-flight validation](#pre-flight-validation) (build check) before upload |
+| `-ca, --confirm-all` | Auto-confirm scope, documentation, cache, and pre-flight prompts (non-interactive; implied in CI) |
 
 :::tip[Including env variables]
 If your tests need `RPC URLs`, `API keys`, `private keys`, etc., pass them with `-env` (reads from `.env`) or `--env-file <path>` for a custom file. Use whatever `.env` format your project's test framework already reads (e.g. `KEY=value` lines).
 
 This is the recommended way to pass env variables — the file is encrypted in transit with an extra RSA layer on top of the regular channel encryption.
 :::
+
+---
+
+## Pre-flight Validation
+
+Before anything is uploaded, the CLI runs a local **pre-flight check** that confirms your project actually builds. Because BugPoCer ships your locally-built artifacts, a project that doesn't compile on your machine can't be analyzed — pre-flight catches that up front instead of failing server-side.
+
+What it checks, by framework:
+
+- **Foundry** — `forge` is on your `PATH`, git submodules are present, `foundry.toml` remappings resolve, an import-resolution sweep passes, and `forge build` succeeds.
+- **Hardhat** — `node_modules` and `package.json` are present and `hardhat compile` succeeds.
+- **Anchor / Rust / Cairo** — build artifacts exist and the manifest (`Cargo.toml` / `Scarb.toml` / `Anchor.toml`) is readable.
+
+If a blocking issue is found, the CLI prints remediation steps and asks whether to continue anyway or abort. In non-interactive runs (CI, PR mode, or `--confirm-all`) it logs a warning and proceeds.
+
+| Control | Effect |
+|---------|--------|
+| `-sp` / `--skip-preflight` | Skip pre-flight entirely. |
+| `OLYMPIX_PREFLIGHT_BUILD_TIMEOUT_SECONDS` (env var) | Override the build-step timeout. Default: `120`. |
+
+---
+
+## Context Cache
+
+BugPoCer caches the project context it builds so repeat scans don't start from scratch. The cache is keyed on your source files, so the CLI knows whether your code has changed since the last run:
+
+- **Exact match** (no files changed) — interactively you're offered **Approve** (reuse as-is), **Update** (reuse as a baseline and fold in new docs), or **Rebuild**. In non-interactive runs the cache is reused automatically.
+- **Partial match** (some files changed) — the cached context seeds a faster incremental rebuild.
+- **No cache** — context is built from scratch.
+
+Pass `-rc` / `--rebuild-context` to ignore the cache and force a fresh build every time.
 
 ---
 
@@ -190,11 +224,15 @@ In addition to the interactive picker, you can pre-seed scope with a config file
 
 #### Default ignore list
 
-BugPoCer automatically excludes common non-production paths. For Solidity projects, files whose path contains any of the following are always ignored:
+BugPoCer automatically excludes common non-production and dependency paths. Entries are matched as **case-insensitive path segments** — a whole `/`-delimited path segment must match, not an arbitrary substring.
 
-`node_modules`, `test`, `mock`, `example`, `dependencies`, `forge-std`, `openzeppelin`, `solmate`, `solady`, `prb-math`, `prb-test`, `murky`, `permit2`, `v3-core`, `v3-periphery`, `v2-core`, `v2-periphery`
+For **Solidity** projects, any file with one of these path segments is ignored:
 
-Rust and Cairo projects use language-specific exclusion sets instead (typical directories like `tests`, `target`, `vendor`, `.snfoundry_cache`, `fixtures`, `benches`, `examples`).
+`node_modules`, `dependencies`, `forge-std`, `ds-test`, `openzeppelin`, `openzeppelin-contracts`, `openzeppelin-contracts-upgradeable`, `openzeppelin-foundry-upgrades`, `solmate`, `solady`, `prb-math`, `prb-test`, `murky`, `permit2`, `erc4626-tests`, `erc6900`, `v2-core`, `v2-periphery`, `v3-core`, `v3-periphery`, `v4-core`, `v4-periphery`, `uniswap-v2`, `uniswap-v3`, `uniswap-v4`, `aave-v2`, `aave-v3`, `chainlink`, `chainlink-brownie-contracts`, `balancer-v2`, `curve`
+
+For **Rust** projects: `target`, `test`, `tests`, `mock`, `mocks`, `example`, `examples`, `node_modules`.
+
+For **Cairo** projects: `target`, `test`, `tests`, `mock`, `mocks`, `mock_contracts`, `example`, `examples`, `node_modules`, `.snfoundry_cache`.
 
 :::note[Difference from other Olympix tools]
 BugPoCer does **not** use the general `IgnoredPaths`, `TrustedPaths`, `TrustedVariables`, or `TrustedContracts` options. Use `BugPocerScopePaths` and `BugPocerIgnorePaths` instead.
@@ -232,7 +270,7 @@ Once the server has built its understanding of your project, you'll receive the 
 
 ### What gets validated
 
-BugPoCer infers eight categories of context:
+BugPoCer infers nine categories of context:
 
 - **Identity** — what the project is (name, type)
 - **Intent / Description** — what the project does
@@ -242,6 +280,7 @@ BugPoCer infers eight categories of context:
 - **Invariants** — properties that must always hold (one item per invariant)
 - **Design Decisions** — documented intentional behaviors and known limitations (one item per decision)
 - **Security Assumptions** — trust boundaries and assumptions about external entities
+- **Dependencies** — external libraries and protocols the project relies on
 
 Inferences the engine is already confident about are auto-confirmed and don't appear in the validation queue. You only see the items the engine is unsure of.
 
@@ -325,7 +364,6 @@ Taking the time to mark each finding pays off twice. Your verdicts show up in ev
 | `Backspace` | Clear user verdict |
 | `t` | Toggle TP-only filter |
 | `v` | Toggle filter source (engine verdict vs. user verdict) |
-| `d` | Download currently displayed findings / context as Markdown |
 | `b` | Back to menu |
 | `q` | Quit the findings view |
 
@@ -382,7 +420,7 @@ The PDF contains:
 - **Unverified Findings**, same structure, for engine-flagged issues whose PoC didn't compile
 - **False Positive Findings**, same structure
 
-Saved to your current working directory as `BugPoCer_<sessionId>_<timestamp>.pdf`.
+Saved to your current working directory as `BugPoCer_Scan_Report_<sessionId>_<timestamp>.pdf`.
 
 ### PoC test files
 

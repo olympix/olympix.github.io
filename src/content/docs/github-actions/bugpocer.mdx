@@ -5,11 +5,17 @@ description: Run BugPoCer in CI on pull requests.
 
 import { Steps } from '@astrojs/starlight/components';
 
-The Olympix BugPocer action runs Olympix's AI-powered agentic security analysis on Solidity smart
-contracts directly inside your pull-request workflow. BugPocer reasons about your code the way a
-human auditor would — building a project context, ranking the highest-impact functions, and
-generating proof-of-concept exploits for any vulnerabilities it finds — and posts its results back
-to the PR for review.
+The Olympix BugPocer action runs Olympix's AI-powered agentic security analysis on your smart
+contracts — Solidity, Rust (Anchor/Solana), and Cairo (StarkNet) — directly inside your
+pull-request workflow. BugPocer reasons about your code the way a human auditor would — building a
+project context, ranking the highest-impact functions, and generating proof-of-concept exploits for
+any vulnerabilities it finds — and posts its results back to the PR for review.
+
+:::note[Toolchain per language]
+The example workflows below are for Solidity/Foundry projects. Rust and Cairo projects work the
+same way, but swap the Foundry setup steps for your stack's toolchain (e.g. `anchor build` /
+`cargo-build-sbf`, or `scarb build` + `snforge`) so the project builds in CI before the scan runs.
+:::
 
 You can access this action from the [GitHub Marketplace](https://github.com/marketplace/actions/olympix-bugpocer)
 or visit the [GitHub repository](https://github.com/olympix/bugpocer-action).
@@ -25,7 +31,7 @@ auditor that:
 - Reads the PR diff and surrounding context
 - Selects the most impactful contracts and functions to analyze
 - Verifies and severity-scores each vulnerability it finds
-- Generates a Foundry proof-of-concept and posts review comments back to the PR
+- Generates a proof-of-concept in the project's native test framework (Foundry, `cargo test`, or `snforge`) and posts review comments back to the PR
 
 The action supports two trigger modes:
 
@@ -229,6 +235,14 @@ jobs:
 | `GITHUB_REPOSITORY_ID` | Yes | The numeric repository ID (`${{ github.repository_id }}`). |
 | `OLYMPIX_TRIGGER_COMMIT_MESSAGE` | Manual-mode `pull_request` events only | Captured from `git log -1 --pretty=%B`. Lets the trigger parser read the commit body for `/bugpocer scan`. |
 
+:::note[Wired up for you]
+In PR mode BugPocer also reads several variables that you don't normally set by hand: the GitHub
+runner provides `GITHUB_EVENT_NAME`, `GITHUB_EVENT_PATH`, `GITHUB_BASE_REF`, and `GITHUB_HEAD_REF`
+automatically, and the action supplies `OLYMPIX_GITHUB_ACCESS_TOKEN` (used to post review comments)
+and `OLYMPIX_INTEGRATION_ORIGIN`. They're listed here for completeness — the table above covers
+everything you actually configure.
+:::
+
 ---
 
 ## Action Inputs
@@ -237,7 +251,7 @@ The action accepts a single `args` input that is forwarded to the Olympix CLI. T
 flags are:
 
 - **`-w | --workspace-path`** — Project root directory. *Default:* current directory.
-- **`-ca | --confirm-all-questions`** — Skip the interactive scope-review and additional-docs prompts. Optional in CI (the non-TTY environment already suppresses prompts), but harmless to leave in the example workflows.
+- **`-ca | --confirm-all`** — Skip the interactive scope-review and additional-docs prompts. Optional in CI (the non-TTY environment already suppresses prompts), but harmless to leave in the example workflows.
 
 ---
 
