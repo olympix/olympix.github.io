@@ -19,6 +19,17 @@ When `--agent` (or `-am`) is passed to any command, the CLI:
 
 This makes it possible for tools like Claude Code, Cursor, GitHub Copilot, or custom scripts to run Olympix analyses, respond to prompts, and consume results without human interaction.
 
+:::tip[Claude Code plugin]
+If you use **Claude Code**, you don't have to drive this protocol by hand. The [Olympix Claude plugin](https://github.com/olympix/olympix-claude-plugin) ships ready-made skills that run every Olympix tool through agent mode for you. Install it from inside Claude Code:
+
+```
+/plugin marketplace add olympix/olympix-claude-plugin
+/plugin install olympix@olympix
+```
+
+Then restart Claude Code and run `/olympix:full-run` in any Foundry or Hardhat project. See [Claude Code Plugin](#claude-code-plugin) below for the full skill list.
+:::
+
 ---
 
 ## Enabling Agent Mode
@@ -458,6 +469,43 @@ The CLI emits `scope_review`, then a `validation_item` for each inference, then 
 :::caution[One line per JSON object]
 The protocol is newline-delimited JSON (NDJSON). Each command must be a single line — do not pretty-print commands sent to stdin.
 :::
+
+---
+
+## Claude Code Plugin
+
+Rather than implement the JSON protocol yourself, install the **[Olympix Claude plugin](https://github.com/olympix/olympix-claude-plugin)** — a set of Claude Code skills that drive every Olympix tool through agent mode automatically.
+
+### Prerequisites
+
+- **Olympix CLI** — verify with `olympix version`. [Install the CLI](/installation/) if needed.
+- **Foundry/Forge** — verify with `forge --version`. Install from [getfoundry.sh](https://getfoundry.sh).
+- **Claude Code** — the AI coding assistant the plugin extends.
+
+### Install
+
+Inside Claude Code, run:
+
+```
+/plugin marketplace add olympix/olympix-claude-plugin
+/plugin install olympix@olympix
+```
+
+Then restart Claude Code. No clone or setup script needed.
+
+### Available skills
+
+| Skill | Description |
+|-------|-------------|
+| `olympix:full-run` | Run all Olympix tools on a Foundry or Hardhat repo |
+| `olympix:static-analysis` | Run the vulnerability scanner |
+| `olympix:mutation-test` | Generate mutation tests for the top 10 contracts |
+| `olympix:unit-test` | Generate unit tests with coverage scaffolding |
+| `olympix:bug-pocer` | Run BugPocer security analysis (fully automated) |
+| `olympix:assemble-report` | Collect results into `olympix-results/report.md` |
+| `olympix:auth` | Check/refresh CLI authentication |
+
+Open Claude Code inside a Foundry or Hardhat project and run `/olympix:full-run` to chain static analysis → unit tests → mutation tests → BugPocer → report. See the [plugin repository](https://github.com/olympix/olympix-claude-plugin) for full details.
 
 ---
 
