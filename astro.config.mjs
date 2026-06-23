@@ -32,7 +32,6 @@ export default defineConfig({
       sidebar: [
         { label: 'Installation', link: '/installation/' },
         { label: 'Config Options', link: '/config-options/' },
-        { label: 'Ignore Options', link: '/ignore-options/' },
         {
           label: 'CLI',
           items: [{ autogenerate: { directory: 'cli' } }],
