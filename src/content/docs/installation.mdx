@@ -1,0 +1,112 @@
+---
+title: Installation Guide
+description: Install the Olympix CLI and VSCode extension and authenticate your account.
+---
+
+import { Tabs, TabItem, Steps, Code } from '@astrojs/starlight/components';
+import { CLI_BINARIES } from '../../data/cli-version';
+
+Welcome to the Olympix installation guide! Get started by installing the CLI and the VSCode extension to access all of Olympix's powerful features. This guide covers the full process—from downloading the CLI binaries to authenticating your account.
+
+## CLI Installation
+
+:::note
+The following versions are available: osx-arm64, osx-x64, win-x64, win-arm64, linux-x64, linux-arm64.
+:::
+
+<Tabs>
+  <TabItem label="osx-arm64">
+    <Code lang="bash" code={`curl -o olympix ${CLI_BINARIES['osx-arm64'].url}
+chmod +x olympix
+./olympix login -e user@olympix.ai`} />
+  </TabItem>
+  <TabItem label="osx-x64">
+    <Code lang="bash" code={`curl -o olympix ${CLI_BINARIES['osx-x64'].url}
+chmod +x olympix
+./olympix login -e user@olympix.ai`} />
+  </TabItem>
+  <TabItem label="win-arm64">
+    <Code lang="bash" code={`curl.exe -o olympix.exe ${CLI_BINARIES['win-arm64'].url}
+./olympix.exe login -e user@olympix.ai`} />
+  </TabItem>
+  <TabItem label="win-x64">
+    <Code lang="bash" code={`curl.exe -o olympix.exe ${CLI_BINARIES['win-x64'].url}
+./olympix.exe login -e user@olympix.ai`} />
+  </TabItem>
+  <TabItem label="linux-arm64">
+    <Code lang="bash" code={`curl -o olympix ${CLI_BINARIES['linux-arm64'].url}
+chmod +x olympix
+./olympix login -e user@olympix.ai`} />
+  </TabItem>
+  <TabItem label="linux-x64">
+    <Code lang="bash" code={`curl -o olympix ${CLI_BINARIES['linux-x64'].url}
+chmod +x olympix
+./olympix login -e user@olympix.ai`} />
+  </TabItem>
+</Tabs>
+
+### Verify your download
+
+Each binary's SHA-256 is published in the release manifest. After downloading, confirm the file matches:
+
+<Code lang="bash" code={`# macOS / Linux
+shasum -a 256 olympix
+
+# Windows (PowerShell)
+Get-FileHash olympix.exe -Algorithm SHA256`} />
+
+Expected values for the current release:
+
+| Platform | SHA-256 |
+| --- | --- |
+| `osx-arm64`   | <code>{CLI_BINARIES['osx-arm64'].sha256}</code> |
+| `osx-x64`     | <code>{CLI_BINARIES['osx-x64'].sha256}</code> |
+| `linux-arm64` | <code>{CLI_BINARIES['linux-arm64'].sha256}</code> |
+| `linux-x64`   | <code>{CLI_BINARIES['linux-x64'].sha256}</code> |
+| `win-arm64`   | <code>{CLI_BINARIES['win-arm64'].sha256}</code> |
+| `win-x64`     | <code>{CLI_BINARIES['win-x64'].sha256}</code> |
+
+:::tip[Setting Permissions on Unix-like Systems]
+On macOS and Linux, ensure you grant execution permissions to the binary using `chmod +x`. If you receive a warning that the binary is from an unidentified developer, do the following:
+- Open **System Preferences** → **Security & Privacy**.
+- Click the **General** tab.
+- Select **Open Anyway** next to the warning message.
+:::
+
+:::tip[Setting Permissions on Windows]
+For Windows users, download the appropriate binary from the download page and follow these steps:
+- Download the `.exe` binary matching your Windows architecture.
+- Run the binary from the command prompt.
+- If needed, set the executable permissions through file properties.
+:::
+
+## Authentication
+
+After downloading and setting up the CLI, authenticate your account by following these steps:
+
+<Steps>
+
+1. **Run the login command:** Execute `./olympix login -e your_email@domain.com` in your terminal.
+
+2. **Enter the one-time code:** You will receive a one-time code on your email. Enter it in the terminal prompt to complete authentication.
+
+3. **Capture your API token:** Once authenticated, your Olympix API token is displayed. Save it securely as it is required for integration with other services, such as GitHub Actions. (This token is also automatically stored in `~/.opix/config.json`.)
+
+</Steps>
+
+:::note[Adding Team Members]
+**For organization users:** Organization admins can invite team members using `olympix org-invite-user -e user@company.com`. See the [Organization Management Guide](/cli/organization/) for details.
+
+**For standalone accounts:** If you need to register additional standalone email addresses (not part of an organization), email [contact@olympix.ai](mailto:contact@olympix.ai).
+:::
+
+## VSCode Extension
+
+Our extension is available in the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=Olympixai.olympix). Install it to integrate Olympix features directly into your development environment.
+
+## Additional Resources
+
+- **Olympix CLI Documentation:** Visit the [CLI documentation page](/cli/) for complete command reference and troubleshooting tips.
+- **YouTube Tutorial:** For a video walkthrough of the setup and usage, watch our [YouTube tutorial](https://youtu.be/x7Apoq2PgT0).
+
+If you encounter any issues or have questions, feel free to reach out to our support team at [contact@olympix.ai](mailto:contact@olympix.ai).

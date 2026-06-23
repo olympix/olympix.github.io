@@ -1,0 +1,275 @@
+---
+title: Mutation Testing
+description: Generate mutation tests to assess unit test quality.
+---
+
+## Overview
+
+Mutation testing is a powerful technique for evaluating the effectiveness of your test suite by introducing small, systematic modifications (mutations) to your source code and verifying if your tests can detect these changes. While code coverage tells you what lines of code are executed by your tests, mutation testing tells you how effective your tests are at catching actual bugs.
+
+### Why Mutation Testing Matters
+
+Traditional metrics like code coverage can provide a false sense of security. Having 100% coverage doesn't necessarily mean your tests are meaningful—they might assert the wrong things or have weak assertions. Mutation testing provides a more meaningful metric by:
+
+1.  Measuring test suite effectiveness over time  
+2.  Identifying areas where tests might be insufficient  
+3.  Forcing developers to write more thorough assertions  
+4.  Discovering edge cases that weren't previously considered  
+
+### Security Implications
+
+In blockchain and smart contract development, mutation testing is particularly crucial for security. Many historical smart contract hacks occurred due to seemingly minor changes in business logic that weren't caught by existing test suites. Our mutation operators are specifically derived from real-world smart contract exploits—each mutation pattern in our tool corresponds to actual changes that led to significant security breaches in production contracts.
+
+---
+
+## Installation & Requirements
+
+The mutation test generator is designed to be dependency-free and works with both **Foundry** and **Hardhat** projects.
+
+### Foundry projects
+
+:white_check_mark: No external dependencies  
+:white_check_mark: Works with standard Forge unit tests out of the box
+
+### Hardhat projects
+
+:white_check_mark: Works with Hardhat projects using Mocha-based test suites  
+:white_check_mark: Requires npm and a `hardhat.config.{js,ts}` file at the project root
+
+:::caution[npm install must succeed]
+When you submit a Hardhat project for mutation testing, `npm install` runs server-side to install your dependencies. If this step fails (e.g., due to missing packages, private registries, or incompatible Node versions), the entire mutation test run will fail. Make sure your `package.json` and lock file are committed and that `npm install` succeeds in a clean environment before running mutation tests.
+:::
+
+---
+
+## CLI Usage
+
+```none
+generate-mutation-tests [-w <workspace>] [-p <solidity-file>] [-t <timeout>]
+
+Options
+	-w, --workspace-path: Root project directory path (default: current directory)
+	-p, --path: Solidity file path to mutate (can be specified multiple times)
+	-t, --timeout: Timeout in seconds for each mutant test run (default: 300s, range: 10-500s)
+    -env, --include-dot-env: If included, sends the env file data along with smart contracts (This is to pass secrets such as private keys/RPC urls/API keys etc. which are often need for fork testing). To specify a custom env file, include the --env-file argument.
+    --env-file: Defines the path of the file containing the environment variables. Make sure to follow foundry's .env format guidelines. Doesn't do anything if '--include-dot-env' is not set.
+    -ext, --extension: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions. For example: --extra-extension .json --extra-extension .txt. By default, only .sol/.t.sol and/or foundry.toml files are uploaded.
+	Tip: The timeout option is crucial as some mutations can cause infinite loops in test execution. Set this to slightly higher than your normal test suite execution time.
+```
+
+:::tip[Including env variables]
+We provide the ability to pass environment variables with your solidity files. If you would like to provide `RPC URLs`, `API keys`, `private keys`, etc. You can do so by using the `-env` flag which will read these parameters from your `.env` file. You can also specify a custom filepath for your `env` file using the `--env-file` flag.
+Refer here for format guidelines: `https://book.getfoundry.sh/cheatcodes/env-string`.
+
+Note: If you do require passing `env variables` for your `forge` run, this is the recommended way to do it. We encrypt all communication of this file with an extra layer of RSA on top of the regular encryption.
+:::
+
+
+## Mutation Operators
+
+Our mutation operators are directly inspired by real-world smart contract exploits. Each operator represents a pattern of change that has historically led to security incidents.
+
+Below is a comprehensive list of all currently supported operators.
+
+### Arithmetic Operator Mutations
+
+- `+` ↔ `-`
+- `%` ↔ `/`
+- `-` ↔ `+`
+- `/` ↔ `%`
+
+```solidity 
+// Original
+amount + tax
+// Mutated
+amount - tax
+```
+
+
+###  Comparison Operator Mutations
+
+Inverts comparison operators:
+- `==` ↔ `!=`
+- `>` ↔ `<`
+- `>=` ↔ `<`
+- `<=` ↔ `>`
+
+```solidity 
+// Original
+amount > 0
+// Mutated
+amount < 0
+```
+
+###  Logical Operator Mutations (AND ↔ OR)
+
+Swaps logical operators:
+- `&&` ↔ `||`
+- `||` ↔ `&&`
+
+```solidity 
+// Original
+require(isEnabled && amount > 100)
+// Mutated
+require(isEnabled || amount > 100)
+```
+
+###  Condition Negation Mutations
+
+Negates a condition by adding or removing the `!` operator.
+
+```solidity 
+// Original
+if (taxEnabled)
+// Mutated
+if (!taxEnabled)
+```
+
+###  Ternary Conditional Mutations
+
+Swaps the `true` and `false` branches in a ternary expression `(?:)`.
+
+```solidity 
+// Original
+amount < 100 ? amount : 100 - tax
+// Mutated
+amount < 100 ? 100 - tax : amount
+```
+
+###  Function Call Mutations (delegatecall → call)
+
+Replaces `delegatecall` with `call`.
+
+```solidity 
+// Original
+(address).delegatecall(data)
+// Mutated
+(address).call(data)
+```
+
+###  Hex Number Literal Mutations
+
+- Replaces any hex literal with `0x0`.
+- Replaces a hex literal with a different randomly chosen hex literal found in the same function.
+
+```solidity 
+// Original
+0xabcd1234
+// Mutated 1 (→ 0)
+0x0
+// Mutated 2 (→ Another Random Hex)
+0xdef12345
+```
+
+###  Remove emit Statement
+
+Removes the `emit` statement.
+
+```solidity 
+// Original
+emit Transfer(msg.sender, recipient, amount);
+// Mutated
+// (empty string)
+```
+
+###  Remove delete Operator
+
+Removes the `delete` statement.
+
+```solidity 
+// Original
+delete myStruct;
+// Mutated
+// (empty string)
+```
+
+### Storage Location Mutations
+
+Swaps the variable declaration storage location: `storage` ↔ `memory`
+
+```solidity 
+// Original
+uint[] storage x;
+// Mutated
+uint[] memory x;
+```
+
+### Variable Assignment Operator Replacement
+
+Swaps `+=` with `-=` (and vice versa).
+
+```solidity 
+// Original
+balances[msg.sender] += amount;
+// Mutated
+balances[msg.sender] -= amount;
+```
+
+### State Variable Initialization Changes
+
+Mutates state variable initial values based on type.
+
+```solidity 
+// Original
+bool public taxEnabled = true;
+// Mutated
+bool public taxEnabled = false;
+
+// Original
+uint public maxSupply = 1000;
+// Mutated
+uint public maxSupply = 1001;
+
+// Original
+string public greeting = "Hello";
+// Mutated
+string public greeting = "Mutation text"
+```
+
+### Modifier Removal Mutations
+
+Removes function modifiers.
+
+```solidity 
+// Original
+function toggleTax() public onlyOwner {
+    // ...
+}
+
+// Mutated
+function toggleTax() public {
+    // ...
+}
+```
+
+### Address swap Mutations
+
+Swaps addresses in function calls.
+
+```solidity
+// Original
+address(0xaaaaaaaaaaaaaaaaaaaaa).call();
+// Mutated
+address(0xbbbbbbbbbbbbbbbbbbbbb).call(); // where 0xbbbbbbbbbbbbbbbbbbbbb is another address in the current function
+```
+
+## Quick Fixes
+
+When a mutant survives — meaning your existing tests didn't catch the mutation — the mutation test generator can automatically generate a test that kills it. This feature is called **Quick Fixes**.
+
+Quick fixes use an AI-powered agentic loop to produce ready-to-use test files that target the survived mutants. The results include:
+
+- **Quick fix test files** — generated `.t.sol` files you can drop into your test suite
+- **Score with quick fixes** — an updated mutation score showing what your coverage would be if you adopt the generated tests
+
+:::tip[Enabling Quick Fixes]
+Quick fixes are generated automatically when supported by your project. The results email will include the generated test files alongside the standard mutation testing report.
+:::
+
+---
+
+## Security Foundation
+
+Each mutation operator in this tool was carefully selected based on extensive analysis of historical smart contract exploits. By studying security incidents and identifying the precise commits that introduced vulnerabilities, we've created a comprehensive set of mutations that represent real-world attack vectors.
+
+This approach ensures that your test suite is validated against realistic threat models rather than purely theoretical vulnerabilities.
