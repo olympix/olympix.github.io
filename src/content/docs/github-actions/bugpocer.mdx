@@ -252,6 +252,7 @@ flags are:
 
 - **`-w | --workspace-path`** — Project root directory. *Default:* current directory.
 - **`-ca | --confirm-all`** — Skip the interactive scope-review and additional-docs prompts. Optional in CI (the non-TTY environment already suppresses prompts), but harmless to leave in the example workflows.
+- **`--diff-base <git ref>` / `--diff-target <git ref>`** — Restrict the scan to code changed between two git refs ([diff mode](/cli/bugpocer/#diff-mode)). You normally don't need these in PR mode — the action already reads the PR diff automatically. Passing `--diff-base` **overrides PR mode**: BugPocer uses the git-based diff and disables PR-comment posting (it logs a warning). Reach for it in non-PR workflows, such as a scheduled scan of a release-branch range.
 
 ---
 

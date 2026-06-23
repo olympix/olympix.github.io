@@ -114,6 +114,10 @@ Send one JSON object per line to stdin:
 
 BugPocer's multi-stage pipeline maps to the following event/action sequence.
 
+:::note[Diff mode]
+Add `--diff-base <git ref>` (optionally `--diff-target <git ref>`) to constrain the scan to changed code — see [Diff mode](/cli/bugpocer/#diff-mode). The protocol below is unchanged, with one exception: an **empty diff** ends the run before `scope_review`, emitting a terminal `completed` event (`"No changed source files found…"`) instead of starting a session.
+:::
+
 ### 1. Session Selection
 
 **Event:** `sessions_list`
