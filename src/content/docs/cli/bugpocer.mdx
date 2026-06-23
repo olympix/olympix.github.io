@@ -104,11 +104,46 @@ olympix bug-pocer
 | `-rc, --rebuild-context` | Force a fresh project-context build, ignoring the [context cache](#context-cache) |
 | `-sp, --skip-preflight` | Skip the local [pre-flight validation](#pre-flight-validation) (build check) before upload |
 | `-ca, --confirm-all` | Auto-confirm scope, documentation, cache, and pre-flight prompts (non-interactive; implied in CI) |
+| `--diff-base <git ref>` | Enable [diff mode](#diff-mode) — scan only the code changed relative to this commit, branch, or tag |
+| `--diff-target <git ref>` | Other end of the diff (must be the checked-out `HEAD`); defaults to the working tree. Requires `--diff-base` |
 
 :::tip[Including env variables]
 If your tests need `RPC URLs`, `API keys`, `private keys`, etc., pass them with `-env` (reads from `.env`) or `--env-file <path>` for a custom file. Use whatever `.env` format your project's test framework already reads (e.g. `KEY=value` lines).
 
 This is the recommended way to pass env variables — the file is encrypted in transit with an extra RSA layer on top of the regular channel encryption.
+:::
+
+---
+
+## Diff Mode
+
+By default BugPoCer scans your whole project scope. **Diff mode** narrows a scan to only the source code that changed between two git references — ideal for auditing a single pull request or feature branch without re-scanning the entire codebase.
+
+```bash
+# Scan only what changed on the current branch since it diverged from main
+olympix bug-pocer --diff-base main
+
+# Diff an explicit range (the target must be the checked-out commit)
+olympix bug-pocer --diff-base v1.2.0 --diff-target HEAD
+```
+
+| Flag | Description |
+|------|-------------|
+| `--diff-base <git ref>` | **Enables diff mode.** Commit, branch, or tag to diff against — BugPoCer scans only the code that changed relative to it. |
+| `--diff-target <git ref>` | The other end of the diff. Optional; defaults to your working tree. If set, it must be the currently checked-out commit (`HEAD`). |
+
+How it behaves:
+
+- The diff is taken from the **merge base** of `--diff-base` and the target (the same "what this branch changed" view as a pull request), so commits that landed on `--diff-base` after you branched aren't counted.
+- **Scope comes from the changed lines** — only the functions, contracts, and libraries whose lines overlap the diff are selected. Diff mode skips the interactive [scope picker](#scope-selection) and instead prints the source files it derived from the diff. Any `BugPocerScopePaths` / `BugPocerIgnorePaths` from your config still apply on top.
+- **The analysis is change-aware, not just change-scoped** — each selected unit is still read in full for context, but the actual diff hunks (the removed `-` and added `+` lines) are fed into the scan and weighted heavily. The engine reasons about what each change introduced: new attack surface, weakened or removed checks and invariants, and interactions between the changed lines and the surrounding unchanged code.
+- Only source files in your project language (`.sol`, `.rs`, `.cairo`) are considered; deleted files are dropped and renames are followed.
+- **Untracked files are not scanned** — `git add` or commit them first to include them (the CLI warns about any it skips).
+- An **empty diff** (no changed source files) exits before a session is created, so an unchanged range never starts a billable scan.
+- Refs are validated locally before anything uploads, so a bad ref, a missing `--diff-base`, or a non-git workspace fails instantly.
+
+:::note[Uncommitted changes vs. an explicit `--diff-target`]
+If you pass an explicit `--diff-target` commit while your working tree has uncommitted changes, the scan reads files from disk and could misreport changed line numbers against that commit. The CLI detects this and asks whether to compare against your **working tree** (recommended) or the committed `--diff-target`.
 :::
 
 ---
