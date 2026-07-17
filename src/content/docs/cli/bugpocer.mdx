@@ -5,7 +5,7 @@ description: AI-powered vulnerability detection with automated PoC generation.
 
 import { Steps } from '@astrojs/starlight/components';
 
-BugPoCer is an AI-powered internal audit tool that automates end-to-end vulnerability exploitation for smart contracts on Solidity, Rust (Anchor/Solana), and Cairo (StarkNet) — moving beyond static warnings to deliver **concrete, verifiable Proof-of-Concept (PoC) exploits**.
+BugPoCer is an AI-powered internal audit tool that automates end-to-end vulnerability exploitation for smart contracts on Solidity, Rust (Anchor/Solana and CosmWasm/Cosmos), and Cairo (StarkNet) — moving beyond static warnings to deliver **concrete, verifiable Proof-of-Concept (PoC) exploits**.
 
 ---
 
@@ -17,8 +17,7 @@ Built on Olympix's proprietary Intermediate Representation (IR) and symbolic exe
 
 - **Automated Vulnerability Detection** — AI-driven protocol scanning
 - **Project Context and Invariant Building** — Approve inferred project context
-- **PoC Generation** — Automatically creates Foundry test files that demonstrate exploits
-- **Interactive Analysis** — Ask follow-up questions about findings
+- **PoC Generation** — Automatically creates runnable PoC test files that demonstrate exploits
 
 ---
 
@@ -26,10 +25,15 @@ Built on Olympix's proprietary Intermediate Representation (IR) and symbolic exe
 
 :::note[Project Requirements]
 - A project in one of the supported stacks that **builds and tests locally** before you start a scan. BugPoCer ships your locally-built artifacts and vendored dependencies in the upload, so the build must succeed on your machine first:
-  - **Solidity** — Foundry project where `forge test` succeeds (run `forge install` locally first).
+  - **Solidity** — a Foundry project where `forge test` succeeds (run `forge install` locally first), or a Hardhat project where `npx hardhat compile` succeeds with `node_modules` installed (Hardhat 3 is supported).
   - **Rust / Anchor (Solana)** — a `Cargo.toml` (with `solana` / `anchor-lang` / `solana-program` dependencies) or `Anchor.toml` project. Run `anchor build` (or `cargo-build-sbf`) locally so `target/deploy/*.so` is on disk. For private crates, run `cargo vendor` locally so `vendor/` ships with the upload. TypeScript-tested Anchor projects also need `yarn install` (or equivalent) locally first so `node_modules/` ships.
+  - **Rust / CosmWasm (Cosmos)** — a `Cargo.toml` project using `cosmwasm-std` (or `provwasm`) where `cargo build` succeeds locally. For private crates, run `cargo vendor` and commit `Cargo.lock` so the build can run offline. No pre-built `.so` is required.
   - **Cairo / StarkNet** — a `Scarb.toml` project. Run `scarb build` and `snforge test` locally first. For private packages, vendor under `vendor_cairo/` locally.
 - An Olympix account — log in with `olympix login -e <email>` (or `olympix login-sso -e <email>` if your organization uses SSO) before starting a scan (see [Installation](/installation/))
+:::
+
+:::note[Access]
+BugPoCer is a premium feature, granted per account. Each account has separate allowances for **full-repo scans** and **diff scans**; when you reach an allowance, contact [contact@olympix.ai](mailto:contact@olympix.ai) to request access or a higher limit.
 :::
 
 ---
@@ -58,8 +62,6 @@ BugPoCer runs as a multi-stage pipeline. The analysis itself happens server-side
 | 5 | **Findings review** | Reconnect, browse findings, mark verdicts, export reports. | `InitialScanCompleted` | *BugPoCer Initial Scan Complete* |
 
 </div>
-
-After the initial scan you can also ask follow-up questions, which cycles the session between `QuestionReceived` and `QuestionAnswered`.
 
 ---
 
@@ -106,6 +108,7 @@ olympix bug-pocer
 | `-ca, --confirm-all` | Auto-confirm scope, documentation, cache, and pre-flight prompts (non-interactive; implied in CI) |
 | `--diff-base <git ref>` | Enable [diff mode](#diff-mode) — scan only the code changed relative to this commit, branch, or tag |
 | `--diff-target <git ref>` | Other end of the diff (must be the checked-out `HEAD`); defaults to the working tree. Requires `--diff-base` |
+| `--framework foundry\|hardhat` | Pin the framework for a **multiframework** repo — one with both a `foundry.toml` and a `hardhat.config.*`. No effect on single-framework repos. |
 
 :::tip[Including env variables]
 If your tests need `RPC URLs`, `API keys`, `private keys`, etc., pass them with `-env` (reads from `.env`) or `--env-file <path>` for a custom file. Use whatever `.env` format your project's test framework already reads (e.g. `KEY=value` lines).
@@ -156,26 +159,31 @@ What it checks, by framework:
 
 - **Foundry** — `forge` is on your `PATH`, git submodules are present, `foundry.toml` remappings resolve, an import-resolution sweep passes, and `forge build` succeeds.
 - **Hardhat** — `node_modules` and `package.json` are present and `hardhat compile` succeeds.
-- **Anchor / Rust / Cairo** — build artifacts exist and the manifest (`Cargo.toml` / `Scarb.toml` / `Anchor.toml`) is readable.
+- **Anchor (Solana) / CosmWasm / Cairo** — build artifacts exist and the manifest (`Cargo.toml` / `Anchor.toml` / `Scarb.toml`) is readable. Anchor needs a locally built `target/deploy/*.so`; CosmWasm builds with `cargo build`; Cairo with `scarb build`.
 
 If a blocking issue is found, the CLI prints remediation steps and asks whether to continue anyway or abort. In non-interactive runs (CI, PR mode, or `--confirm-all`) it logs a warning and proceeds.
 
-| Control | Effect |
-|---------|--------|
-| `-sp` / `--skip-preflight` | Skip pre-flight entirely. |
-| `OLYMPIX_PREFLIGHT_BUILD_TIMEOUT_SECONDS` (env var) | Override the build-step timeout. Default: `120`. |
+Skip the pre-flight check entirely with `-sp` / `--skip-preflight`.
+
+### Server-side build check
+
+After upload, the backend runs its own build (`forge build` / `npx hardhat compile` / `cargo build` / `scarb build`; up to a ~30-minute cap). **A successful build is not required to scan.** If the build fails, the scan still runs and findings are still reported — but **proof-of-concept generation is skipped, so those findings can only reach [Unverified](#verdict-terminology), never a confirmed True Positive** (a non-compiling test can't prove exploitability). You're prompted `[c]ontinue with findings only  |  [k]ill session` (non-interactive runs continue automatically). For full results with PoCs, make the build pass locally and start a new scan.
 
 ---
 
 ## Context Cache
 
-BugPoCer caches the project context it builds so repeat scans don't start from scratch. The cache is keyed on your source files, so the CLI knows whether your code has changed since the last run:
+BugPoCer caches the project context it builds so repeat scans don't start from scratch. The cache is keyed on a fingerprint of your **source files** — dependencies under `lib/` and `node_modules/` are excluded so they don't skew the comparison — so the CLI knows whether your code has changed since the last run:
 
-- **Exact match** (no files changed) — interactively you're offered **Approve** (reuse as-is), **Update** (reuse as a baseline and fold in new docs), or **Rebuild**. In non-interactive runs the cache is reused automatically.
-- **Partial match** (some files changed) — the cached context seeds a faster incremental rebuild.
-- **No cache** — context is built from scratch.
+- **Exact match** (identical source fingerprint) — interactively you're offered **Approve** (reuse as-is), **Update** (reuse as a baseline and fold in new docs), or **Rebuild**. In non-interactive runs the cache is reused automatically.
+- **Partial match** (source overlaps a prior run by **at least 80%**) — the cached context seeds a faster incremental rebuild.
+- **No cache** (below 80% overlap, or no prior run) — context is built from scratch.
 
 Pass `-rc` / `--rebuild-context` to ignore the cache and force a fresh build every time.
+
+:::note[Cache limit]
+Projects with more than **100,000 files** are too large to fingerprint and skip the cache entirely (this file count is separate from the ~100,000-token budget for attached documentation).
+:::
 
 ---
 
@@ -199,18 +207,21 @@ Running `olympix bug-pocer` on a project with existing sessions shows the sessio
 
 | Status | Meaning |
 |--------|---------|
+| `Pending` | Queued — the scan has been submitted and is waiting for an available worker to start (may sit here longer under heavy load) |
 | `ChatStarted` | Session created, context building in progress |
 | `ValidationRequested` | Waiting for you to validate project context |
 | `ValidationCompleted` | Context approved, initial scan running |
 | `InitialScanCompleted` | Scan finished, findings available for review |
-| `QuestionReceived` | Processing a follow-up question |
-| `QuestionAnswered` | Response ready |
 
 ---
 
 ## Scope Selection
 
 When you start a new session, the CLI displays an interactive scope picker so you can decide which files BugPoCer analyzes. The tree is pre-filtered by the default ignore list (see [Scope and ignore config](#scope-and-ignore-config)) and by any `BugPocerScopePaths` / `BugPocerIgnorePaths` in your `olympix-config.json`.
+
+:::note[What gets deep-scanned]
+BugPoCer ranks in-scope code by criticality and deep-scans the highest-impact units first (a diff scan covers a focused subset). The scope picker's footer shows **how many units will actually be deep-scanned out of the total in scope** ("N of M") — and, as it notes, *findings may span a wider scope if other units are affected*. Issues involving units outside the selected scope can still be reported.
+:::
 
 | Key | Action |
 |-----|--------|
@@ -287,7 +298,8 @@ During context building, the server ingests documentation it finds in your codeb
 |-----|--------|
 | `n` | Add free-text notes |
 | `l` | Add a documentation link (URL) |
-| `f` | Load a local file (any readable text file — common picks: `.md`, `.sol`, `.txt`) |
+| `f` | Load a local file (`.txt`, `.md`, or `.pdf`) |
+| `d` | Add a **folder of docs** — recursively imports the documentation files found under a directory |
 
 :::tip[What to add here]
 Think *private* or *external* context: internal design docs, threat models, audit scopes, Notion pages, architecture diagrams exported to text, protocol specs hosted elsewhere, trust assumptions that aren't written down in the repo. Anything that explains how the system is *supposed* to behave but doesn't live in a `.md` file in the codebase. This material is one of the biggest levers on result quality — the engine can read your code but it cannot read your whiteboard.
@@ -460,36 +472,6 @@ Saved to your current working directory as `BugPoCer_Scan_Report_<sessionId>_<ti
 ### PoC test files
 
 One file per finding that has a compilable PoC, written under your workspace so you can drop it straight into your test suite. Extension is inferred from the PoC contents: `.t.sol` for Foundry tests, `.rs` for Rust / Anchor tests, `.cairo` for Starknet Foundry tests.
-
----
-
-## Interactive Q&A
-
-There is no "Ask a question" menu option. To reach the Q&A prompt:
-
-<Steps>
-
-1. From the post-scan menu, choose **Display Findings**.
-
-2. Navigate the findings pager as usual, then exit the pager (press `q`).
-
-3. The CLI prints:
-
-    ```
-    You can ask questions to BugPocer or enter nothing to exit:>
-    ```
-
-4. Type your question and press `Enter`. Press `Enter` on an empty line to finish.
-
-</Steps>
-
-Example questions:
-
-- "Explain the reentrancy vulnerability in more detail"
-- "How can I fix the access control issue in Vault.sol?"
-- "Are there any other functions affected by this pattern?"
-
-Questions cycle the session through `QuestionReceived` → `QuestionAnswered`.
 
 ---
 

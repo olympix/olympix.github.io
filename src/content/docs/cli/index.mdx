@@ -5,7 +5,7 @@ description: Quick start guide for the Olympix CLI — commands, options, and us
 
 import { CardGrid, LinkCard } from '@astrojs/starlight/components';
 
-Welcome to the Olympix CLI usage guide! This guide will help you quickly get started with the command-line interface for the Olympix Static Analyzer and Test Generator.
+Welcome to the Olympix CLI usage guide! This guide will help you quickly get started with the command-line interface for the Olympix Static Analyzer, Test Generator, and BugPoCer.
 
 ---
 
@@ -138,6 +138,18 @@ When using the `bug-pocer` command for AI-powered vulnerability detection and Po
   *Default*: `.env`
 
 - **`-ext, --extension`**: This allows you to specify additional file extensions to be included in the analysis. You can use this option multiple times to add more extensions.
+
+- **`-rc | --rebuild-context`**: Force a fresh project-context build, ignoring the context cache.
+
+- **`-sp | --skip-preflight`**: Skip the local pre-flight build check before upload.
+
+- **`-ca | --confirm-all`**: Auto-confirm scope, documentation, cache, and pre-flight prompts (non-interactive; implied in CI).
+
+- **`--diff-base <git ref>`** / **`--diff-target <git ref>`**: Scan only the code changed between two git refs ([diff mode](/cli/bugpocer/#diff-mode)). `--diff-target` requires `--diff-base`.
+
+- **`--framework foundry|hardhat`**: Pin the framework for a multiframework repo (one with both a `foundry.toml` and a `hardhat.config.*`).
+
+See the [BugPoCer documentation](/cli/bugpocer/) for full details on these options.
 
 ---
 
