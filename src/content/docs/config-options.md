@@ -100,7 +100,7 @@ Here is an example `olympix-config.json` file demonstrating how to use the diffe
 ### info
 - The configuration file **must** be located at the **workspace root**.
 - It supports multiple detector slugs, files, contracts, and line numbers.
-- The settings apply **across all Olympix tools**.
+- The settings apply **across all Olympix tools**, with one exception: **BugPoCer does not use** `IgnoredPaths`, `TrustedPaths`, `TrustedVariables`, or `TrustedContracts`. Scope BugPoCer with its own `BugPocerScopePaths` / `BugPocerIgnorePaths` instead (see the [BugPoCer scope config](/cli/bugpocer/#scope-and-ignore-config)).
 
 ## Usage
 To use these features, ensure that:

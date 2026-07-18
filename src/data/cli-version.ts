@@ -1,6 +1,6 @@
 const MANIFEST_URL = 'https://olympix-download.s3.amazonaws.com/cli/manifest.json';
 
-const FALLBACK_VERSION = '0.11.74';
+const FALLBACK_VERSION = '0.11.99';
 const FALLBACK_BINARIES: Binaries = {
   'osx-arm64':   { url: `https://olympix-download.s3.amazonaws.com/cli/v${FALLBACK_VERSION}/osx-arm64/olympix`,       sha256: '', size: 0 },
   'osx-x64':     { url: `https://olympix-download.s3.amazonaws.com/cli/v${FALLBACK_VERSION}/osx-x64/olympix`,         sha256: '', size: 0 },

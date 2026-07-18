@@ -115,7 +115,7 @@ Send one JSON object per line to stdin:
 BugPocer's multi-stage pipeline maps to the following event/action sequence.
 
 :::note[Diff mode]
-Add `--diff-base <git ref>` (optionally `--diff-target <git ref>`) to constrain the scan to changed code — see [Diff mode](/cli/bugpocer/#diff-mode). The protocol below is unchanged, with one exception: an **empty diff** ends the run before `scope_review`, emitting a terminal `completed` event (`"No changed source files found…"`) instead of starting a session.
+Add `--diff-base <git ref>` (optionally `--diff-target <git ref>`) to constrain the scan to changed code — see [Diff mode](/cli/bugpocer/#diff-mode). Two differences from the flow below: the scope step arrives as an immutable **`diff_review`** event (the whole diff is the scope) with actions `["confirm_diff", "disconnect"]` instead of `scope_review`; and an **empty diff** ends the run before scope, emitting a terminal `completed` event (`"No changed source files found…"`) instead of starting a session.
 :::
 
 ### 1. Session Selection
@@ -138,6 +138,33 @@ Add `--diff-base <git ref>` (optionally `--diff-target <git ref>`) to constrain 
 
 - `new_session` with optional `{ "title": "My scan" }` — start a new scan
 - `connect_session` with `{ "session_id": "abc-123" }` — reconnect to an existing session
+
+### 1.5 Context Cache Review (conditional)
+
+**Event:** `context_cache_review` — emitted only when a prior context matches this codebase and `--rebuild-context` was not passed.
+
+```json
+{
+  "event": "context_cache_review",
+  "data": {
+    "match_type": "exact",
+    "source_session_id": "def-456",
+    "cached_at": "2026-07-01T12:00:00Z",
+    "overlap_percent": 100,
+    "changed_files": [],
+    "changed_files_total": 0,
+    "summary": {}
+  },
+  "actions": ["reuse_context", "rebuild_context", "disconnect"]
+}
+```
+
+**Actions:**
+
+- `reuse_context` — reuse the cached context (exact match) or seed context building from it (partial match)
+- `rebuild_context` — ignore the cache and build a fresh context
+
+`match_type` is `exact` (identical source fingerprint) or `partial` (`overlap_percent` ≥ 80). Closing stdin without answering defaults an exact match to reuse. See [Context Cache](/cli/bugpocer/#context-cache) for the rules.
 
 ### 2. Scope Review
 
@@ -269,6 +296,9 @@ This is the one prompt that spends credits. An EOF (closed stdin) or any unrecog
         "affected_code": "...",
         "file_path": "src/Vault.sol",
         "line_number": 42,
+        "bugpocer_verdict": "true_positive",
+        "user_verdict": "unreviewed",
+        "user_verdict_reason": null,
         "effective_verdict": "true_positive",
         "confidence_score": 90,
         "poc_summary": "...",
@@ -276,7 +306,7 @@ This is the one prompt that spends credits. An EOF (closed stdin) or any unrecog
       }
     ]
   },
-  "actions": ["ask_question", "generate_pdf", "save_pocs", "save_findings_md", "disconnect"]
+  "actions": ["set_verdict", "generate_pdf", "save_pocs", "save_findings_md", "disconnect"]
 }
 ```
 
@@ -285,20 +315,7 @@ When findings arrive, the CLI **auto-downloads** the PoC exploit files and the s
 - `save_pocs` — re-export PoCs → `pocs_saved` `{ "session_id", "saved_count", "output_path" }`
 - `save_findings_md` — re-export markdown → `findings_saved` `{ "session_id", "files": [{ "category", "count", "path" }] }`
 - `generate_pdf` — generate the PDF report → `pdf_generated` `{ "session_id", "pdf_path" }`
-- `ask_question` with `{ "question": "Explain the reentrancy" }` — ask a follow-up
-
-### 7. Q&A
-
-After `ask_question`, the CLI emits `qa_waiting` while the model responds, then:
-
-**Event:** `question_answered`
-
-```json
-{
-  "event": "question_answered",
-  "data": { "session_id": "abc-123", "answer": "The reentrancy exists because..." }
-}
-```
+- `set_verdict` with `{ "finding_id": "f1", "verdict": true, "reason": "confirmed" }` — record your user verdict (`true` = true positive, `false` = false positive, `null` = clear to unreviewed) → `verdict_set`
 
 ---
 
@@ -468,7 +485,7 @@ olympix bug-pocer --agent <<'EOF'
 EOF
 ```
 
-The CLI emits `scope_review`, then a `validation_item` for each inference, then (optionally) `security_question`s and the `additional_docs_prompt`, and finally `initial_scan_completed` / `findings_ready`. Respond to each with one of its advertised `actions`.
+The CLI emits `context_cache_review` (if a prior context matches), then `scope_review` (or `diff_review` in diff mode), then a `validation_item` for each inference, then (optionally) `security_question`s and the `additional_docs_prompt`, and finally `initial_scan_completed` / `findings_ready`. Respond to each with one of its advertised `actions`.
 
 :::caution[One line per JSON object]
 The protocol is newline-delimited JSON (NDJSON). Each command must be a single line — do not pretty-print commands sent to stdin.
