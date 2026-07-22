@@ -317,6 +317,25 @@ When findings arrive, the CLI **auto-downloads** the PoC exploit files and the s
 - `generate_pdf` — generate the PDF report → `pdf_generated` `{ "session_id", "pdf_path" }`
 - `set_verdict` with `{ "finding_id": "f1", "verdict": true, "reason": "confirmed" }` — record your user verdict (`true` = true positive, `false` = false positive, `null` = clear to unreviewed) → `verdict_set`
 
+### Killing a Session
+
+`kill-bp-session` terminates an active session. It is a one-shot command — the session ID is passed as a flag and no stdin input is needed:
+
+```bash
+olympix kill-bp-session -s <session-id> --agent
+```
+
+**Event:** `session_killed`
+
+```json
+{
+  "event": "session_killed",
+  "data": { "session_id": "abc-123", "was_running": true }
+}
+```
+
+`was_running` is `false` when the session was not running (e.g. already completed). A missing session ID or no acknowledgment within 30 seconds emits an `error` event and exits non-zero.
+
 ---
 
 ## Test Generator Agent Protocol

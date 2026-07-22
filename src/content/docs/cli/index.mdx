@@ -26,6 +26,8 @@ When you run the Olympix CLI, you have access to several commands:
 - **`generate-unit-tests`**: Generate unit tests
 - **`generate-mutation-tests`**: Generate mutation tests
 - **`generate-fuzz-tests`**: Generate fuzz tests
+- **`list-bp-sessions`**: List active BugPocer sessions (with IDs and statuses)
+- **`kill-bp-session`**: Kill an active BugPocer session by ID
 - **`show-vulnerabilities`**: Show the vulnerability types that the analyzer aims to find
 
 **Agent Mode (AI integrations):**
@@ -171,6 +173,8 @@ olympix analyze [-w | --workspace-path <workspace directory>] [-p | --path <anal
 olympix generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confirm-all] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
 olympix generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --t <timeout>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
 olympix generate-fuzz-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-cm | --coverage-mode <path|branch>] [-cl | --chain-length <length>]
+olympix list-bp-sessions
+olympix kill-bp-session [-s | --session-id <session id>]
 
 # Agent mode (AI integrations)
 olympix bug-pocer --agent

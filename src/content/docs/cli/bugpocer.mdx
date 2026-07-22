@@ -213,6 +213,18 @@ Running `olympix bug-pocer` on a project with existing sessions shows the sessio
 | `ValidationCompleted` | Context approved, initial scan running |
 | `InitialScanCompleted` | Scan finished, findings available for review |
 
+### Killing a session
+
+To terminate an active session — one started by mistake, or one you no longer want to continue — use:
+
+```bash
+olympix kill-bp-session -s <session-id>
+```
+
+The CLI confirms whether the session was actually running when killed, or had already completed. To find the session ID, run `olympix list-bp-sessions` (prints each session's ID and status) or `olympix sessions --agent`.
+
+The command also works in [agent mode](/cli/agent-mode/#killing-a-session), emitting a `session_killed` event.
+
 ---
 
 ## Scope Selection
