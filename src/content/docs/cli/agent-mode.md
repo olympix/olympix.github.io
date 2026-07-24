@@ -46,12 +46,18 @@ olympix unit-testing --agent
 # Mutation testing in agent mode
 olympix mutation-testing --agent
 
+# Fuzz testing in agent mode
+olympix generate-fuzz-tests -p src/Vault.sol --agent
+olympix connect-fuzz-session -s <session-id> --agent
+
 # Static analysis in agent mode
 olympix static-analysis --agent
 
 # List all sessions (agent mode only)
 olympix sessions --agent
 ```
+
+`tui`, `theme`, `login`, `login-sso` and the `org-*` commands have no agent protocol — they ignore `--agent` and stay interactive.
 
 Alternatively, set the environment variable:
 
@@ -110,9 +116,46 @@ Send one JSON object per line to stdin:
 
 ---
 
+## Static Analysis Agent Protocol
+
+Both `analyze` and `static-analysis` run a **fresh scan** in agent mode. `static-analysis` skips its interactive session picker rather than reconnecting to a previous run, so the two commands behave identically here.
+
+```bash
+olympix analyze -w . --agent
+olympix static-analysis -w . --agent
+```
+
+**Event:** `findings_ready` — reuses the BugPocer findings shape, with the verdict and PoC fields defaulted to `"n/a"` and `session_id` null:
+
+```json
+{
+  "event": "findings_ready",
+  "data": {
+    "session_id": null,
+    "findings": [
+      {
+        "id": "f1",
+        "title": "unchecked-return-value",
+        "severity": "High",
+        "description": "...",
+        "affected_code": "...",
+        "file_path": "src/Vault.sol",
+        "line_number": 42
+      }
+    ]
+  }
+}
+```
+
+The CLI exits 0 straight after emitting the findings — no action is required. Findings you have ignored in `opix.config.json` are filtered out before the event is emitted. A workspace with no Solidity files emits an `error` event and exits non-zero.
+
+---
+
 ## BugPocer Agent Protocol
 
 BugPocer's multi-stage pipeline maps to the following event/action sequence.
+
+`bug-pocer` starts at session selection. `start-bp-session` skips `sessions_list`/`new_session` and begins directly at step 2 (`scope_review`, or `diff_review` in diff mode); the rest of the flow is identical and it accepts the same `--diff-base`/`--diff-target` flags.
 
 :::note[Diff mode]
 Add `--diff-base <git ref>` (optionally `--diff-target <git ref>`) to constrain the scan to changed code — see [Diff mode](/cli/bugpocer/#diff-mode). Two differences from the flow below: the scope step arrives as an immutable **`diff_review`** event (the whole diff is the scope) with actions `["confirm_diff", "disconnect"]` instead of `scope_review`; and an **empty diff** ends the run before scope, emitting a terminal `completed` event (`"No changed source files found…"`) instead of starting a session.
@@ -340,7 +383,7 @@ olympix kill-bp-session -s <session-id> --agent
 
 ## Test Generator Agent Protocol
 
-`unit-testing`, `mutation-testing`, and the `generate-*` commands share the session / file-selection flow.
+`unit-testing`, `mutation-testing`, `generate-unit-tests` and `generate-mutation-tests` share the session / file-selection flow. Fuzz generation follows a different, dispatch-only flow — see [Fuzz Test Generator Agent Protocol](#fuzz-test-generator-agent-protocol).
 
 ### Session & file selection
 
@@ -425,24 +468,95 @@ The generated `.t.sol` test files are written into the workspace automatically.
 
 ---
 
+## Fuzz Test Generator Agent Protocol
+
+Fuzz runs are **long-lived**. `generate-fuzz-tests` only dispatches the run and returns a session ID — full results are emailed and can be pulled back later with `connect-fuzz-session`.
+
+```bash
+# Dispatch a run (returns a session_id; results arrive by email)
+olympix generate-fuzz-tests -w . -p src/Vault.sol --agent
+
+# List your fuzz sessions
+olympix list-fuzz-sessions --agent
+
+# Fetch a finished session's summary (+ optional PDF report)
+olympix connect-fuzz-session -s <session-id> --agent
+
+# Session manager: list, then reconnect, in one process
+olympix fuzz-testing -w . --agent
+```
+
+### Dispatching a run
+
+`generate-fuzz-tests` emits a `progress` event carrying the new session ID, then a terminal `completed` event:
+
+```json
+{
+  "event": "completed",
+  "data": { "type": "fuzz_test", "session_id": "abc-123", "message": "Fuzz generation started; results pending." }
+}
+```
+
+### Fetching results
+
+`connect-fuzz-session` (and `connect_session` from a session list) emits a summary of the finished run:
+
+**Event:** `fuzz_test_results`
+
+```json
+{
+  "event": "fuzz_test_results",
+  "data": {
+    "session_id": "abc-123",
+    "contracts": 3,
+    "strategies": 7,
+    "test_cases": 128,
+    "exploit_test_cases": 2
+  },
+  "actions": ["generate_report", "disconnect"]
+}
+```
+
+- `generate_report` — render the PDF report → `pdf_generated` `{ "session_id", "pdf_path" }`
+- `disconnect` — exit without generating a report
+
+If the run has not finished yet, the CLI emits `results_ready` `{ "type": "fuzz_test", "session_id", "message": "Results not ready yet…" }` instead and exits.
+
+### Session manager
+
+`list-fuzz-sessions` and `fuzz-testing` both emit `sessions_list` (actions `new_session`, `connect_session`, `disconnect`) and then follow the fetch flow above once you send `connect_session`.
+
+:::note[Starting a run]
+These two commands accept `connect_session` only. `new_session` returns an `error` event — dispatch a new run with `generate-fuzz-tests -p <file> --agent` instead.
+:::
+
+---
+
 ## File Output
 
 In agent mode, the CLI writes structured results to `.opix/agent/` within the workspace:
 
 ```
 .opix/agent/
-├── <session-id>/          # BugPocer, per session
+├── <session-id>/          # BugPocer, per session ("pending/" until the ID is known)
 │   ├── scope.json         # Scope review data
+│   ├── diff.json          # Diff review data (diff mode)
+│   ├── context-cache.json # Context cache review data
 │   ├── report.json        # Initial scan report
 │   ├── findings.json      # Findings (mirrors findings_ready)
 │   └── qa.json            # Q&A exchange history
+├── bug-pocer/
+│   └── sessions.json      # Session list
 ├── unit-tests/
 │   ├── sessions.json      # Session list
 │   ├── contracts.json     # Available contracts
 │   └── results.json       # Test results
-└── mutation-tests/
+├── mutation-tests/
+│   ├── sessions.json      # Session list
+│   └── results.json       # Test results
+└── fuzz-tests/
     ├── sessions.json      # Session list
-    └── results.json       # Test results
+    └── results.json       # Fuzz run summary
 ```
 
 Files are written atomically (temp file + rename) and use snake_case JSON.
@@ -461,7 +575,7 @@ The `sessions` command is agent-mode-only and returns active sessions across all
 olympix sessions --agent
 ```
 
-**Event:** `all_sessions` — sessions grouped per service (BugPocer, unit tests, mutation tests).
+**Event:** `all_sessions` — sessions grouped per service, as the arrays `bug_pocer`, `unit_tests`, `mutation_tests`, `fuzz_tests` and `static_analysis`. Each entry has `id`, `title`, `status` and `created_at`.
 
 ---
 
