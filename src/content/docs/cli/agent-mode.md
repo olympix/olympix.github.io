@@ -479,7 +479,7 @@ olympix generate-fuzz-tests -w . -p src/Vault.sol --agent
 # List your fuzz sessions
 olympix list-fuzz-sessions --agent
 
-# Fetch a finished session's summary (+ optional PDF report)
+# Fetch a finished session's summary + generated test files (+ optional PDF report)
 olympix connect-fuzz-session -s <session-id> --agent
 
 # Session manager: list, then reconnect, in one process
@@ -511,16 +511,38 @@ olympix fuzz-testing -w . --agent
     "contracts": 3,
     "strategies": 7,
     "test_cases": 128,
-    "exploit_test_cases": 2
+    "exploit_test_cases": 2,
+    "tests_path": "/repo/fuzz_tests_abc-123",
+    "tests_file_count": 9
   },
-  "actions": ["generate_report", "disconnect"]
+  "actions": ["download_tests", "generate_report", "disconnect"]
 }
 ```
 
+- `download_tests` — re-download the generated test files → `fuzz_tests_downloaded`
 - `generate_report` — render the PDF report → `pdf_generated` `{ "session_id", "pdf_path" }`
-- `disconnect` — exit without generating a report
+- `disconnect` — exit
 
 If the run has not finished yet, the CLI emits `results_ready` `{ "type": "fuzz_test", "session_id", "message": "Results not ready yet…" }` instead and exits.
+
+### Generated test files
+
+When results arrive, the CLI **auto-downloads** the generated Solidity test sources — the same files attached to the completion email — into `fuzz_tests_<session-id>/` in the working directory, and emits `fuzz_tests_downloaded` before `fuzz_test_results`:
+
+```json
+{
+  "event": "fuzz_tests_downloaded",
+  "data": {
+    "session_id": "abc-123",
+    "saved_count": 9,
+    "output_path": "/repo/fuzz_tests_abc-123",
+    "files": ["Vault_Reentrancy.t.sol", "Vault_ForcedRevert.t.sol"]
+  },
+  "actions": ["download_tests", "generate_report", "disconnect"]
+}
+```
+
+The same location is echoed on `fuzz_test_results` as `tests_path` / `tests_file_count`. No action is needed to get the files — `download_tests` only re-downloads them. If the session has no stored test files, the CLI reports it as a `progress` event and continues; the summary and PDF are unaffected.
 
 ### Session manager
 
@@ -556,8 +578,10 @@ In agent mode, the CLI writes structured results to `.opix/agent/` within the wo
 │   └── results.json       # Test results
 └── fuzz-tests/
     ├── sessions.json      # Session list
-    └── results.json       # Fuzz run summary
+    └── results.json       # Fuzz run summary (tests_path points at the downloaded test files)
 ```
+
+Generated artifacts land outside `.opix/agent/`, in the working directory: fuzz test sources in `fuzz_tests_<session-id>/` and the fuzz PDF report alongside it.
 
 Files are written atomically (temp file + rename) and use snake_case JSON.
 

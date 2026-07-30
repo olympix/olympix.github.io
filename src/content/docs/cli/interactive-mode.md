@@ -80,6 +80,19 @@ olympix unit-testing -w /path/to/project
 - **`olympix analyze`** / **`olympix generate-unit-tests`** / etc. — the original non-interactive commands, still available for scripting and CI/CD.
 :::
 
+### Fuzz test results menu
+
+Reopening a completed fuzz session (from `olympix fuzz-testing`, `olympix list-fuzz-sessions` or `olympix connect-fuzz-session -s <session id>`) lands on a menu:
+
+| Option | Action |
+|--------|--------|
+| `[0]` | Display Results (contracts, strategies, test cases, exploit test cases) |
+| `[1]` | Generate and Save PDF Report |
+| `[2]` | Download Generated Test Files |
+| `[3]` | Back to Sessions |
+
+**Download Generated Test Files** writes the generated Solidity test sources — the same files attached to the completion email — into `fuzz_tests_<session id>/` in the current directory, so you no longer have to go through the email to get them.
+
 ---
 
 ## Access Tiers
