@@ -303,7 +303,7 @@ For Solidity this also covers the Foundry filename conventions `*.t.sol` and `*.
 **Rust and Cairo** additionally prune `target`, `target_bugpocer`, `node_modules`, `.git`, `fixtures`, `benches`, and `vendor` (Rust) / `.snfoundry_cache`, `mock_contracts` (Cairo). They also exclude by **filename**: `test_*`, `*_test.rs` / `*_test.cairo`, `tests.rs` / `tests.cairo`, and any name containing `.test.` — so a production module named `test_utils.rs` will not be scanned. Rename it if you need it in scope.
 
 :::note[Excluded does not mean unread]
-These rules decide what BugPoCer picks as a **scan target**. Files under `test/`, `mocks/`, `examples/`, `script/`, `certora/` and `lib/` are still uploaded and parsed, and the engine can read them for context — so a finding in your source can still cite a mock or a test that sets up the conditions.
+These rules decide what BugPoCer picks as a **scan target**. Files under `test/`, `mocks/`, `examples/`, `script/`, `certora/` and `lib/` are still uploaded, and the engine can read them for context — so a finding in your source can still cite a mock or a test that sets up the conditions.
 
 Build and package directories are a different matter: `out`, `cache`, `build`, `dist`, `artifacts`, `coverage`, `target`, `.snfoundry_cache` are never uploaded at all, and `node_modules` is uploaded only when the run needs JS dependency source (Hardhat, Foundry, or a TypeScript-tested Anchor project).
 :::
