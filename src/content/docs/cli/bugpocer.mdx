@@ -284,13 +284,36 @@ In addition to the interactive picker, you can pre-seed scope with a config file
 
 BugPoCer automatically excludes common non-production and dependency paths. Entries are matched as **case-insensitive path segments** — a whole `/`-delimited path segment must match, not an arbitrary substring.
 
-For **Solidity** projects, any file with one of these path segments is ignored:
+Because matching is by segment, a contract is never excluded just because its **name** contains one of these words — `Attestation.sol`, `ContestToken.sol`, `LatestAnswer.sol` and `Permit2Lib.sol` all stay in scope.
+
+Two categories are excluded. **Non-production code**, in every language:
+
+`test`, `tests`, `mock`, `mocks`, `example`, `examples`, `script`, `scripts`, `certora`
+
+For Solidity this also covers the Foundry filename conventions `*.t.sol` and `*.s.sol` anywhere in the tree, plus whatever `test` and `script` directories your `foundry.toml` declares (so a project using `test = "spec"` has `spec/` excluded too).
+
+**Vendored dependencies**, for Solidity — `lib/` at the repository root, plus any file with one of these path segments:
 
 `node_modules`, `dependencies`, `forge-std`, `ds-test`, `openzeppelin`, `openzeppelin-contracts`, `openzeppelin-contracts-upgradeable`, `openzeppelin-foundry-upgrades`, `solmate`, `solady`, `prb-math`, `prb-test`, `murky`, `permit2`, `erc4626-tests`, `erc6900`, `v2-core`, `v2-periphery`, `v3-core`, `v3-periphery`, `v4-core`, `v4-periphery`, `uniswap-v2`, `uniswap-v3`, `uniswap-v4`, `aave-v2`, `aave-v3`, `chainlink`, `chainlink-brownie-contracts`, `balancer-v2`, `curve`
 
-For **Rust** projects: `target`, `test`, `tests`, `mock`, `mocks`, `example`, `examples`, `node_modules`.
+Rust and Cairo add their build and vendor directories: `target`, `target_bugpocer`, `node_modules`, `fixtures`, `benches`, `vendor` (Rust) and `.snfoundry_cache`, `mock_contracts` (Cairo).
 
-For **Cairo** projects: `target`, `test`, `tests`, `mock`, `mocks`, `mock_contracts`, `example`, `examples`, `node_modules`, `.snfoundry_cache`.
+:::note[Excluded does not mean unread]
+These rules decide what BugPoCer picks as a **scan target**. Excluded files are still uploaded and parsed, and the engine can read them for context — so a finding in your source can still cite a mock or a test that sets up the conditions.
+:::
+
+#### Scanning an excluded path anyway
+
+Naming a path in `BugPocerScopePaths` overrides the built-in exclusion for that path. The rule is that a declared path is treated as vetted, and only what lies *beneath* it is still filtered:
+
+| `BugPocerScopePaths` | File | Result |
+| --- | --- | --- |
+| `["examples/apps"]` | `examples/apps/Router.sol` | Scanned |
+| `["examples/apps"]` | `examples/apps/test/Router.t.sol` | Still excluded |
+| `["src"]` | `src/test/Vault.t.sol` | Still excluded |
+| `["src/Invariants.t.sol"]` | `src/Invariants.t.sol` | Scanned — naming an exact file always wins |
+
+So to audit a reference implementation that lives under `examples/`, add it to `BugPocerScopePaths`; you no longer need to rename the directory.
 
 :::note[Difference from other Olympix tools]
 BugPoCer does **not** use the general `IgnoredPaths`, `TrustedPaths`, `TrustedVariables`, or `TrustedContracts` options. Use `BugPocerScopePaths` and `BugPocerIgnorePaths` instead.
