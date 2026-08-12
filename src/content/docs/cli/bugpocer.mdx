@@ -285,7 +285,7 @@ In addition to the interactive picker, you can pre-seed scope with a config file
 BugPoCer automatically excludes common non-production and dependency paths. Entries are matched as **case-insensitive path segments** — a whole `/`-delimited path segment must match, not an arbitrary substring.
 
 :::note[Requires a recent CLI]
-Segment matching and the `BugPocerScopePaths` override below landed together. On older CLIs these patterns matched as substrings anywhere in the path, so a contract could be dropped for its name alone (`Attestation.sol` matched `test`), and nothing could opt an excluded path back in. Run `olympix update` if the behaviour here does not match what you see.
+Segment matching and the `BugPocerScopePaths` override below landed together. On older CLIs these patterns matched as substrings anywhere in the path, so a contract could be dropped for its name alone (`Attestation.sol` matched `test`); protocol names like `chainlink` matched at any depth, dropping first-party integration directories; and nothing could opt an excluded path back in. Run `olympix update` if the behaviour here does not match what you see.
 :::
 
 Because directory matching is by segment, a Solidity contract is never excluded just because its **name** contains one of these words — `Attestation.sol`, `ContestToken.sol`, `LatestAnswer.sol` and `Permit2Lib.sol` all stay in scope.
@@ -296,9 +296,13 @@ Two categories are excluded. **Non-production code**, in every language:
 
 For Solidity this also covers the Foundry filename conventions `*.t.sol` and `*.s.sol` anywhere in the tree, plus whatever `test` and `script` directories your `foundry.toml` declares (so a project using `test = "spec"` has `spec/` excluded too).
 
-**Vendored dependencies**, for Solidity — `lib/` at the repository root, plus any file with one of these path segments:
+**Vendored dependencies**, for Solidity — a dependency is recognised by *where* it lives:
 
-`node_modules`, `dependencies`, `forge-std`, `ds-test`, `openzeppelin`, `openzeppelin-contracts`, `openzeppelin-contracts-upgradeable`, `openzeppelin-foundry-upgrades`, `solmate`, `solady`, `prb-math`, `prb-test`, `murky`, `permit2`, `erc4626-tests`, `erc6900`, `v2-core`, `v2-periphery`, `v3-core`, `v3-periphery`, `v4-core`, `v4-periphery`, `uniswap-v2`, `uniswap-v3`, `uniswap-v4`, `aave-v2`, `aave-v3`, `chainlink`, `chainlink-brownie-contracts`, `balancer-v2`, `curve`
+- `lib/` at the repository root (the Foundry convention). `lib/` deeper in the tree is yours: `src/lib/Math.sol` is in scope.
+- `node_modules/` or `dependencies/` at any depth.
+- A handful of package names that can only ever be a vendored copy, wherever they sit: `forge-std`, `ds-test`, `openzeppelin-contracts`, `openzeppelin-contracts-upgradeable`, `openzeppelin-foundry-upgrades`, `solmate`, `solady`, `prb-math`, `prb-test`, `murky`, `erc4626-tests`.
+
+Protocol names are deliberately **not** on that list. A directory called `chainlink`, `curve`, `aave-v3`, `uniswap-v3`, `v4-core`, `permit2` or `openzeppelin` is just as likely to be your own integration code or a monorepo package, so `src/oracles/chainlink/PriceFeed.sol` and `packages/v4-core/src/PoolManager.sol` are scanned. Under `lib/` or `node_modules/` they are still dependencies.
 
 **Rust and Cairo** additionally prune `target`, `target_bugpocer`, `node_modules`, `.git`, `fixtures`, `benches`, and `vendor` (Rust) / `.snfoundry_cache`, `mock_contracts` (Cairo). They also exclude by **filename**: `test_*`, `*_test.rs` / `*_test.cairo`, `tests.rs` / `tests.cairo`, and any name containing `.test.` — so a production module named `test_utils.rs` will not be scanned. Rename it if you need it in scope.
 
@@ -310,7 +314,7 @@ Build and package directories are a different matter: `out`, `cache`, `build`, `
 
 #### Scanning an excluded path anyway
 
-**Solidity only.** Naming a path in `BugPocerScopePaths` overrides the built-in exclusion for that path. A declared path is treated as vetted, and only what lies *beneath* it is still filtered:
+Naming a path in `BugPocerScopePaths` overrides the built-in exclusion for that path, in every language. A declared path is treated as vetted, and only what lies *beneath* it is still filtered:
 
 | `BugPocerScopePaths` | File | Result |
 | --- | --- | --- |
@@ -324,12 +328,14 @@ Build and package directories are a different matter: `out`, `cache`, `build`, `
 
 So to audit a reference implementation under `examples/`, add it to `BugPocerScopePaths` — you no longer need to rename the directory.
 
+Declaring a scope can only ever **widen** what the built-in rules allow. It never excludes something that would otherwise have been scanned, so adding `"src"` cannot cost you `src/lib/Math.sol`.
+
 :::caution[`BugPocerScopePaths` is positive scoping]
 It does not just add — once it is non-empty, **only** files matching one of its entries are in scope. List your real source alongside the path you are opting in: `["src", "examples/apps"]`, not `["examples/apps"]`.
 :::
 
-:::note[Rust and Cairo]
-These languages prune excluded directories during file discovery, before scope configuration is applied, so `BugPocerScopePaths` cannot opt a path back in. Rename the directory if you need it scanned.
+:::note[Rust and Cairo: the local scope picker]
+The override applies to the scan itself. The CLI's interactive scope picker prunes Rust and Cairo directories while walking the project, before your config is read, so an opted-in directory will not appear in the picker even though the scan covers it.
 :::
 
 :::note[Difference from other Olympix tools]
