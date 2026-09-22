@@ -109,6 +109,9 @@ olympix bug-pocer
 | `--diff-base <git ref>` | Enable [diff mode](#diff-mode) — scan only the code changed relative to this commit, branch, or tag |
 | `--diff-target <git ref>` | Other end of the diff (must be the checked-out `HEAD`); defaults to the working tree. Requires `--diff-base` |
 | `--framework foundry\|hardhat` | Pin the framework for a **multiframework** repo — one with both a `foundry.toml` and a `hardhat.config.*`. No effect on single-framework repos. |
+| `--directed` | Start a [directed scan](#directed-mode) — investigate only the domains and custom directions you choose |
+| `--domains <id,...>` | Comma-separated [domains](#domains) to investigate. Requires `--directed` |
+| `--directions-file <path>` | File of [custom directions](#custom-directions). Requires `--directed` |
 
 :::tip[Including env variables]
 If your tests need `RPC URLs`, `API keys`, `private keys`, etc., pass them with `-env` (reads from `.env`) or `--env-file <path>` for a custom file. Use whatever `.env` format your project's test framework already reads (e.g. `KEY=value` lines).
@@ -148,6 +151,87 @@ How it behaves:
 :::note[Uncommitted changes vs. an explicit `--diff-target`]
 If you pass an explicit `--diff-target` commit while your working tree has uncommitted changes, the scan reads files from disk and could misreport changed line numbers against that commit. The CLI detects this and asks whether to compare against your **working tree** (recommended) or the committed `--diff-target`.
 :::
+
+---
+
+## Directed Mode
+
+A standard scan prioritizes the riskiest code across your whole scope. A **directed scan** focuses BugPoCer on what you care about: a set of risk **domains**, your own **custom directions** (specific questions about the code), or both. BugPoCer plans its work around those targets, and an independent scope review drops any finding that doesn't connect to one of them before it's verified or reported.
+
+```bash
+# Open the directed setup screen
+olympix bug-pocer --directed
+
+# Prefill it with domains and a directions file
+olympix bug-pocer --directed --domains vaults,oracles --directions-file targets.md
+```
+
+| Flag | Description |
+|------|-------------|
+| `--directed` | **Enables directed mode.** Skips the session picker and goes straight to a new directed session. |
+| `--domains <id,...>` | Comma-separated domain IDs from the [table below](#domains). Requires `--directed`. |
+| `--directions-file <path>` | A file of [custom directions](#custom-directions). Requires `--directed`. |
+
+Passing `--domains` or `--directions-file` without `--directed` is an error.
+
+You can also start a directed scan from the [session picker](#session-picker): choose **Start a new session**, then **Directed scan**.
+
+### Setup screen
+
+Interactive runs open a setup screen before [scope selection](#scope-selection), prefilled with any flags you passed:
+
+- Toggle domains with `Space`; the highlighted domain's description is shown below the list.
+- **Add / replace directions file**, **Preview directions** (page through each loaded direction), and **Remove directions file**.
+- **Continue to scope review** once at least one domain or direction is selected.
+
+Scope selection, [diff mode](#diff-mode), and your scope/ignore config still apply: directed mode decides *what to look for* within the code you've scoped. In non-interactive runs (`--confirm-all`, CI, or agent mode) the flags are used as given, so pass at least one domain or a directions file.
+
+### Domains
+
+Domains are available for **Solidity** projects.
+
+| ID | Domain | Covers |
+|----|--------|--------|
+| `tokens` | Tokens & ERC standards | Token transfers, approvals, permit signatures, minting and NFT integration behavior |
+| `vaults` | Vaults & yield strategies | Vault shares, deposits, withdrawals, yield strategies, fees and ERC-4626 accounting |
+| `lending` | Lending & liquidations | Collateral, debt, interest, borrowing and liquidation safety |
+| `trading` | Exchanges, liquidity & trading | Swaps, liquidity, routing, AMM hooks, slippage and trading-related price manipulation |
+| `staking` | Staking & rewards | Stake accounting, reward distribution, delegation, slashing and withdrawals |
+| `oracles` | Oracles & pricing | Price freshness, manipulation, normalization, derived prices and fallback behavior |
+| `bridges` | Bridges & cross-chain messaging | Message authenticity, replay, finality and cross-chain asset accounting |
+| `governance` | Governance & voting | Voting power, proposals, timelocks and governance execution |
+| `signatures` | Signatures & authorization | Signed-message validation, replay protection, smart-wallet signatures and relayed authorization |
+| `upgrades` | Proxies & upgrades | Initialization, upgrade authorization, storage compatibility and delegatecall behavior |
+| `access-control` | Access control & permissions | Role assignment, privileged entry points, ownership, configuration setters and permission boundaries |
+| `external-calls` | External calls & reentrancy | External interactions, callbacks, hooks, call ordering, reentrancy and return-value handling |
+
+### Custom directions
+
+Custom directions work for every supported language. Write each one as a specific question about your code, in Markdown/plain text or JSON.
+
+**Markdown or text** (`.md`, `.txt`): one bullet or paragraph per direction. Indented lines continue the previous bullet, and headings are ignored.
+
+```markdown
+# Lending review
+
+- Can a stale oracle price let a user borrow more than their collateral allows?
+- Can repeated small deposits round vault share prices in the depositor's favor?
+  Pay particular attention to the first deposit into an empty vault.
+```
+
+**JSON** (`.json`): an object with a `targets` array of strings.
+
+```json
+{ "targets": ["Can a stale oracle price let a user borrow more than their collateral allows?"] }
+```
+
+Limits: at most **32** directions, **8,000** characters each, and **32,000** characters in total.
+
+:::note[Quota and coverage]
+Directed scans use the same Full or Diff run quota as a standard scan, depending on their code scope. A directed scan with no findings is not proof that the targeted area is safe — BugPoCer may miss relevant paths or fail to establish a real bug.
+:::
+
+Directed sessions are labelled **DIRECTED** in the session picker.
 
 ---
 
@@ -191,7 +275,7 @@ Projects with more than **100,000 files** are too large to fingerprint and skip 
 
 Running `olympix bug-pocer` on a project with existing sessions shows the session picker:
 
-- **Start a new session** — begin a fresh scan.
+- **Start a new session** — begin a fresh scan. You're asked whether it's a **Standard scan** or a [**Directed scan**](#directed-mode).
 - **Return to an active session** — continue an in-progress scan.
 - **Reconnect to a past session** — review results from a completed scan.
 
