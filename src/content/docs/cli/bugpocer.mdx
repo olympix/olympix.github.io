@@ -170,7 +170,7 @@ olympix bug-pocer --directed --domains vaults,oracles --directions-file targets.
 |------|-------------|
 | `--directed` | **Enables directed mode.** Skips the session picker and goes straight to a new directed session. |
 | `--domains <id,...>` | Comma-separated domain IDs from the [table below](#domains). Requires `--directed`. |
-| `--directions-file <path>` | A file of [custom directions](#custom-directions). Requires `--directed`. |
+| `--directions-file <path>` | A file of [custom directions](#custom-directions). Requires `--directed`. Relative paths resolve from the directory you run the CLI in, not from `-w`. |
 
 Passing `--domains` or `--directions-file` without `--directed` is an error.
 
