@@ -304,7 +304,7 @@ Skip the pre-flight check entirely with `-sp` / `--skip-preflight`.
 
 ### Server-side build check
 
-After upload, the backend runs its own build (`forge build` / `npx hardhat compile` / `cargo build` / `scarb build`; up to a ~30-minute cap). **A successful build is not required to scan.** If the build fails, the scan still runs and findings are still reported — but **proof-of-concept generation is skipped, so those findings can only reach [Unverified](#verdict-terminology), never a confirmed True Positive** (a non-compiling test can't prove exploitability). You're prompted `[c]ontinue with findings only  |  [k]ill session` (non-interactive runs continue automatically). For full results with PoCs, make the build pass locally and start a new scan.
+After upload, the backend runs its own build (`forge build` / `npx hardhat compile` / `cargo build` / `scarb build`; up to a ~30-minute cap). **A successful build is not required to scan.** If the build fails, the scan still runs and findings are still reported — but **proof-of-concept generation is skipped, so those findings can only reach [Needs Further Review](#bugpocer-assessment-and-your-verdict), never Verified** (a non-compiling test can't prove exploitability). You're prompted `[c]ontinue with findings only  |  [k]ill session` (non-interactive runs continue automatically). For full results with PoCs, make the build pass locally and start a new scan.
 
 ---
 
@@ -526,80 +526,109 @@ When the scan completes, reopen the session from the picker. You'll land on a me
 | `[3]` | Save PoCs (one file per finding) |
 | `[4]` | Back to Sessions |
 
-### Verdict terminology
+### BugPoCer assessment and your verdict
 
-There are two distinct classifications attached to every finding: what the **engine** thinks, and what **you** think.
+Every finding carries two separate calls: what **BugPoCer** concluded, and what **you** decided.
 
-**Engine classification** — determined by the engine and whether it could machine-verify the exploit:
+**BugPoCer assessment**: how far BugPoCer got in proving the finding.
 
-- **True Positive (TP)** — the engine confirmed the bug *and* its generated PoC compiled and reproduced the exploit.
-- **Unverified** — the engine flagged the issue but the PoC did not compile (or the Foundry build failed). Exploitability isn't machine-verified, so these still warrant a human look.
-- **False Positive** — the PoC compiled but did not reproduce the bug.
+| Assessment | Badge | Meaning |
+|------------|-------|---------|
+| **Verified** | `VERIFIED` (green) | BugPoCer confirmed the bug and produced a proof-of-concept exploit for it. |
+| **Needs Further Review** | `NFR` (yellow) | BugPoCer flagged the issue but couldn't prove it: the PoC didn't compile or ran without showing harm, the project build failed, or verification needed context it didn't have. These still warrant a human look. |
+| **Not Exploitable** | `NOT EXPLOITABLE` (grey) | BugPoCer investigated the finding and ruled it out. |
 
-:::caution[TP vs Non-TP in the CLI display]
-The [interactive findings pager](#interactive-findings-pager) collapses this into a binary badge: **`TP`** (green) for confirmed true positives, **`NON-TP`** (yellow) for everything else. Unverified findings are folded into `NON-TP` in the pager — you can tell them apart by reading the finding's PoC summary. The **exported reports** (PDF and Markdown) break out all three categories separately.
+**Your verdict**: `ACCEPTED` (green), `REJECTED` (grey) or `NOT REVIEWED` (grey), set from the [findings pager](#interactive-findings-pager). Your verdict takes precedence: a finding you accept shows and counts as Verified, and one you reject as Not Exploitable, in the pager, its counts and every export. The reviewer badge stays beside it, so you can always tell a person made the call.
+
+:::note[Not Exploitable findings are hidden by default]
+Findings BugPoCer ruled out don't appear in the pager or its counts; the header shows how many are hidden. To show them, open **Settings** from the main menu (`s`) and turn on **Show Not Exploitable findings**, or set `"showNotExploitableFindings": true` in `~/.opix/config.json`. Findings you rejected yourself always stay visible. Exports aren't affected: they use the filter you pick when exporting.
 :::
-
-**User verdict** — your own verdict on each finding, displayed beside the engine badge in the pager as `VERDICT: TP` / `VERDICT: NON-TP` / `VERDICT: —` (unset). User verdicts are stored independently of the engine's classification.
 
 :::tip[Record your verdicts]
 Taking the time to mark each finding pays off twice. Your verdicts show up in every export (so the PDF/Markdown you hand off is already triaged), and they feed back into BugPoCer to improve your future scans on similar code.
 :::
 
+### Finding groups
+
+BugPoCer groups findings that share **one root cause and one fix**, for example the same access check missing from several functions. Each member is still its own finding with its own severity, assessment and verdict; the group tells you they are one defect to fix once.
+
+- **In the pager**, every member carries a `GROUP` badge, and the group's lead finding carries `GROUP*`. The lead is always a Verified finding when the group has one. Members are listed together, lead first, and the group sorts by its most severe member. Press `Enter` on a member to see the group's title and shared root cause.
+- **In the Markdown and PDF exports**, a group is one entry: a heading with the group's title, the root cause and the fix, then its members lettered `a)`, `b)`, …. The group is filed under the severity of its most severe member, so a Medium member can appear under High.
+
 ### Interactive findings pager
+
+The pager lists ten findings per page. The header shows the session, the number of findings (and how many Not Exploitable ones are hidden), and the count per assessment: **Verified**, **Needs review**, and **Rejected**, or **Not exploitable** once you've chosen to show those.
+
+Each row reads left to right: severity, BugPoCer's assessment, the group badge (grouped findings only), your verdict and its reason if you gave one, then the unit and vulnerability name:
+
+```
+> [  1]  HIGH   VERIFIED   GROUP*   ACCEPTED  Vault :: missing_access_control_on_withdraw
+  [  2]  MEDIUM   NFR   GROUP   NOT REVIEWED  Vault :: missing_access_control_on_sweep
+  [  3]  LOW   VERIFIED   NOT REVIEWED  Vault :: rounding_direction_favours_user
+```
+
+| Badge | Meaning |
+|-------|---------|
+| `HIGH` `MEDIUM` `LOW` `INFO` | Severity. `INFO` marks an informational finding and is listed in the legend only when the session has one. |
+| `VERIFIED` `NFR` `NOT EXPLOITABLE` | BugPoCer's [assessment](#bugpocer-assessment-and-your-verdict), after your verdict is applied. |
+| `GROUP*` / `GROUP` | The lead / another member of a [finding group](#finding-groups). |
+| `ACCEPTED` `REJECTED` `NOT REVIEWED` | Your verdict. |
+
+The footer lists the common keys. Press `h` to show every key plus a badge legend, and `h` again to hide them.
 
 | Key | Action |
 |-----|--------|
-| `↑` / `↓` | Navigate findings / page |
+| `↑` / `↓` | Select a finding (moves to the next or previous page at the edges) |
 | `←` / `→` | Previous / next page |
-| `Enter` | Expand / collapse a finding |
-| `o` | View the generated PoC full-screen |
-| `y` | Mark as true positive (prompts for an optional reason) |
-| `n` | Mark as false positive (prompts for an optional reason) |
-| `Space` | Cycle user verdict |
-| `Backspace` | Clear user verdict |
-| `t` | Toggle TP-only filter |
-| `v` | Toggle filter source (engine verdict vs. user verdict) |
-| `b` | Back to menu |
-| `q` | Quit the findings view |
+| `Enter` | Expand / collapse the selected finding: location, description, verdict reason, group title and root cause, PoC summary and a PoC preview |
+| `o` | View the finding's PoC full-screen |
+| `y` | Accept the finding (prompts for an optional reason) |
+| `n` | Reject the finding (prompts for an optional reason) |
+| `Space` | Flip your verdict between accepted and rejected. On a finding you haven't reviewed, it records the opposite of BugPoCer's raw true/false call; on a Needs Further Review finding, use `y` or `n` instead |
+| `Backspace` | Clear your verdict |
+| `t` | Show only findings BugPoCer called a true positive. This is its raw call, so it can include Needs Further Review findings. After `v`, show only the findings you accepted |
+| `r` | Show only findings that need review |
+| `v` | Switch what `t` filters on: BugPoCer's call, or your accepted verdicts |
+| `b` | Back to the session list |
+| `q` | Back to the main menu (ends the command if you didn't open the findings from the main menu) |
+| `Esc` | Back to the main menu |
+| `h` | Show or hide all keys and the badge legend |
 
 ---
 
 ## Exporting Results
 
-Every export option (the [PDF](#pdf-export--full-audit-style-report), [Markdown](#markdown-export--lightweight-per-category-report), and [PoC files](#poc-test-files) exports) walks you through a two-stage filter dialog first.
+Every export option (the [PDF](#pdf-export--full-audit-style-report), [Markdown](#markdown-export--lightweight-report), and [PoC files](#poc-test-files) exports) first asks which findings to include, on two screens (Space toggles, Enter confirms, `q` cancels).
 
-**Stage 1 — finding category** (Space toggles, Enter confirms):
+**Screen 1: assessment and reviewer verdict**
 
-- **True Positives** *(default: on)*
-- **Unverified** *(default: on)*
-- **False Positives** *(default: off)*
+- BugPoCer Assessment: **Verified** *(default: on)*, **Needs Further Review** *(default: on)*, **Not Exploitable** *(default: off)*
+- Reviewer Verdict: **Accepted or not yet reviewed** *(default: on)*, **Rejected by a reviewer** *(default: off)*
 
-**Stage 2 — severity** (Space toggles, Enter confirms):
+**Screen 2: severity**
 
-- **High** *(default: on)*
-- **Medium** *(default: on)*
-- **Low** *(default: on)*
+- **High**, **Medium**, **Low** *(default: all on)*. Informational findings count as Low.
 
-At least one category and at least one severity must be selected.
+At least one option must be selected in each group. The assessment here already reflects your verdicts, so a finding you accepted counts as Verified.
 
-### Markdown export — lightweight per-category report
+### Markdown export — lightweight report
 
 The Markdown export is a **stripped-down** version, not the full audit report. It's meant for sharing a filtered list of findings without the full methodology/scope/invariants/assumptions wrapper.
 
-It writes **one file per selected category** (so you may get up to three files in a single export):
+It writes up to two files to your current working directory:
 
-- `true_positives_<sessionId>_<timestamp>.md`
-- `unverified_<sessionId>_<timestamp>.md`
-- `false_positives_<sessionId>_<timestamp>.md`
+- `findings_<sessionId>_<timestamp>.md`: Verified and Needs Further Review findings
+- `ruled_out_<sessionId>_<timestamp>.md`: Not Exploitable findings, when you include them
+
+A [group](#finding-groups) is never split across the two: it goes in the findings file if any of its members is Verified or needs review.
 
 Each file contains:
 
 - A title and scan metadata (session ID, scan start/complete times, report generation time, repository, commit short SHA, branch)
 - Total finding count and a Foundry-build-failure disclaimer if relevant
-- Per-finding blocks ordered by severity, each with the severity badge, vulnerability name, unit name, location, description, your user verdict (if set) with optional reason, and the PoC summary
+- Findings under `## High`, `## Medium` and `## Low`, with groups as described in [Finding groups](#finding-groups). Each finding shows its severity, assessment and your verdict as badges (for example `[High] [Verified] [Accepted]`), then the unit name, location, description, your verdict reason (if set), the evidence (the affected code), and the PoC summary for findings BugPoCer verified with a PoC
 
-The **PoC code itself is not inlined** in the Markdown export — use the [PoC export](#poc-test-files) to get the PoCs as standalone files, or use the PDF export for a single document that includes everything. Files are written to your current working directory.
+The **PoC code itself is not inlined** in the Markdown export — use the [PoC export](#poc-test-files) to get the PoCs as standalone files, or use the PDF export for a single document that includes everything.
 
 ### PDF export — full audit-style report
 
@@ -611,16 +640,16 @@ The PDF contains:
 - **Table of contents** — auto-generated
 - **About** — methodology, disclaimer (with a Foundry-build-failure note if relevant), and project overview drawn from your validated context
 - **Scope** — repository, commit short SHA, branch, scanned-unit count, and the list of units analyzed
-- **Summary** — scan start/complete/generation times, a High/Medium/Low severity table for true positives, a pie chart of TP findings by severity, and severity-level definitions
-- **True Positive Findings**, grouped by severity, each with vulnerability name, unit, location, description, your user verdict + reason (if set), PoC summary, and the **full PoC Solidity code** with syntax highlighting
-- **Unverified Findings**, same structure, for engine-flagged issues whose PoC didn't compile
-- **False Positive Findings**, same structure
+- **Ingested Documentation** — the documents BugPoCer read: docs, Certora specs and PDFs found in the repository, plus any you [added](#adding-project-documentation)
+- **Summary** — scan start/complete/generation times, a severity bar chart split by assessment, an index of the issues in the report (a group counts once), and glossaries of the severity levels and assessments
+- **Findings** — Verified and Needs Further Review findings, banded by severity. Each finding has chips for its severity, assessment and your verdict, then the unit, location, description, your verdict reason (if set), evidence, and for findings BugPoCer verified with a PoC, the PoC summary and the **full PoC code** with syntax highlighting. A [group](#finding-groups) appears as one issue with a root cause / fix card and lettered members
+- **Findings Ruled Out** — Not Exploitable findings, when you include them, in the same layout
 
 Saved to your current working directory as `BugPoCer_Scan_Report_<sessionId>_<timestamp>.pdf`.
 
 ### PoC test files
 
-One file per finding that has a compilable PoC, written under your workspace so you can drop it straight into your test suite. Extension is inferred from the PoC contents: `.t.sol` for Foundry tests, `.rs` for Rust / Anchor tests, `.cairo` for Starknet Foundry tests.
+One file per exported finding that has a PoC, written under `pocs_<sessionId>/` in your current working directory. Each file mirrors the path the scanner built it at, so you can copy the folder's contents straight into your project (`cp -r pocs_<sessionId>/* .`); findings from older scans use a flat `<unit>_<vulnerability>` file name instead. Extensions follow the project's test framework: `.t.sol` for Foundry, `.js` or `.ts` for Hardhat, `.rs` for Rust / Anchor, `.ts` for TypeScript-tested Anchor projects, `.cairo` for Starknet Foundry.
 
 ---
 
@@ -631,12 +660,12 @@ Each finding in the BugPoCer scan report includes:
 ### Vulnerability Details
 
 - **Description** — what the vulnerability is and how it can be exploited
-- **Severity** — risk level (High, Medium, or Low)
+- **Severity** — risk level (High, Medium, or Low). A finding can occasionally be marked Informational; the pager shows it as `INFO` and exports count it as Low
 - **Location** — affected file and line numbers
 
 ### Exploit Demonstration
 
-- **PoC Test** — a ready-to-run Foundry test that reliably triggers the issue
+- **PoC Test** — a ready-to-run test in the project's own framework (Foundry, Hardhat, Rust / Anchor or Starknet Foundry) that reliably triggers the issue
 - **Test Location** — path to the generated test file
 - **Summary** — explanation of how the PoC demonstrates the vulnerability
 

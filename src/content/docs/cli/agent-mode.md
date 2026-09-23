@@ -125,13 +125,12 @@ olympix analyze -w . --agent
 olympix static-analysis -w . --agent
 ```
 
-**Event:** `findings_ready` — reuses the BugPocer findings shape, with the verdict and PoC fields defaulted to `"n/a"` and `session_id` null:
+**Event:** `findings_ready` — reuses the BugPocer findings shape: the three `*_verdict` fields and `category` are `"n/a"`, `confidence_score` and `hidden_not_exploitable` are `0`, and `session_id` and the PoC and group fields are omitted:
 
 ```json
 {
   "event": "findings_ready",
   "data": {
-    "session_id": null,
     "findings": [
       {
         "id": "f1",
@@ -140,9 +139,15 @@ olympix static-analysis -w . --agent
         "description": "...",
         "affected_code": "...",
         "file_path": "src/Vault.sol",
-        "line_number": 42
+        "line_number": 42,
+        "bugpocer_verdict": "n/a",
+        "user_verdict": "n/a",
+        "effective_verdict": "n/a",
+        "confidence_score": 0,
+        "category": "n/a"
       }
-    ]
+    ],
+    "hidden_not_exploitable": 0
   }
 }
 ```
@@ -372,24 +377,55 @@ This is the one prompt that spends credits. An EOF (closed stdin) or any unrecog
         "line_number": 42,
         "bugpocer_verdict": "true_positive",
         "user_verdict": "unreviewed",
-        "user_verdict_reason": null,
         "effective_verdict": "true_positive",
+        "category": "tp",
         "confidence_score": 90,
         "poc_summary": "...",
-        "poc_content": "..."
+        "poc_content": "...",
+        "group_id": "group_f1",
+        "group_role": "Primary",
+        "group_title": "Missing access control on vault withdrawals",
+        "group_root_cause": "...",
+        "group_fix": "..."
       }
-    ]
+    ],
+    "hidden_not_exploitable": 3
   },
-  "actions": ["set_verdict", "generate_pdf", "save_pocs", "save_findings_md", "disconnect"]
+  "actions": ["set_verdict", "fetch_findings", "generate_pdf", "save_pocs", "save_findings_md", "disconnect"]
 }
 ```
 
-When findings arrive, the CLI **auto-downloads** the PoC exploit files and the split findings markdown to `.opix/agent/<session-id>/` (default filter: true positives + unverified). The actions let you re-export or query:
+Fields with no value (for example `user_verdict_reason` on an unreviewed finding) are omitted rather than sent as `null`. Fields worth knowing:
 
-- `save_pocs` — re-export PoCs → `pocs_saved` `{ "session_id", "saved_count", "output_path" }`
-- `save_findings_md` — re-export markdown → `findings_saved` `{ "session_id", "files": [{ "category", "count", "path" }] }`
-- `generate_pdf` — generate the PDF report → `pdf_generated` `{ "session_id", "pdf_path" }`
-- `set_verdict` with `{ "finding_id": "f1", "verdict": true, "reason": "confirmed" }` — record your user verdict (`true` = true positive, `false` = false positive, `null` = clear to unreviewed) → `verdict_set`
+- `category` is BugPoCer's [assessment](/cli/bugpocer/#bugpocer-assessment-and-your-verdict) with your verdict applied: `tp` (Verified), `unverified` (Needs Further Review) or `fp` (Not Exploitable). Use it for the final call. `bugpocer_verdict` and `effective_verdict` are true/false only (`user_verdict` adds `unreviewed`) and can't express Needs Further Review: an unproven finding shows there as `true_positive` or `false_positive`, depending on BugPoCer's raw call.
+- `affected_code` is the affected source snippet (the evidence), not the PoC; the PoC is in `poc_content`.
+- `group_*` fields are set when the finding is part of a [finding group](/cli/bugpocer/#finding-groups): every member shares one `group_id`, the lead has `group_role` `Primary` and the rest `Member`, and `group_title`, `group_root_cause` and `group_fix` describe the shared defect. They are omitted for ungrouped findings.
+- `hidden_not_exploitable` counts the Not Exploitable findings left out of `findings`: the ones nobody has reviewed yet, unless `showNotExploitableFindings` is on in `~/.opix/config.json`. Send `fetch_findings` with `{ "include_false_positives": true }` to get them too.
+
+When findings arrive, the CLI **auto-downloads** the PoC files (under `pocs_<session-id>/`) and the findings markdown (`findings_<session-id>_<timestamp>.md`) to the working directory, using the default filter: Verified and Needs Further Review, all severities, nothing a reviewer rejected. `findings.json` in `.opix/agent/<session-id>/` mirrors the `findings_ready` event. The actions let you re-export or query:
+
+- `save_pocs` — re-export PoCs → `pocs_saved` `{ "session_id", "saved_count", "output_path", "filter" }`
+- `save_findings_md` — re-export markdown → `findings_saved` `{ "session_id", "files": [{ "category", "count", "path" }], "filter" }`, where `category` is `Findings` or `Ruled Out`
+- `generate_pdf` — generate the PDF report → `pdf_generated` `{ "session_id", "pdf_path", "filter" }`
+- `fetch_findings` — re-send `findings_ready`, optionally with `{ "include_false_positives": true }`
+- `set_verdict` with `{ "verdicts": [{ "finding_id": "f1", "verdict": true, "reason": "confirmed" }] }` — record verdicts in bulk (`true` = accept, `false` = reject, `null` = clear to unreviewed) → `verdict_set` with one `results` entry per finding
+
+The three export actions take an optional `filter` in `data`, mirroring the interactive [export dialog](/cli/bugpocer/#exporting-results). Omitted keys keep their defaults:
+
+| Key | Default |
+|-----|---------|
+| `include_true_positives` (Verified) | `true` |
+| `include_unverified` (Needs Further Review) | `true` |
+| `include_false_positives` (Not Exploitable) | `false` |
+| `include_high` / `include_medium` / `include_low` | `true` |
+| `include_reviewer_accepted` (accepted or not yet reviewed) | `true` |
+| `include_reviewer_rejected` | `false` |
+
+```json
+{"action":"generate_pdf","data":{"filter":{"include_false_positives":true,"include_low":false}}}
+```
+
+Leaving every assessment, every severity, or both reviewer keys off is rejected with an `error`.
 
 ### Killing a Session
 
