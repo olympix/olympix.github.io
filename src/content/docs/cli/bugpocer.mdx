@@ -207,25 +207,78 @@ Domains are available for **Solidity** projects.
 
 ### Custom directions
 
-Custom directions work for every supported language. Write each one as a specific question about your code, in Markdown/plain text or JSON.
+A custom direction is one security question you want BugPoCer to answer about your code. BugPoCer plans its work around each question, looks for a concrete exploit path, and only reports findings that connect to one of your directions or domains. Directions work for every supported language (domains are Solidity-only).
 
-**Markdown or text** (`.md`, `.txt`): one bullet or paragraph per direction. Indented lines continue the previous bullet, and headings are ignored.
+#### What to write
+
+Write each direction as a **specific, answerable question about your own code**: name the contract or function, the actor, and the outcome you're worried about. One concern per direction.
+
+| Less useful | Better |
+|-------------|--------|
+| `Check for reentrancy.` | `Can a contract re-enter SavingsAccount.withdraw() through the _sendFunds callback and claim the loyalty bonus twice?` |
+| `Look at access control.` | `Can anyone other than the owner call resetHasWithdrawnBonus() to re-arm another user's bonus?` |
+| `Oracle issues?` | `Can LendingPool.borrow() use a Chainlink price older than the heartbeat and let a user borrow more than their collateral allows?` |
+| `Audit the vault.` | `Can the first depositor into an empty Vault inflate the share price with a donation so later deposits round down to zero shares?` |
+
+Tips:
+
+- **Name code, not categories.** A broad topic such as "reentrancy" is better covered by selecting a [domain](#domains); use directions for the questions only you know to ask.
+- **State the harm.** "…and drain more than they deposited", "…and block withdrawals for everyone" tells BugPoCer what a successful exploit looks like.
+- **Add context on continuation lines** — assumptions, trusted roles, invariants you rely on ("the owner is a 3/5 multisig", "fees are capped at 5%").
+- **Don't restate out-of-scope code.** Directions narrow *what to look for*; they don't add files to the scan. Make sure the contracts you mention are in the [scope](#scope-selection).
+
+#### File format
+
+Pick the format by file extension: `.json` is parsed as JSON; anything else (`.md`, `.txt`, no extension) is parsed as Markdown/plain text. Files must be UTF-8.
+
+**Markdown or plain text**
+
+- Each bullet (`-`, `*`, `+`) or numbered item (`1.` or `1)`) starts a new direction.
+- Indented lines after a bullet continue that direction (use them for context).
+- A plain paragraph without a bullet is one direction; consecutive lines join until a blank line.
+- Headings (`#` … `######`) and blank lines are ignored, so you can organize the file freely.
+- Nested bullets become **separate** directions, not sub-points.
+- Don't wrap the content in a code fence — the ```` ``` ```` lines would be read as directions.
 
 ```markdown
-# Lending review
+# Withdrawals
 
-- Can a stale oracle price let a user borrow more than their collateral allows?
-- Can repeated small deposits round vault share prices in the depositor's favor?
-  Pay particular attention to the first deposit into an empty vault.
+- Can a contract re-enter SavingsAccount.withdraw() through the _sendFunds
+  callback and claim the loyalty bonus more than once?
+  The bonus flag is only set after the external call.
+
+# Admin functions
+
+- Can anyone other than the owner call resetHasWithdrawnBonus() to re-arm
+  another user's bonus?
 ```
 
-**JSON** (`.json`): an object with a `targets` array of strings.
+This file contains **two** directions.
+
+**JSON**
+
+An object with a `targets` array of non-empty strings; other keys are ignored. A [JSON Schema](/schemas/directed-targets.schema.json) is available for editor validation and autocompletion:
 
 ```json
-{ "targets": ["Can a stale oracle price let a user borrow more than their collateral allows?"] }
+{
+  "$schema": "https://olympix.github.io/schemas/directed-targets.schema.json",
+  "targets": [
+    "Can a contract re-enter SavingsAccount.withdraw() through the _sendFunds callback and claim the loyalty bonus more than once?",
+    "Can anyone other than the owner call resetHasWithdrawnBonus() to re-arm another user's bonus?"
+  ]
+}
 ```
 
-Limits: at most **32** directions, **8,000** characters each, and **32,000** characters in total.
+#### Limits and errors
+
+| Rule | Error if broken |
+|------|-----------------|
+| At least one direction (or a selected domain) | `Select at least one domain or add a directions file.` |
+| At most **32** directions, each non-empty and at most **8,000** characters | `Supply at most 32 non-empty directions of at most 8000 characters each.` |
+| At most **32,000** characters in total | `Directions must contain at most 32000 characters in total.` / `Directions file is too large.` |
+| JSON must be an object with a `targets` array of strings | `Directions JSON must contain a targets array of strings.` |
+
+Relative paths resolve from the directory you run the CLI in, not from `-w`. In the setup screen, use **Preview directions** to page through exactly what was parsed before you continue.
 
 :::note[Quota and coverage]
 Directed scans use the same Full or Diff run quota as a standard scan, depending on their code scope. A directed scan with no findings is not proof that the targeted area is safe — BugPoCer may miss relevant paths or fail to establish a real bug.

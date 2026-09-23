@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://olympix.github.io/schemas/directed-targets.schema.json",
+  "title": "BugPoCer directed scan directions",
+  "description": "Custom directions for `olympix bug-pocer --directed --directions-file <file>.json`. Each target is one specific security question about your code. The CLI also rejects files whose targets exceed 32,000 characters in total.",
+  "type": "object",
+  "required": ["targets"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "targets": {
+      "description": "One entry per direction, written as a question about specific contracts or functions.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 8000,
+        "pattern": "\\S"
+      }
+    }
+  }
+}
