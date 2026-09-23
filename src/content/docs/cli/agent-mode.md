@@ -161,6 +161,10 @@ BugPocer's multi-stage pipeline maps to the following event/action sequence.
 Add `--diff-base <git ref>` (optionally `--diff-target <git ref>`) to constrain the scan to changed code — see [Diff mode](/cli/bugpocer/#diff-mode). Two differences from the flow below: the scope step arrives as an immutable **`diff_review`** event (the whole diff is the scope) with actions `["confirm_diff", "disconnect"]` instead of `scope_review`; and an **empty diff** ends the run before scope, emitting a terminal `completed` event (`"No changed source files found…"`) instead of starting a session.
 :::
 
+:::note[Directed mode]
+Add `--directed` with `--domains <id,...>` and/or `--directions-file <path>` to run a [directed scan](/cli/bugpocer/#directed-mode), or pass the same options on `new_session` (see below). A directed run adds a [`directed_scope`](#12-directed-scope-directed-mode-only) confirmation step before `context_cache_review` and `scope_review`. In agent mode the scope must contain at least one domain or direction; `--domains` / `--directions-file` without `--directed` fail at startup.
+:::
+
 ### 1. Session Selection
 
 **Event:** `sessions_list`
@@ -170,7 +174,7 @@ Add `--diff-base <git ref>` (optionally `--diff-target <git ref>`) to constrain 
   "event": "sessions_list",
   "data": {
     "sessions": [
-      { "id": "abc-123", "title": "My Scan", "status": "ValidationRequested", "created_at": "...", "error_message": null }
+      { "id": "abc-123", "title": "My Scan", "status": "ValidationRequested", "created_at": "...", "error_message": null, "scan_mode": "full", "directed": false }
     ]
   },
   "actions": ["new_session", "connect_session", "disconnect"]
@@ -180,7 +184,34 @@ Add `--diff-base <git ref>` (optionally `--diff-target <git ref>`) to constrain 
 **Actions:**
 
 - `new_session` with optional `{ "title": "My scan" }` — start a new scan
+  - For a directed scan, add `"directed": true` with `"domains": ["vaults", "oracles"]` and/or `"directions": ["Can a stale price enable borrowing?"]` (or `"directions_file": "targets.md"`). Supplying `domains`, `directions` or `directions_file` implies `directed: true`; `"directed": false` starts a standard scan even after a directed one.
 - `connect_session` with `{ "session_id": "abc-123" }` — reconnect to an existing session
+
+A relative `directions_file` (and `--directions-file`) path is opened by the CLI process, so it resolves from the directory the CLI was launched in, not from `-w`. Pass an absolute path when launching from elsewhere.
+
+### 1.2 Directed Scope (directed mode only)
+
+**Event:** `directed_scope` — emitted first when the session is directed, before `context_cache_review` and `scope_review`.
+
+```json
+{
+  "event": "directed_scope",
+  "data": {
+    "domains": ["vaults", "oracles"],
+    "directions": ["Can a stale oracle price let a user borrow more than their collateral allows?"]
+  },
+  "actions": ["confirm_directed", "disconnect"]
+}
+```
+
+**Actions:**
+
+- `confirm_directed` — accept the directed scope and continue
+- `disconnect` — end the run without starting a scan
+
+Like other prompts, a stdin read [timeout](#timeouts) re-emits `directed_scope`. Any other action returns an `error` with code `invalid_directed_action` and the prompt stays open. An invalid scope (unknown domain, no targets, a domain on a non-Solidity project, or directions over the limits) returns an `error` with code `invalid_directed_scope`; a server without directed support returns `directed_unavailable`.
+
+Findings from a directed scan carry `directed_target_ids` (the domains or directions each finding was attributed to) and `directed_scope_reason`.
 
 ### 1.5 Context Cache Review (conditional)
 
