@@ -33,15 +33,14 @@ The main menu presents all available tools with keyboard navigation:
   ❯ [1] BugPocer - Interactive AI-powered security analysis
     [2] Mutation Testing - Generate mutation tests to verify test suite effectiveness
     [3] Unit Testing - Generate unit tests for OlympixUnitTest contracts
-    [4] Fuzz Testing - Generate fuzz tests for smart contract security
-    [5] Static Analysis - Scan contracts for vulnerabilities and security issues
+    [4] Static Analysis - Scan contracts for vulnerabilities and security issues
 ```
 
 | Key | Action |
 |-----|--------|
 | `↑` / `↓` | Navigate tools |
 | `Enter` | Launch selected tool |
-| `1`–`5` | Quick-select by number |
+| `1`–`4` | Quick-select by number |
 | `q` / `Esc` | Exit |
 
 ### Live sessions
@@ -61,7 +60,6 @@ Each tool also has its own dedicated command that launches directly into its int
 | `olympix static-analysis` | Interactive static analysis — file selection, scan, results |
 | `olympix unit-testing` | Unit test session manager — list, reconnect, or start new |
 | `olympix mutation-testing` | Mutation test session manager — list, reconnect, or start new |
-| `olympix fuzz-testing` | Interactive fuzz test generator |
 | `olympix bug-pocer` | BugPocer session manager — see [BugPoCer docs](/cli/bugpocer/) |
 
 These commands accept the same workspace and path options as their `analyze` / `generate-*` counterparts:
@@ -91,7 +89,6 @@ Some tools require specific account tiers:
 | Static Analysis | Free |
 | Mutation Testing | Premium |
 | Unit Testing | Premium |
-| Fuzz Testing | Premium + Private Alpha |
 | BugPocer | Premium + Private Alpha |
 
 If you don't have access to a tool, the menu shows the requirement and prevents selection. Contact [contact@olympix.ai](mailto:contact@olympix.ai) to upgrade.
