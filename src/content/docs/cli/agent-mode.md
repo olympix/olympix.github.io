@@ -46,10 +46,6 @@ olympix unit-testing --agent
 # Mutation testing in agent mode
 olympix mutation-testing --agent
 
-# Fuzz testing in agent mode
-olympix generate-fuzz-tests -p src/Vault.sol --agent
-olympix connect-fuzz-session -s <session-id> --agent
-
 # Static analysis in agent mode
 olympix static-analysis --agent
 
@@ -450,7 +446,7 @@ olympix kill-bp-session -s <session-id> --agent
 
 ## Test Generator Agent Protocol
 
-`unit-testing`, `mutation-testing`, `generate-unit-tests` and `generate-mutation-tests` share the session / file-selection flow. Fuzz generation follows a different, dispatch-only flow — see [Fuzz Test Generator Agent Protocol](#fuzz-test-generator-agent-protocol).
+`unit-testing`, `mutation-testing`, `generate-unit-tests` and `generate-mutation-tests` share the session / file-selection flow.
 
 ### Session & file selection
 
@@ -535,70 +531,6 @@ The generated `.t.sol` test files are written into the workspace automatically.
 
 ---
 
-## Fuzz Test Generator Agent Protocol
-
-Fuzz runs are **long-lived**. `generate-fuzz-tests` only dispatches the run and returns a session ID — full results are emailed and can be pulled back later with `connect-fuzz-session`.
-
-```bash
-# Dispatch a run (returns a session_id; results arrive by email)
-olympix generate-fuzz-tests -w . -p src/Vault.sol --agent
-
-# List your fuzz sessions
-olympix list-fuzz-sessions --agent
-
-# Fetch a finished session's summary (+ optional PDF report)
-olympix connect-fuzz-session -s <session-id> --agent
-
-# Session manager: list, then reconnect, in one process
-olympix fuzz-testing -w . --agent
-```
-
-### Dispatching a run
-
-`generate-fuzz-tests` emits a `progress` event carrying the new session ID, then a terminal `completed` event:
-
-```json
-{
-  "event": "completed",
-  "data": { "type": "fuzz_test", "session_id": "abc-123", "message": "Fuzz generation started; results pending." }
-}
-```
-
-### Fetching results
-
-`connect-fuzz-session` (and `connect_session` from a session list) emits a summary of the finished run:
-
-**Event:** `fuzz_test_results`
-
-```json
-{
-  "event": "fuzz_test_results",
-  "data": {
-    "session_id": "abc-123",
-    "contracts": 3,
-    "strategies": 7,
-    "test_cases": 128,
-    "exploit_test_cases": 2
-  },
-  "actions": ["generate_report", "disconnect"]
-}
-```
-
-- `generate_report` — render the PDF report → `pdf_generated` `{ "session_id", "pdf_path" }`
-- `disconnect` — exit without generating a report
-
-If the run has not finished yet, the CLI emits `results_ready` `{ "type": "fuzz_test", "session_id", "message": "Results not ready yet…" }` instead and exits.
-
-### Session manager
-
-`list-fuzz-sessions` and `fuzz-testing` both emit `sessions_list` (actions `new_session`, `connect_session`, `disconnect`) and then follow the fetch flow above once you send `connect_session`.
-
-:::note[Starting a run]
-These two commands accept `connect_session` only. `new_session` returns an `error` event — dispatch a new run with `generate-fuzz-tests -p <file> --agent` instead.
-:::
-
----
-
 ## File Output
 
 In agent mode, the CLI writes structured results to `.opix/agent/` within the workspace:
@@ -618,12 +550,9 @@ In agent mode, the CLI writes structured results to `.opix/agent/` within the wo
 │   ├── sessions.json      # Session list
 │   ├── contracts.json     # Available contracts
 │   └── results.json       # Test results
-├── mutation-tests/
-│   ├── sessions.json      # Session list
-│   └── results.json       # Test results
-└── fuzz-tests/
+└── mutation-tests/
     ├── sessions.json      # Session list
-    └── results.json       # Fuzz run summary
+    └── results.json       # Test results
 ```
 
 Files are written atomically (temp file + rename) and use snake_case JSON.
@@ -642,7 +571,7 @@ The `sessions` command is agent-mode-only and returns active sessions across all
 olympix sessions --agent
 ```
 
-**Event:** `all_sessions` — sessions grouped per service, as the arrays `bug_pocer`, `unit_tests`, `mutation_tests`, `fuzz_tests` and `static_analysis`. Each entry has `id`, `title`, `status` and `created_at`.
+**Event:** `all_sessions` — sessions grouped per service, as the arrays `bug_pocer`, `unit_tests`, `mutation_tests` and `static_analysis`. Each entry has `id`, `title`, `status` and `created_at`.
 
 ---
 

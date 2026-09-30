@@ -18,22 +18,18 @@ When you run the Olympix CLI, you have access to several commands:
 - **`static-analysis`**: Interactive static analysis — file selection, scan, results
 - **`unit-testing`**: Unit test session manager — list, reconnect, or start new
 - **`mutation-testing`**: Mutation test session manager — list, reconnect, or start new
-- **`fuzz-testing`**: Interactive fuzz test generator
 - **`bug-pocer`**: BugPocer session manager — start, reconnect, review findings
 
 **Direct Commands (non-interactive, for scripting/CI):**
 - **`analyze`**: Perform code analysis
 - **`generate-unit-tests`**: Generate unit tests
 - **`generate-mutation-tests`**: Generate mutation tests
-- **`generate-fuzz-tests`**: Generate fuzz tests
 - **`start-bp-session`**: Start a new BugPocer session directly, skipping the session picker
 
 **Session Management:**
 - **`list-bp-sessions`**: List your BugPocer sessions with their IDs and statuses
 - **`connect-bp-session`**: Reconnect to an existing BugPocer session by ID
 - **`kill-bp-session`**: Kill an active BugPocer session by ID
-- **`list-fuzz-sessions`**: List your fuzz test sessions
-- **`connect-fuzz-session`**: Reconnect to a fuzz test session and generate a report
 - **`sessions`**: List sessions across all services (agent mode only)
 
 **Agent Mode (AI integrations):**
@@ -138,31 +134,6 @@ When generating mutation tests, you have the following options:
 
 ---
 
-## Fuzz Tests Generation Options
-
-When generating fuzz tests, you have the following options:
-
-- **`-w | --workspace-path`**
-  Defines the root project directory path.
-  *Default:* current directory
-
-- **`-p | --path`**
-  Defines the Solidity file path to generate fuzz tests for. Can be used multiple times.
-
-- **`-cm | --coverage-mode`**
-  Exploration strategy: `path` or `branch`.
-
-- **`-cl | --chain-length`**
-  Number of sequential function calls per exploration.
-  *Allowed range:* 1 - 5
-
-- **`--no-<attack strategy id>`**
-  Defines the attack strategies to be ignored. Can be used multiple times.
-
-Fuzz runs are long-lived: the command dispatches the run and returns a session ID, and results are emailed when the run finishes. Use `list-fuzz-sessions` and `connect-fuzz-session -s <session id>` to pull the summary back and generate a PDF report.
-
----
-
 ## BugPoCer Options
 
 When using the `bug-pocer` command for AI-powered vulnerability detection and PoC generation:
@@ -202,28 +173,22 @@ olympix
 olympix static-analysis [-w | --workspace-path <workspace directory>]
 olympix unit-testing [-w | --workspace-path <workspace directory>]
 olympix mutation-testing [-w | --workspace-path <workspace directory>]
-olympix fuzz-testing [-w | --workspace-path <workspace directory>]
 olympix bug-pocer [-w | --workspace-path <workspace directory>]
 
 # Direct commands (non-interactive, for scripting/CI)
 olympix analyze [-w | --workspace-path <workspace directory>] [-p | --path <analysis directory>] [-f | --output-format <output format>] [-o | --output-path <output directory>] [--no-<vulnerability id>]
 olympix generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confirm-all] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
 olympix generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --t <timeout>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
-olympix generate-fuzz-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-cm | --coverage-mode <path|branch>] [-cl | --chain-length <length>]
 olympix start-bp-session [-w | --workspace-path <workspace directory>] [--diff-base <git ref>] [--diff-target <git ref>]
 
 # Session management
 olympix list-bp-sessions
 olympix connect-bp-session [-s | --session-id <session id>]
 olympix kill-bp-session [-s | --session-id <session id>]
-olympix list-fuzz-sessions
-olympix connect-fuzz-session [-s | --session-id <session id>]
 
 # Agent mode (AI integrations)
 olympix bug-pocer --agent
 olympix unit-testing --agent
-olympix generate-fuzz-tests -p src/Vault.sol --agent
-olympix connect-fuzz-session -s <session id> --agent
 olympix sessions --agent
 
 # Login with email
