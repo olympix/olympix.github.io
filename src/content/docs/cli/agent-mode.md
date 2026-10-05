@@ -563,7 +563,7 @@ olympix kill-bugscout-session -s <session-id> --agent
 ```json
 {
   "event": "completed",
-  "data": { "type": "fuzz_test", "session_id": "abc-123", "message": "BugScout run started; results pending." }
+  "data": { "type": "bugscout", "session_id": "abc-123", "message": "BugScout run started; results pending." }
 }
 ```
 
@@ -571,11 +571,11 @@ olympix kill-bugscout-session -s <session-id> --agent
 
 `connect-bugscout-session` (and `connect_session` from a session list) emits a summary of the finished run:
 
-**Event:** `fuzz_test_results`
+**Event:** `bugscout_results`
 
 ```json
 {
-  "event": "fuzz_test_results",
+  "event": "bugscout_results",
   "data": {
     "session_id": "abc-123",
     "contracts": 3,
@@ -590,7 +590,7 @@ olympix kill-bugscout-session -s <session-id> --agent
 - `generate_report` — render the PDF report → `pdf_generated` `{ "session_id", "pdf_path" }`
 - `disconnect` — exit without generating a report
 
-If the run has not finished yet, the CLI emits `results_ready` `{ "type": "fuzz_test", "session_id", "message": "Results not ready yet…" }` instead and exits.
+If the run has not finished yet, the CLI emits `results_ready` `{ "type": "bugscout", "session_id", "message": "Results not ready yet…" }` instead and exits.
 
 ### Session manager
 
@@ -624,7 +624,7 @@ In agent mode, the CLI writes structured results to `.opix/agent/` within the wo
 ├── mutation-tests/
 │   ├── sessions.json      # Session list
 │   └── results.json       # Test results
-└── fuzz-tests/
+└── bugscout/
     ├── sessions.json      # Session list
     └── results.json       # BugScout run summary
 ```
@@ -645,7 +645,7 @@ The `sessions` command is agent-mode-only and returns active sessions across all
 olympix sessions --agent
 ```
 
-**Event:** `all_sessions` — sessions grouped per service, as the arrays `bug_pocer`, `unit_tests`, `mutation_tests`, `fuzz_tests` and `static_analysis`. Each entry has `id`, `title`, `status` and `created_at`.
+**Event:** `all_sessions` — sessions grouped per service, as the arrays `bug_pocer`, `unit_tests`, `mutation_tests`, `bugscout` and `static_analysis`. Each entry has `id`, `title`, `status` and `created_at`.
 
 ---
 
