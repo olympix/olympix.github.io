@@ -46,9 +46,9 @@ olympix unit-testing --agent
 # Mutation testing in agent mode
 olympix mutation-testing --agent
 
-# Fuzz testing in agent mode
-olympix generate-fuzz-tests -p src/Vault.sol --agent
-olympix connect-fuzz-session -s <session-id> --agent
+# BugScout in agent mode
+olympix generate-bugscout-tests -p src/Vault.sol --agent
+olympix connect-bugscout-session -s <session-id> --agent
 
 # Static analysis in agent mode
 olympix static-analysis --agent
@@ -450,7 +450,7 @@ olympix kill-bp-session -s <session-id> --agent
 
 ## Test Generator Agent Protocol
 
-`unit-testing`, `mutation-testing`, `generate-unit-tests` and `generate-mutation-tests` share the session / file-selection flow. Fuzz generation follows a different, dispatch-only flow — see [Fuzz Test Generator Agent Protocol](#fuzz-test-generator-agent-protocol).
+`unit-testing`, `mutation-testing`, `generate-unit-tests` and `generate-mutation-tests` share the session / file-selection flow. BugScout follows a different, dispatch-only flow — see [BugScout Agent Protocol](#bugscout-agent-protocol).
 
 ### Session & file selection
 
@@ -535,38 +535,41 @@ The generated `.t.sol` test files are written into the workspace automatically.
 
 ---
 
-## Fuzz Test Generator Agent Protocol
+## BugScout Agent Protocol
 
-Fuzz runs are **long-lived**. `generate-fuzz-tests` only dispatches the run and returns a session ID — full results are emailed and can be pulled back later with `connect-fuzz-session`.
+BugScout runs are **long-lived**. `generate-bugscout-tests` only dispatches the run and returns a session ID — full results are emailed and can be pulled back later with `connect-bugscout-session`.
 
 ```bash
 # Dispatch a run (returns a session_id; results arrive by email)
-olympix generate-fuzz-tests -w . -p src/Vault.sol --agent
+olympix generate-bugscout-tests -w . -p src/Vault.sol --agent
 
-# List your fuzz sessions
-olympix list-fuzz-sessions --agent
+# List your BugScout sessions
+olympix list-bugscout-sessions --agent
 
 # Fetch a finished session's summary (+ optional PDF report)
-olympix connect-fuzz-session -s <session-id> --agent
+olympix connect-bugscout-session -s <session-id> --agent
 
 # Session manager: list, then reconnect, in one process
-olympix fuzz-testing -w . --agent
+olympix bugscout -w . --agent
+
+# Stop a running session (permanent; results are lost)
+olympix kill-bugscout-session -s <session-id> --agent
 ```
 
 ### Dispatching a run
 
-`generate-fuzz-tests` emits a `progress` event carrying the new session ID, then a terminal `completed` event:
+`generate-bugscout-tests` emits a `progress` event carrying the new session ID, then a terminal `completed` event:
 
 ```json
 {
   "event": "completed",
-  "data": { "type": "fuzz_test", "session_id": "abc-123", "message": "Fuzz generation started; results pending." }
+  "data": { "type": "fuzz_test", "session_id": "abc-123", "message": "BugScout run started; results pending." }
 }
 ```
 
 ### Fetching results
 
-`connect-fuzz-session` (and `connect_session` from a session list) emits a summary of the finished run:
+`connect-bugscout-session` (and `connect_session` from a session list) emits a summary of the finished run:
 
 **Event:** `fuzz_test_results`
 
@@ -591,10 +594,10 @@ If the run has not finished yet, the CLI emits `results_ready` `{ "type": "fuzz_
 
 ### Session manager
 
-`list-fuzz-sessions` and `fuzz-testing` both emit `sessions_list` (actions `new_session`, `connect_session`, `disconnect`) and then follow the fetch flow above once you send `connect_session`.
+`list-bugscout-sessions` and `bugscout` both emit `sessions_list` (actions `new_session`, `connect_session`, `disconnect`) and then follow the fetch flow above once you send `connect_session`.
 
 :::note[Starting a run]
-These two commands accept `connect_session` only. `new_session` returns an `error` event — dispatch a new run with `generate-fuzz-tests -p <file> --agent` instead.
+These two commands accept `connect_session` only. `new_session` returns an `error` event — dispatch a new run with `generate-bugscout-tests -p <file> --agent` instead.
 :::
 
 ---
@@ -623,7 +626,7 @@ In agent mode, the CLI writes structured results to `.opix/agent/` within the wo
 │   └── results.json       # Test results
 └── fuzz-tests/
     ├── sessions.json      # Session list
-    └── results.json       # Fuzz run summary
+    └── results.json       # BugScout run summary
 ```
 
 Files are written atomically (temp file + rename) and use snake_case JSON.
