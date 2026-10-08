@@ -352,7 +352,7 @@ Running `olympix bug-pocer` on a project with existing sessions shows the sessio
 | `ValidationRequested` | Waiting for you to validate project context |
 | `ValidationCompleted` | Context approved, initial scan running. The picker shows it as `SCANNING` |
 | `InitialScanCompleted` | Scan finished, findings available for review |
-| `Killed` | Killed by you, or when validation timed out, before the scan completed. No findings |
+| `Killed` | Killed by you, or when validation timed out, before the scan completed. No findings; clone it (`c`) to start again with the same settings |
 | `ContextExpired` | Ended before the scan completed. No findings; clone it (`c`) to start again with the same settings |
 
 Connecting to a session whose scan hasn't finished says the scan is still running, rather than showing an empty findings list. Reconnect once it reaches `InitialScanCompleted`. A killed or expired session says it ended without findings.

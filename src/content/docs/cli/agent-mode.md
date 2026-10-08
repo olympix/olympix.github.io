@@ -430,9 +430,9 @@ Fields with no value (for example `user_verdict_reason` on an unreviewed finding
 - `group_*` fields are set when the finding is part of a [finding group](/cli/bugpocer/#finding-groups): every member shares one `group_id`, the lead has `group_role` `Primary` and the rest `Member`, and `group_title`, `group_root_cause` and `group_fix` describe the shared defect. They are omitted for ungrouped findings.
 - `hidden_not_exploitable` counts the Not Exploitable findings left out of `findings`: the ones nobody has reviewed yet, unless `showNotExploitableFindings` is on in `~/.opix/config.json`. Send `fetch_findings` with `{ "include_false_positives": true }` to get them too; when the count is above 0, a `progress` line names that action.
 
-If you connect before the scan has finished, `findings_ready` carries `"scan_complete": false`, the session's `session_status` and its `phase`. Its `findings` list is empty and isn't a result: nothing is downloaded, the export actions return an `error`, and a `progress` line says the scan is still running (or that the session ended without findings). Disconnect and reconnect once `sessions_list` shows the session `completed`, or send `fetch_findings` to ask the server again. A finished scan carries `"scan_complete": true`.
+If you connect before the scan has finished, `findings_ready` carries `"scan_complete": false`, the session's `session_status` and its `phase`. Its `findings` list is empty and isn't a result: nothing is downloaded, `findings.json` isn't written, the export actions return an `error`, and a `progress` line says the scan is still running (or that the session ended without findings). Disconnect and reconnect once `sessions_list` shows the session `completed`, or send `fetch_findings` to ask the server again. A finished scan carries `"scan_complete": true`.
 
-When findings arrive, the CLI **auto-downloads** the PoC files (under `pocs_<session-id>/`) and the findings markdown (`findings_<session-id>_<timestamp>.md`) to the working directory, using the default filter: Verified and Needs Further Review, all severities, nothing a reviewer rejected. `findings.json` in `.opix/agent/<session-id>/` mirrors the `findings_ready` event. The actions let you re-export or query:
+When findings arrive, the CLI **auto-downloads** the PoC files (under `pocs_<session-id>/`) and the findings markdown (`findings_<session-id>_<timestamp>.md`) to the working directory, using the default filter: Verified and Needs Further Review, all severities, nothing a reviewer rejected. `findings.json` in `.opix/agent/<session-id>/` mirrors the `findings_ready` event of a finished scan. The actions let you re-export or query:
 
 - `save_pocs` — re-export PoCs → `pocs_saved` `{ "session_id", "saved_count", "output_path", "filter" }`
 - `save_findings_md` — re-export markdown → `findings_saved` `{ "session_id", "files": [{ "category", "count", "path" }], "filter" }`, where `category` is `Findings` or `Ruled Out`
@@ -640,7 +640,7 @@ In agent mode, the CLI writes structured results to `.opix/agent/` within the wo
 │   ├── diff.json          # Diff review data (diff mode)
 │   ├── context-cache.json # Context cache review data
 │   ├── report.json        # Initial scan report
-│   └── findings.json      # Findings (mirrors findings_ready)
+│   └── findings.json      # Findings (mirrors findings_ready once the scan finishes)
 ├── bug-pocer/
 │   └── sessions.json      # Session list
 ├── unit-tests/
