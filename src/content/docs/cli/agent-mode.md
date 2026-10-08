@@ -179,12 +179,22 @@ Add `--directed` with `--domains <id,...>` and/or `--directions-file <path>` to 
   "event": "sessions_list",
   "data": {
     "sessions": [
-      { "id": "abc-123", "title": "My Scan", "status": "ValidationRequested", "created_at": "...", "error_message": null, "scan_mode": "full", "directed": false }
+      { "id": "abc-123", "title": "My Scan", "status": "ValidationRequested", "created_at": "...", "scan_mode": "full", "directed": false, "phase": "awaiting_validation" }
     ]
   },
   "actions": ["new_session", "connect_session", "disconnect"]
 }
 ```
+
+`phase` says what the stored `status` means for you:
+
+| `status` | `phase` |
+|----------|---------|
+| `Pending`, `ChatStarted` | `in_progress` |
+| `ValidationRequested` | `awaiting_validation` |
+| `ValidationCompleted` | `scanning` |
+| `InitialScanCompleted` | `completed` |
+| `Killed`, `ContextExpired` | `terminal` |
 
 **Actions:**
 
@@ -193,6 +203,23 @@ Add `--directed` with `--domains <id,...>` and/or `--directions-file <path>` to 
 - `connect_session` with `{ "session_id": "abc-123" }` — reconnect to an existing session
 
 A relative `directions_file` (and `--directions-file`) path is opened by the CLI process, so it resolves from the directory the CLI was launched in, not from `-w`. Pass an absolute path when launching from elsewhere.
+
+### 1.1 Pre-flight Failures (informational)
+
+**Event:** `preflight_failed` — emitted after `new_session`, before `scope_review`, when the [pre-flight check](/cli/bugpocer/#pre-flight-validation) finds issues that will likely break the scan:
+
+```json
+{
+  "event": "preflight_failed",
+  "data": {
+    "failures": [{ "check": "...", "summary": "..." }],
+    "remediation_commands": ["forge install", "..."],
+    "message": "..."
+  }
+}
+```
+
+It carries no `actions`: agent mode never waits on pre-flight, so the run has already continued. Report the failures and `remediation_commands` to the user. `--skip-preflight` (`-sp`) turns the check off.
 
 ### 1.2 Directed Scope (directed mode only)
 
@@ -399,15 +426,18 @@ Fields with no value (for example `user_verdict_reason` on an unreviewed finding
 
 - `category` is BugPoCer's [assessment](/cli/bugpocer/#bugpocer-assessment-and-your-verdict) with your verdict applied: `tp` (Verified), `unverified` (Needs Further Review) or `fp` (Not Exploitable). Use it for the final call. `bugpocer_verdict` and `effective_verdict` are true/false only (`user_verdict` adds `unreviewed`) and can't express Needs Further Review: an unproven finding shows there as `true_positive` or `false_positive`, depending on BugPoCer's raw call.
 - `affected_code` is the affected source snippet (the evidence), not the PoC; the PoC is in `poc_content`.
+- `title` is the display title the PDF and markdown exports print (for example `Uncollected Taker Fees`), and `file_path` is relative to the project root.
 - `group_*` fields are set when the finding is part of a [finding group](/cli/bugpocer/#finding-groups): every member shares one `group_id`, the lead has `group_role` `Primary` and the rest `Member`, and `group_title`, `group_root_cause` and `group_fix` describe the shared defect. They are omitted for ungrouped findings.
-- `hidden_not_exploitable` counts the Not Exploitable findings left out of `findings`: the ones nobody has reviewed yet, unless `showNotExploitableFindings` is on in `~/.opix/config.json`. Send `fetch_findings` with `{ "include_false_positives": true }` to get them too.
+- `hidden_not_exploitable` counts the Not Exploitable findings left out of `findings`: the ones nobody has reviewed yet, unless `showNotExploitableFindings` is on in `~/.opix/config.json`. Send `fetch_findings` with `{ "include_false_positives": true }` to get them too; when the count is above 0, a `progress` line names that action.
 
-When findings arrive, the CLI **auto-downloads** the PoC files (under `pocs_<session-id>/`) and the findings markdown (`findings_<session-id>_<timestamp>.md`) to the working directory, using the default filter: Verified and Needs Further Review, all severities, nothing a reviewer rejected. `findings.json` in `.opix/agent/<session-id>/` mirrors the `findings_ready` event. The actions let you re-export or query:
+If you connect before the scan has finished, `findings_ready` carries `"scan_complete": false`, the session's `session_status` and its `phase`. Its `findings` list is empty and isn't a result: nothing is downloaded, `findings.json` isn't written, the export actions return an `error`, and a `progress` line says the scan is still running (or that the session ended without findings). Disconnect and reconnect once `sessions_list` shows the session `completed`, or send `fetch_findings` to ask the server again. A finished scan carries `"scan_complete": true`.
+
+When findings arrive, the CLI **auto-downloads** the PoC files (under `pocs_<session-id>/`) and the findings markdown (`findings_<session-id>_<timestamp>.md`) to the working directory, using the default filter: Verified and Needs Further Review, all severities, nothing a reviewer rejected. `findings.json` in `.opix/agent/<session-id>/` mirrors the `findings_ready` event of a finished scan. The actions let you re-export or query:
 
 - `save_pocs` — re-export PoCs → `pocs_saved` `{ "session_id", "saved_count", "output_path", "filter" }`
 - `save_findings_md` — re-export markdown → `findings_saved` `{ "session_id", "files": [{ "category", "count", "path" }], "filter" }`, where `category` is `Findings` or `Ruled Out`
 - `generate_pdf` — generate the PDF report → `pdf_generated` `{ "session_id", "pdf_path", "filter" }`
-- `fetch_findings` — re-send `findings_ready`, optionally with `{ "include_false_positives": true }`
+- `fetch_findings` — re-send `findings_ready`, optionally with `{ "include_false_positives": true }`; while `scan_complete` is `false` it asks the server again
 - `set_verdict` with `{ "verdicts": [{ "finding_id": "f1", "verdict": true, "reason": "confirmed" }] }` — record verdicts in bulk (`true` = accept, `false` = reject, `null` = clear to unreviewed) → `verdict_set` with one `results` entry per finding
 
 The three export actions take an optional `filter` in `data`, mirroring the interactive [export dialog](/cli/bugpocer/#exporting-results). Omitted keys keep their defaults:
@@ -610,8 +640,7 @@ In agent mode, the CLI writes structured results to `.opix/agent/` within the wo
 │   ├── diff.json          # Diff review data (diff mode)
 │   ├── context-cache.json # Context cache review data
 │   ├── report.json        # Initial scan report
-│   ├── findings.json      # Findings (mirrors findings_ready)
-│   └── qa.json            # Q&A exchange history
+│   └── findings.json      # Findings (mirrors findings_ready once the scan finishes)
 ├── bug-pocer/
 │   └── sessions.json      # Session list
 ├── unit-tests/
@@ -642,7 +671,7 @@ The `sessions` command is agent-mode-only and returns active sessions across all
 olympix sessions --agent
 ```
 
-**Event:** `all_sessions` — sessions grouped per service, as the arrays `bug_pocer`, `unit_tests`, `mutation_tests`, `fuzz_tests` and `static_analysis`. Each entry has `id`, `title`, `status` and `created_at`.
+**Event:** `all_sessions` — sessions grouped per service, as the arrays `bug_pocer`, `unit_tests`, `mutation_tests`, `fuzz_tests` and `static_analysis`. Each entry has `id`, `title`, `status` and `created_at`; `bug_pocer` entries add `scan_mode`, `directed` and [`phase`](#1-session-selection).
 
 ---
 

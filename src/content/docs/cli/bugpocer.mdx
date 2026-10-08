@@ -26,7 +26,7 @@ Built on Olympix's proprietary Intermediate Representation (IR) and symbolic exe
 :::note[Project Requirements]
 - A project in one of the supported stacks that **builds and tests locally** before you start a scan. BugPoCer ships your locally-built artifacts and vendored dependencies in the upload, so the build must succeed on your machine first:
   - **Solidity** — a Foundry project where `forge test` succeeds (run `forge install` locally first), or a Hardhat project where `npx hardhat compile` succeeds with `node_modules` installed (Hardhat 3 is supported).
-  - **Rust / Anchor (Solana)** — a `Cargo.toml` (with `solana` / `anchor-lang` / `solana-program` dependencies) or `Anchor.toml` project. Run `anchor build` (or `cargo-build-sbf`) locally so `target/deploy/*.so` is on disk. For private crates, run `cargo vendor` locally so `vendor/` ships with the upload. TypeScript-tested Anchor projects also need `yarn install` (or equivalent) locally first so `node_modules/` ships.
+  - **Rust / Anchor (Solana)** — a `Cargo.toml` (with `solana` / `anchor-lang` / `solana-program` dependencies) or `Anchor.toml` project where `cargo build` succeeds. A prebuilt `target/deploy/*.so` is needed only when the program is tested from TypeScript or its Rust tests load the compiled program (for example `ProgramTest` without a processor, LiteSVM's `add_program_from_file`, or an `.so` path); then run `anchor build` (or `cargo-build-sbf`) locally first. For private crates, run `cargo vendor` locally so `vendor/` ships with the upload. TypeScript-tested Anchor projects also need `yarn install` (or equivalent) locally first so `node_modules/` ships.
   - **Rust / CosmWasm (Cosmos)** — a `Cargo.toml` project using `cosmwasm-std` (or `provwasm`) where `cargo build` succeeds locally. For private crates, run `cargo vendor` and commit `Cargo.lock` so the build can run offline. No pre-built `.so` is required.
   - **Cairo / StarkNet** — a `Scarb.toml` project. Run `scarb build` and `snforge test` locally first. For private packages, vendor under `vendor_cairo/` locally.
 - An Olympix account — log in with `olympix login -e <email>` (or `olympix login-sso -e <email>` if your organization uses SSO) before starting a scan (see [Installation](/installation/))
@@ -79,7 +79,7 @@ BugPoCer runs as a multi-stage pipeline. The analysis itself happens server-side
 
 5. **Wait for the scan-complete email** (subject: *BugPoCer Initial Scan Complete*).
 
-6. **Review** findings, record your verdicts, and export results (Markdown / PDF / PoC `.sol` files).
+6. **Review** findings, record your verdicts, and export results (Markdown / PDF / PoC test files).
 
 </Steps>
 
@@ -294,9 +294,9 @@ Before anything is uploaded, the CLI runs a local **pre-flight check** that conf
 
 What it checks, by framework:
 
-- **Foundry** — `forge` is on your `PATH`, git submodules are present, `foundry.toml` remappings resolve, an import-resolution sweep passes, and `forge build` succeeds.
+- **Foundry** — `forge` is on your `PATH`, git submodules are present, `foundry.toml` remappings resolve, an import-resolution sweep passes, and `forge build` succeeds. The sweep resolves imports the way `forge` does: through your declared remappings and then `forge remappings`, so a dependency nested under `lib/` (for example `forge-std` inside `lib/openzeppelin-contracts/lib/`) counts as found.
 - **Hardhat** — `node_modules` and `package.json` are present and `hardhat compile` succeeds.
-- **Anchor (Solana) / CosmWasm / Cairo** — build artifacts exist and the manifest (`Cargo.toml` / `Anchor.toml` / `Scarb.toml`) is readable. Anchor needs a locally built `target/deploy/*.so`; CosmWasm builds with `cargo build`; Cairo with `scarb build`.
+- **Anchor (Solana) / CosmWasm / Cairo** — build artifacts exist and the manifest (`Cargo.toml` / `Anchor.toml` / `Scarb.toml`) is readable. Anchor needs a locally built `target/deploy/*.so` only when it's tested from TypeScript or its Rust tests load the compiled program; CosmWasm builds with `cargo build`; Cairo with `scarb build`.
 
 If a blocking issue is found, the CLI prints remediation steps and asks whether to continue anyway or abort. In non-interactive runs (CI, PR mode, or `--confirm-all`) it logs a warning and proceeds.
 
@@ -338,6 +338,9 @@ Running `olympix bug-pocer` on a project with existing sessions shows the sessio
 | `Enter` | Open the selected session |
 | `n` | New session |
 | `r` | Refresh |
+| `k` | Kill the selected session |
+| `c` | Clone a finished session (completed, killed or expired) into a new one with the same settings |
+| `←` / `→` | Previous / next page |
 | `q` | Quit |
 
 ### Session status reference
@@ -347,8 +350,12 @@ Running `olympix bug-pocer` on a project with existing sessions shows the sessio
 | `Pending` | Queued — the scan has been submitted and is waiting for an available worker to start (may sit here longer under heavy load) |
 | `ChatStarted` | Session created, context building in progress |
 | `ValidationRequested` | Waiting for you to validate project context |
-| `ValidationCompleted` | Context approved, initial scan running |
+| `ValidationCompleted` | Context approved, initial scan running. The picker shows it as `SCANNING` |
 | `InitialScanCompleted` | Scan finished, findings available for review |
+| `Killed` | Killed by you, or when validation timed out, before the scan completed. No findings; clone it (`c`) to start again with the same settings |
+| `ContextExpired` | Ended before the scan completed. No findings; clone it (`c`) to start again with the same settings |
+
+Connecting to a session whose scan hasn't finished says the scan is still running, rather than showing an empty findings list. Reconnect once it reaches `InitialScanCompleted`. A killed or expired session says it ended without findings.
 
 ### Killing a session
 
@@ -421,11 +428,18 @@ In addition to the interactive picker, you can pre-seed scope with a config file
 
 BugPoCer automatically excludes common non-production and dependency paths. Entries are matched as **case-insensitive path segments** — a whole `/`-delimited path segment must match, not an arbitrary substring.
 
-For **Solidity** projects, any file with one of these path segments is ignored:
+For **Solidity** projects, BugPoCer leaves out:
 
-`node_modules`, `dependencies`, `forge-std`, `ds-test`, `openzeppelin`, `openzeppelin-contracts`, `openzeppelin-contracts-upgradeable`, `openzeppelin-foundry-upgrades`, `solmate`, `solady`, `prb-math`, `prb-test`, `murky`, `permit2`, `erc4626-tests`, `erc6900`, `v2-core`, `v2-periphery`, `v3-core`, `v3-periphery`, `v4-core`, `v4-periphery`, `uniswap-v2`, `uniswap-v3`, `uniswap-v4`, `aave-v2`, `aave-v3`, `chainlink`, `chainlink-brownie-contracts`, `balancer-v2`, `curve`
+- everything under the root `lib/` directory
+- test and script files: `*.t.sol`, `*.s.sol`, and the `test` and `script` directories set in `foundry.toml`
+- any file with a `test`, `tests`, `mock`, `mocks`, `example`, `examples`, `script`, `scripts` or `certora` path segment
+- any file with one of these dependency path segments:
 
-For **Rust** projects: `target`, `test`, `tests`, `mock`, `mocks`, `example`, `examples`, `node_modules`.
+  `node_modules`, `dependencies`, `forge-std`, `ds-test`, `openzeppelin`, `openzeppelin-contracts`, `openzeppelin-contracts-upgradeable`, `openzeppelin-foundry-upgrades`, `solmate`, `solady`, `prb-math`, `prb-test`, `murky`, `permit2`, `erc4626-tests`, `erc6900`, `v2-core`, `v2-periphery`, `v3-core`, `v3-periphery`, `v4-core`, `v4-periphery`, `uniswap-v2`, `uniswap-v3`, `uniswap-v4`, `aave-v2`, `aave-v3`, `chainlink`, `chainlink-brownie-contracts`, `balancer-v2`, `curve`
+
+The scope picker applies the same rules, so it lists only code BugPoCer scans.
+
+For **Rust** projects: `target`, `test`, `tests`, `mock`, `mocks`, `example`, `examples`, `script`, `scripts`, `certora`, `fixtures`, `benches`, `vendor`, `node_modules`. Each workspace member is listed once, and members in `[workspace].exclude` are left out.
 
 For **Cairo** projects: `target`, `test`, `tests`, `mock`, `mocks`, `mock_contracts`, `example`, `examples`, `node_modules`, `.snfoundry_cache`.
 
@@ -534,8 +548,8 @@ Every finding carries two separate calls: what **BugPoCer** concluded, and what 
 
 | Assessment | Badge | Meaning |
 |------------|-------|---------|
-| **Verified** | `VERIFIED` (green) | BugPoCer confirmed the bug and produced a proof-of-concept exploit for it. |
-| **Needs Further Review** | `NFR` (yellow) | BugPoCer flagged the issue but couldn't prove it: the PoC didn't compile or ran without showing harm, the project build failed, or verification needed context it didn't have. These still warrant a human look. |
+| **Verified** | `VERIFIED` (green) | BugPoCer confirmed the bug with a proof-of-concept exploit that runs against your project's code and shows the harm. |
+| **Needs Further Review** | `NFR` (yellow) | BugPoCer flagged the issue but couldn't prove it: the PoC didn't compile, ran without showing harm, or didn't exercise your project's code; the project build failed; or verification needed context it didn't have. These still warrant a human look. |
 | **Not Exploitable** | `NOT EXPLOITABLE` (grey) | BugPoCer investigated the finding and ruled it out. |
 
 **Your verdict**: `ACCEPTED` (green), `REJECTED` (grey) or `NOT REVIEWED` (grey), set from the [findings pager](#interactive-findings-pager). Your verdict takes precedence: a finding you accept shows and counts as Verified, and one you reject as Not Exploitable, in the pager, its counts and every export. The reviewer badge stays beside it, so you can always tell a person made the call.
@@ -642,14 +656,14 @@ The PDF contains:
 - **Scope** — repository, commit short SHA, branch, scanned-unit count, and the list of units analyzed
 - **Ingested Documentation** — the documents BugPoCer read: docs, Certora specs and PDFs found in the repository, plus any you [added](#adding-project-documentation)
 - **Summary** — scan start/complete/generation times, a severity bar chart split by assessment, an index of the issues in the report (a group counts once), and glossaries of the severity levels and assessments
-- **Findings** — Verified and Needs Further Review findings, banded by severity. Each finding has chips for its severity, assessment and your verdict, then the unit, location, description, your verdict reason (if set), evidence, and for findings BugPoCer verified with a PoC, the PoC summary and the **full PoC code** with syntax highlighting. A [group](#finding-groups) appears as one issue with a root cause / fix card and lettered members
+- **Findings** — Verified and Needs Further Review findings, banded by severity. Each finding has chips for its severity, assessment and your verdict, then the unit, location, description, your verdict reason (if set), evidence, and for findings BugPoCer verified with a PoC, the PoC summary and the **full PoC code** in its own language (Solidity PoCs are syntax-highlighted). A [group](#finding-groups) appears as one issue with a root cause / fix card and lettered members
 - **Findings Ruled Out** — Not Exploitable findings, when you include them, in the same layout
 
 Saved to your current working directory as `BugPoCer_Scan_Report_<sessionId>_<timestamp>.pdf`.
 
 ### PoC test files
 
-One file per exported finding that has a PoC, written under `pocs_<sessionId>/` in your current working directory. Each file mirrors the path the scanner built it at, so you can copy the folder's contents straight into your project (`cp -r pocs_<sessionId>/* .`); findings from older scans use a flat `<unit>_<vulnerability>` file name instead. Extensions follow the project's test framework: `.t.sol` for Foundry, `.js` or `.ts` for Hardhat, `.rs` for Rust / Anchor, `.ts` for TypeScript-tested Anchor projects, `.cairo` for Starknet Foundry.
+One file per exported finding that has a PoC, written under `pocs_<sessionId>/` in your current working directory. Each file mirrors the path the scanner built it at, so you can copy the folder's contents straight into your project (`cp -r pocs_<sessionId>/* .`); findings from older scans use a flat `<unit>_<vulnerability>` file name instead. Extensions follow the project's test framework: `.t.sol` for Foundry, `.js` or `.ts` for Hardhat, `.rs` for Rust / Anchor, `.ts` for TypeScript-tested Anchor projects, `.cairo` for Starknet Foundry. In a Rust workspace a PoC lands in the `tests/` directory of the package that owns the finding (for example `program/tests/`), so it can use that crate.
 
 ---
 
