@@ -649,6 +649,10 @@ An older session with no stored test files emits a `progress` event saying nothi
 
 If the run has not finished yet, the CLI emits `results_ready` `{ "type": "bugscout", "session_id", "message": "Results not ready yet…" }` instead and exits.
 
+:::note[Names from before the rename]
+For one release the CLI also emits `fuzz_test_results` and `fuzz_tests_downloaded` right after `bugscout_results` and `bugscout_tests_downloaded`, with the same data, adds a `fuzz_tests` key mirroring `bugscout` to `olympix sessions --agent`, and writes `.opix/agent/fuzz-tests/results.json` as well as `.opix/agent/bugscout/results.json`. These keep integrations written before the rename working. New integrations should use the `bugscout` names only.
+:::
+
 ### Session manager
 
 `list-bugscout-sessions` and `bugscout` both emit `sessions_list` (actions `new_session`, `connect_session`, `kill_session`, `disconnect`).
