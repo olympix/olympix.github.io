@@ -46,9 +46,9 @@ olympix unit-testing --agent
 # Mutation testing in agent mode
 olympix mutation-testing --agent
 
-# Fuzz testing in agent mode
-olympix generate-fuzz-tests -p src/Vault.sol --agent
-olympix connect-fuzz-session -s <session-id> --agent
+# BugScout in agent mode
+olympix generate-bugscout-tests -p src/Vault.sol --agent
+olympix connect-bugscout-session -s <session-id> --agent
 
 # Static analysis in agent mode
 olympix static-analysis --agent
@@ -459,10 +459,11 @@ Leaving every assessment, every severity, or both reviewer keys off is rejected 
 
 ### Killing a Session
 
-`kill-bp-session` terminates an active session. It is a one-shot command — the session ID is passed as a flag and no stdin input is needed:
+`kill-bp-session` terminates an active BugPoCer session, and `kill-bugscout-session` a running BugScout session. Both are one-shot commands — the session ID is passed as a flag and no stdin input is needed:
 
 ```bash
 olympix kill-bp-session -s <session-id> --agent
+olympix kill-bugscout-session -s <session-id> --agent
 ```
 
 **Event:** `session_killed`
@@ -476,11 +477,13 @@ olympix kill-bp-session -s <session-id> --agent
 
 `was_running` is `false` when the session was not running (e.g. already completed). A missing session ID or no acknowledgment within 30 seconds emits an `error` event and exits non-zero.
 
+A killed BugScout run is terminal: it reports `Killed` in the sessions list and has no results to retrieve.
+
 ---
 
 ## Test Generator Agent Protocol
 
-`unit-testing`, `mutation-testing`, `generate-unit-tests` and `generate-mutation-tests` share the session / file-selection flow. Fuzz generation follows a different, dispatch-only flow — see [Fuzz Test Generator Agent Protocol](#fuzz-test-generator-agent-protocol).
+`unit-testing`, `mutation-testing`, `generate-unit-tests` and `generate-mutation-tests` share the session / file-selection flow. BugScout follows a different, dispatch-only flow — see [BugScout Agent Protocol](#bugscout-agent-protocol).
 
 ### Session & file selection
 
@@ -565,66 +568,100 @@ The generated `.t.sol` test files are written into the workspace automatically.
 
 ---
 
-## Fuzz Test Generator Agent Protocol
+## BugScout Agent Protocol
 
-Fuzz runs are **long-lived**. `generate-fuzz-tests` only dispatches the run and returns a session ID — full results are emailed and can be pulled back later with `connect-fuzz-session`.
+BugScout runs are **long-lived**. `generate-bugscout-tests` only dispatches the run and returns a session ID — full results are emailed and can be pulled back later with `connect-bugscout-session`.
 
 ```bash
 # Dispatch a run (returns a session_id; results arrive by email)
-olympix generate-fuzz-tests -w . -p src/Vault.sol --agent
+olympix generate-bugscout-tests -w . -p src/Vault.sol --agent
 
-# List your fuzz sessions
-olympix list-fuzz-sessions --agent
+# List your BugScout sessions
+olympix list-bugscout-sessions --agent
 
-# Fetch a finished session's summary (+ optional PDF report)
-olympix connect-fuzz-session -s <session-id> --agent
+# Fetch a finished session: summary, generated test files (+ optional PDF report)
+olympix connect-bugscout-session -s <session-id> --agent
 
 # Session manager: list, then reconnect, in one process
-olympix fuzz-testing -w . --agent
+olympix bugscout -w . --agent
+
+# Stop a running session (permanent; results are lost)
+olympix kill-bugscout-session -s <session-id> --agent
 ```
 
 ### Dispatching a run
 
-`generate-fuzz-tests` emits a `progress` event carrying the new session ID, then a terminal `completed` event:
+`generate-bugscout-tests` emits a `progress` event carrying the new session ID, then a terminal `completed` event:
 
 ```json
 {
   "event": "completed",
-  "data": { "type": "fuzz_test", "session_id": "abc-123", "message": "Fuzz generation started; results pending." }
+  "data": { "type": "bugscout", "session_id": "abc-123", "message": "BugScout run started; results pending." }
 }
 ```
 
 ### Fetching results
 
-`connect-fuzz-session` (and `connect_session` from a session list) emits a summary of the finished run:
+`connect-bugscout-session` (and `connect_session` from a session list) first downloads the generated test files, then emits a summary of the finished run.
 
-**Event:** `fuzz_test_results`
+**Event:** `bugscout_tests_downloaded`
+
+The generated test sources are written to `bugscout_tests_<session-id>/` before the summary:
 
 ```json
 {
-  "event": "fuzz_test_results",
+  "event": "bugscout_tests_downloaded",
+  "data": {
+    "session_id": "abc-123",
+    "saved_count": 3,
+    "output_path": "bugscout_tests_abc-123",
+    "files": ["TestCases_Vault_Reentrancy_0_0.t.sol", "TestCases_Vault_SignatureReplay_0_0.t.sol", "ExploitCases_Vault_Reentrancy.t.sol"]
+  },
+  "actions": ["download_tests", "generate_report", "disconnect"]
+}
+```
+
+An older session with no stored test files emits a `progress` event saying nothing was downloaded, not an `error`, and the summary still follows.
+
+**Event:** `bugscout_results`
+
+```json
+{
+  "event": "bugscout_results",
   "data": {
     "session_id": "abc-123",
     "contracts": 3,
     "strategies": 7,
     "test_cases": 128,
-    "exploit_test_cases": 2
+    "exploit_test_cases": 2,
+    "tests_path": "bugscout_tests_abc-123",
+    "tests_file_count": 3
   },
-  "actions": ["generate_report", "disconnect"]
+  "actions": ["download_tests", "generate_report", "disconnect"]
 }
 ```
 
-- `generate_report` — render the PDF report → `pdf_generated` `{ "session_id", "pdf_path" }`
-- `disconnect` — exit without generating a report
+`tests_path` and `tests_file_count` describe the automatic download; `tests_path` is absent and `tests_file_count` is `0` when nothing was downloaded.
 
-If the run has not finished yet, the CLI emits `results_ready` `{ "type": "fuzz_test", "session_id", "message": "Results not ready yet…" }` instead and exits.
+- `download_tests` — download the generated test files again → `bugscout_tests_downloaded`. A failure here is an `error` event.
+- `generate_report` — render the PDF report → `pdf_generated` `{ "session_id", "pdf_path" }`
+- `disconnect` — exit
+
+If the run has not finished yet, the CLI emits `results_ready` `{ "type": "bugscout", "session_id", "message": "Results not ready yet…" }` instead and exits.
+
+:::note[Names from before the rename]
+For one release the CLI also emits `fuzz_test_results` and `fuzz_tests_downloaded` right after `bugscout_results` and `bugscout_tests_downloaded`, with the same data, adds a `fuzz_tests` key mirroring `bugscout` to `olympix sessions --agent`, and writes `.opix/agent/fuzz-tests/results.json` as well as `.opix/agent/bugscout/results.json`. These keep integrations written before the rename working. New integrations should use the `bugscout` names only.
+:::
 
 ### Session manager
 
-`list-fuzz-sessions` and `fuzz-testing` both emit `sessions_list` (actions `new_session`, `connect_session`, `disconnect`) and then follow the fetch flow above once you send `connect_session`.
+`list-bugscout-sessions` and `bugscout` both emit `sessions_list` (actions `new_session`, `connect_session`, `kill_session`, `disconnect`).
+
+- `connect_session` `{ "session_id" }` — follows the fetch flow above.
+- `kill_session` `{ "session_id" }` — stops a running session → `session_killed` `{ "session_id", "was_running" }`, as in [Killing a Session](#killing-a-session).
 
 :::note[Starting a run]
-These two commands accept `connect_session` only. `new_session` returns an `error` event — dispatch a new run with `generate-fuzz-tests -p <file> --agent` instead.
+These two commands accept `connect_session` and `kill_session`. `new_session` returns an `error` event — dispatch a new run with `generate-bugscout-tests -p <file> --agent` instead.
 :::
 
 ---
@@ -650,9 +687,9 @@ In agent mode, the CLI writes structured results to `.opix/agent/` within the wo
 ├── mutation-tests/
 │   ├── sessions.json      # Session list
 │   └── results.json       # Test results
-└── fuzz-tests/
+└── bugscout/
     ├── sessions.json      # Session list
-    └── results.json       # Fuzz run summary
+    └── results.json       # BugScout run summary
 ```
 
 Files are written atomically (temp file + rename) and use snake_case JSON.
@@ -671,7 +708,7 @@ The `sessions` command is agent-mode-only and returns active sessions across all
 olympix sessions --agent
 ```
 
-**Event:** `all_sessions` — sessions grouped per service, as the arrays `bug_pocer`, `unit_tests`, `mutation_tests`, `fuzz_tests` and `static_analysis`. Each entry has `id`, `title`, `status` and `created_at`; `bug_pocer` entries add `scan_mode`, `directed` and [`phase`](#1-session-selection).
+**Event:** `all_sessions` — sessions grouped per service, as the arrays `bug_pocer`, `unit_tests`, `mutation_tests`, `bugscout` and `static_analysis`. Each entry has `id`, `title`, `status` and `created_at`; `bug_pocer` entries add `scan_mode`, `directed` and [`phase`](#1-session-selection).
 
 ---
 
