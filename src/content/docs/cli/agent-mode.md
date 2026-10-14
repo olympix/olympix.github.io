@@ -459,10 +459,11 @@ Leaving every assessment, every severity, or both reviewer keys off is rejected 
 
 ### Killing a Session
 
-`kill-bp-session` terminates an active session. It is a one-shot command — the session ID is passed as a flag and no stdin input is needed:
+`kill-bp-session` terminates an active BugPoCer session, and `kill-bugscout-session` a running BugScout session. Both are one-shot commands — the session ID is passed as a flag and no stdin input is needed:
 
 ```bash
 olympix kill-bp-session -s <session-id> --agent
+olympix kill-bugscout-session -s <session-id> --agent
 ```
 
 **Event:** `session_killed`
@@ -475,6 +476,8 @@ olympix kill-bp-session -s <session-id> --agent
 ```
 
 `was_running` is `false` when the session was not running (e.g. already completed). A missing session ID or no acknowledgment within 30 seconds emits an `error` event and exits non-zero.
+
+A killed BugScout run is terminal: it reports `Killed` in the sessions list and has no results to retrieve.
 
 ---
 
@@ -576,7 +579,7 @@ olympix generate-bugscout-tests -w . -p src/Vault.sol --agent
 # List your BugScout sessions
 olympix list-bugscout-sessions --agent
 
-# Fetch a finished session's summary (+ optional PDF report)
+# Fetch a finished session: summary, generated test files (+ optional PDF report)
 olympix connect-bugscout-session -s <session-id> --agent
 
 # Session manager: list, then reconnect, in one process
@@ -599,7 +602,26 @@ olympix kill-bugscout-session -s <session-id> --agent
 
 ### Fetching results
 
-`connect-bugscout-session` (and `connect_session` from a session list) emits a summary of the finished run:
+`connect-bugscout-session` (and `connect_session` from a session list) first downloads the generated test files, then emits a summary of the finished run.
+
+**Event:** `bugscout_tests_downloaded`
+
+The generated test sources are written to `bugscout_tests_<session-id>/` before the summary:
+
+```json
+{
+  "event": "bugscout_tests_downloaded",
+  "data": {
+    "session_id": "abc-123",
+    "saved_count": 3,
+    "output_path": "bugscout_tests_abc-123",
+    "files": ["TestCases_Vault_Reentrancy_0_0.t.sol", "TestCases_Vault_SignatureReplay_0_0.t.sol", "ExploitCases_Vault_Reentrancy.t.sol"]
+  },
+  "actions": ["download_tests", "generate_report", "disconnect"]
+}
+```
+
+An older session with no stored test files emits a `progress` event saying nothing was downloaded, not an `error`, and the summary still follows.
 
 **Event:** `bugscout_results`
 
@@ -611,23 +633,31 @@ olympix kill-bugscout-session -s <session-id> --agent
     "contracts": 3,
     "strategies": 7,
     "test_cases": 128,
-    "exploit_test_cases": 2
+    "exploit_test_cases": 2,
+    "tests_path": "bugscout_tests_abc-123",
+    "tests_file_count": 3
   },
-  "actions": ["generate_report", "disconnect"]
+  "actions": ["download_tests", "generate_report", "disconnect"]
 }
 ```
 
+`tests_path` and `tests_file_count` describe the automatic download; `tests_path` is absent and `tests_file_count` is `0` when nothing was downloaded.
+
+- `download_tests` — download the generated test files again → `bugscout_tests_downloaded`. A failure here is an `error` event.
 - `generate_report` — render the PDF report → `pdf_generated` `{ "session_id", "pdf_path" }`
-- `disconnect` — exit without generating a report
+- `disconnect` — exit
 
 If the run has not finished yet, the CLI emits `results_ready` `{ "type": "bugscout", "session_id", "message": "Results not ready yet…" }` instead and exits.
 
 ### Session manager
 
-`list-bugscout-sessions` and `bugscout` both emit `sessions_list` (actions `new_session`, `connect_session`, `disconnect`) and then follow the fetch flow above once you send `connect_session`.
+`list-bugscout-sessions` and `bugscout` both emit `sessions_list` (actions `new_session`, `connect_session`, `kill_session`, `disconnect`).
+
+- `connect_session` `{ "session_id" }` — follows the fetch flow above.
+- `kill_session` `{ "session_id" }` — stops a running session → `session_killed` `{ "session_id", "was_running" }`, as in [Killing a Session](#killing-a-session).
 
 :::note[Starting a run]
-These two commands accept `connect_session` only. `new_session` returns an `error` event — dispatch a new run with `generate-bugscout-tests -p <file> --agent` instead.
+These two commands accept `connect_session` and `kill_session`. `new_session` returns an `error` event — dispatch a new run with `generate-bugscout-tests -p <file> --agent` instead.
 :::
 
 ---
