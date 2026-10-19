@@ -386,6 +386,10 @@ This is the one prompt that spends credits. An EOF (closed stdin) or any unrecog
 }
 ```
 
+:::note[Name from before the rename]
+For one release the CLI also emits `initial_scan_completed` right after `scan_completed`, with the same data, so older plugins keep working. Ignore it.
+:::
+
 **Event:** `findings_ready`
 
 ```json
