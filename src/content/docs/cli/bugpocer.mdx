@@ -55,11 +55,11 @@ BugPoCer runs as a multi-stage pipeline. The analysis itself happens server-side
 
 | # | Stage | What happens | Session state | Email sent |
 |---|-------|--------------|---------------|------------|
-| 1 | **Start session** | You run `olympix bug-pocer`, pick a project, name the session, select scope, and optionally attach additional documentation. Nothing is committed server-side until you press `Enter` to submit the documentation step — at that point the session is created, transitions to `ChatStarted`, and the *Scan Started* email fires. Cancelling during scope selection or the documentation step leaves no session behind. | — → `ChatStarted` | *BugPoCer Scan Started* |
-| 2 | **Context building** | Server scans your uploaded code (including any documentation found in the repo) and infers project identity, intent, core functions, design goals, patterns, invariants, and security assumptions. | `ChatStarted` | — |
+| 1 | **Start session** | You run `olympix bug-pocer`, pick a project, name the session, select scope, and optionally attach additional documentation. Nothing is committed server-side until you press `Enter` to submit the documentation step — at that point the session is created, transitions to `ScanStarted`, and the *Scan Started* email fires. Cancelling during scope selection or the documentation step leaves no session behind. | — → `ScanStarted` | *BugPoCer Scan Started* |
+| 2 | **Context building** | Server scans your uploaded code (including any documentation found in the repo) and infers project identity, intent, core functions, design goals, patterns, invariants, and security assumptions. | `ScanStarted` | — |
 | 3 | **Context validation** | You review and correct the inferences the engine isn't confident about. | `ValidationRequested` | *[Action Required] Validate Project Context* (or the *…(Partial)* variant if some context agents fell short). You have 72 hours to respond; if you don't, reminder emails fire inside the window and the session is killed when it expires. |
-| 4 | **Initial scan** | Validated context is fed into the vulnerability scan and PoC generation. | `ValidationCompleted` | — |
-| 5 | **Findings review** | Reconnect, browse findings, mark verdicts, export reports. | `InitialScanCompleted` | *BugPoCer Initial Scan Complete* |
+| 4 | **Scan** | Validated context is fed into the vulnerability scan and PoC generation. | `ValidationCompleted` | — |
+| 5 | **Findings review** | Reconnect, browse findings, mark verdicts, export reports. | `ScanCompleted` | *BugPoCer Scan Complete* |
 
 </div>
 
@@ -77,7 +77,7 @@ BugPoCer runs as a multi-stage pipeline. The analysis itself happens server-side
 
 4. **Validate**: run `olympix bug-pocer` again, reopen the session, confirm or correct each inference, then submit.
 
-5. **Wait for the scan-complete email** (subject: *BugPoCer Initial Scan Complete*).
+5. **Wait for the scan-complete email** (subject: *BugPoCer Scan Complete*).
 
 6. **Review** findings, record your verdicts, and export results (Markdown / PDF / PoC test files).
 
@@ -348,14 +348,14 @@ Running `olympix bug-pocer` on a project with existing sessions shows the sessio
 | Status | Meaning |
 |--------|---------|
 | `Pending` | Queued — the scan has been submitted and is waiting for an available worker to start (may sit here longer under heavy load) |
-| `ChatStarted` | Session created, context building in progress |
+| `ScanStarted` | Session created, context building in progress |
 | `ValidationRequested` | Waiting for you to validate project context |
-| `ValidationCompleted` | Context approved, initial scan running. The picker shows it as `SCANNING` |
-| `InitialScanCompleted` | Scan finished, findings available for review |
+| `ValidationCompleted` | Context approved, scan running. The picker shows it as `SCANNING` |
+| `ScanCompleted` | Scan finished, findings available for review |
 | `Killed` | Killed by you, or when validation timed out, before the scan completed. No findings; clone it (`c`) to start again with the same settings |
 | `ContextExpired` | Ended before the scan completed. No findings; clone it (`c`) to start again with the same settings |
 
-Connecting to a session whose scan hasn't finished says the scan is still running, rather than showing an empty findings list. Reconnect once it reaches `InitialScanCompleted`. A killed or expired session says it ended without findings.
+Connecting to a session whose scan hasn't finished says the scan is still running, rather than showing an empty findings list. Reconnect once it reaches `ScanCompleted`. A killed or expired session says it ended without findings.
 
 ### Killing a session
 
@@ -470,7 +470,7 @@ Think *private* or *external* context: internal design docs, threat models, audi
 
 All attached documentation shares a combined budget of roughly 100,000 tokens; the UI shows how much headroom is left as you add items.
 
-Press `Enter` to submit. This is the point at which your session is created server-side (`ChatStarted`) and the *BugPoCer Scan Started* email fires. If you quit before this step, no session is created.
+Press `Enter` to submit. This is the point at which your session is created server-side (`ScanStarted`) and the *BugPoCer Scan Started* email fires. If you quit before this step, no session is created.
 
 ---
 
@@ -524,7 +524,7 @@ Both files persist across CLI restarts. If you close the CLI mid-validation, the
 Your feedback tells the engine what's intentional vs. what might be a vulnerability. Accurate context means more real findings and fewer false positives. Treat validation as part of the scan, not paperwork after it.
 :::
 
-Once you submit, the session transitions to `ValidationCompleted` and the initial scan begins. You can close the CLI — the *BugPoCer Initial Scan Complete* email will tell you when results are ready.
+Once you submit, the session transitions to `ValidationCompleted` and the scan begins. You can close the CLI — the *BugPoCer Scan Complete* email will tell you when results are ready.
 
 ---
 
