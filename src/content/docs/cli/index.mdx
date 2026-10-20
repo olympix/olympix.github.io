@@ -33,7 +33,7 @@ When you run the Olympix CLI, you have access to several commands:
 - **`connect-bp-session`**: Reconnect to an existing BugPocer session by ID
 - **`kill-bp-session`**: Kill an active BugPocer session by ID
 - **`list-fuzz-sessions`**: List your fuzz test sessions
-- **`connect-fuzz-session`**: Reconnect to a fuzz test session and generate a report
+- **`connect-fuzz-session`**: Reconnect to a fuzz test session, download the generated test files and generate a report
 - **`sessions`**: List sessions across all services (agent mode only)
 
 **Agent Mode (AI integrations):**
@@ -159,7 +159,7 @@ When generating fuzz tests, you have the following options:
 - **`--no-<attack strategy id>`**
   Defines the attack strategies to be ignored. Can be used multiple times.
 
-Fuzz runs are long-lived: the command dispatches the run and returns a session ID, and results are emailed when the run finishes. Use `list-fuzz-sessions` and `connect-fuzz-session -s <session id>` to pull the summary back and generate a PDF report.
+Fuzz runs are long-lived: the command dispatches the run and returns a session ID, and results are emailed when the run finishes. Use `list-fuzz-sessions` and `connect-fuzz-session -s <session id>` to pull the summary back, download the generated test files into `fuzz_tests_<session id>/` and generate a PDF report.
 
 ---
 
