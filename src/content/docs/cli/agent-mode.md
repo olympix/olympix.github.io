@@ -190,10 +190,10 @@ Add `--directed` with `--domains <id,...>` and/or `--directions-file <path>` to 
 
 | `status` | `phase` |
 |----------|---------|
-| `Pending`, `ChatStarted` | `in_progress` |
+| `Pending`, `ScanStarted` | `in_progress` |
 | `ValidationRequested` | `awaiting_validation` |
 | `ValidationCompleted` | `scanning` |
-| `InitialScanCompleted` | `completed` |
+| `ScanCompleted` | `completed` |
 | `Killed`, `ContextExpired` | `terminal` |
 
 **Actions:**
@@ -377,14 +377,18 @@ This is the one prompt that spends credits. An EOF (closed stdin) or any unrecog
 
 ### 6. Results
 
-**Event:** `initial_scan_completed`
+**Event:** `scan_completed`
 
 ```json
 {
-  "event": "initial_scan_completed",
+  "event": "scan_completed",
   "data": { "session_id": "abc-123", "message": "Scan complete", "total_scan_cost": "150 credits" }
 }
 ```
+
+:::note[Name from before the rename]
+For one release the CLI also emits `initial_scan_completed` right after `scan_completed`, with the same data, so older plugins keep working. Ignore it.
+:::
 
 **Event:** `findings_ready`
 
@@ -676,7 +680,7 @@ In agent mode, the CLI writes structured results to `.opix/agent/` within the wo
 │   ├── scope.json         # Scope review data
 │   ├── diff.json          # Diff review data (diff mode)
 │   ├── context-cache.json # Context cache review data
-│   ├── report.json        # Initial scan report
+│   ├── report.json        # Scan report
 │   └── findings.json      # Findings (mirrors findings_ready once the scan finishes)
 ├── bug-pocer/
 │   └── sessions.json      # Session list
@@ -751,7 +755,7 @@ olympix bug-pocer --agent <<'EOF'
 EOF
 ```
 
-The CLI emits `context_cache_review` (if a prior context matches), then `scope_review` (or `diff_review` in diff mode), then a `validation_item` for each inference, then (optionally) `security_question`s and the `additional_docs_prompt`, and finally `initial_scan_completed` / `findings_ready`. Respond to each with one of its advertised `actions`.
+The CLI emits `context_cache_review` (if a prior context matches), then `scope_review` (or `diff_review` in diff mode), then a `validation_item` for each inference, then (optionally) `security_question`s and the `additional_docs_prompt`, and finally `scan_completed` / `findings_ready`. Respond to each with one of its advertised `actions`.
 
 :::caution[One line per JSON object]
 The protocol is newline-delimited JSON (NDJSON). Each command must be a single line — do not pretty-print commands sent to stdin.
