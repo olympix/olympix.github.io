@@ -108,6 +108,7 @@ olympix bug-pocer
 | `-ca, --confirm-all` | Auto-confirm scope, documentation, cache, and pre-flight prompts (non-interactive; implied in CI) |
 | `--diff-base <git ref>` | Enable [diff mode](#diff-mode) — scan only the code changed relative to this commit, branch, or tag |
 | `--diff-target <git ref>` | Other end of the diff (must be the checked-out `HEAD`); defaults to the working tree. Requires `--diff-base` |
+| `--strict` | [Strict diff mode](#strict-diff-mode) — report only findings whose vulnerable code is in the changed files. Requires `--diff-base` |
 | `--framework foundry\|hardhat` | Pin the framework for a **multiframework** repo — one with both a `foundry.toml` and a `hardhat.config.*`. No effect on single-framework repos. |
 | `--directed` | Start a [directed scan](#directed-mode) — investigate only the domains and custom directions you choose |
 | `--domains <id,...>` | Comma-separated [domains](#domains) to investigate. Requires `--directed` |
@@ -131,12 +132,18 @@ olympix bug-pocer --diff-base main
 
 # Diff an explicit range (the target must be the checked-out commit)
 olympix bug-pocer --diff-base v1.2.0 --diff-target HEAD
+
+# Report only findings rooted in the changed files
+olympix bug-pocer --diff-base main --strict
 ```
+
+In the interactive TUI, choose **Diff** when starting a new scan to enter the base ref, an optional target ref, and the strict toggle.
 
 | Flag | Description |
 |------|-------------|
 | `--diff-base <git ref>` | **Enables diff mode.** Commit, branch, or tag to diff against — BugPoCer scans only the code that changed relative to it. |
 | `--diff-target <git ref>` | The other end of the diff. Optional; defaults to your working tree. If set, it must be the currently checked-out commit (`HEAD`). |
+| `--strict` | Report only findings whose vulnerable code is in the changed files. See [Strict diff mode](#strict-diff-mode). |
 
 How it behaves:
 
@@ -151,6 +158,17 @@ How it behaves:
 :::note[Uncommitted changes vs. an explicit `--diff-target`]
 If you pass an explicit `--diff-target` commit while your working tree has uncommitted changes, the scan reads files from disk and could misreport changed line numbers against that commit. The CLI detects this and asks whether to compare against your **working tree** (recommended) or the committed `--diff-target`.
 :::
+
+### Strict diff mode
+
+A regular diff scan starts from the changed code but still reports a vulnerability whose root cause sits in unchanged code it calls into. Add `--strict` when you want results that map only to what you're shipping:
+
+- Only contracts in the changed files are in scope; contracts outside them are read as context but never reported on.
+- A finding is kept only when its vulnerable code (the sink) is in a changed file, and its evidence doesn't point solely at unchanged code. A finding that enters through unchanged code but whose defect is in a changed file is still reported.
+- Findings rooted in unchanged code are dropped rather than reported as out of scope.
+- For Rust crates without `#[program]`, the unit is the whole crate: once any of its files changes, findings anywhere in that crate are kept.
+
+The diff review shows `Strict: only findings originating in the changed files` before you confirm, and the PDF report labels the run **Strict Diff Scan**.
 
 ---
 

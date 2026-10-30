@@ -191,6 +191,8 @@ When using the `bug-pocer` command for AI-powered vulnerability detection and Po
 
 - **`--diff-base <git ref>`** / **`--diff-target <git ref>`**: Scan only the code changed between two git refs ([diff mode](/cli/bugpocer/#diff-mode)). `--diff-target` requires `--diff-base`.
 
+- **`--strict`**: With `--diff-base`, report only findings whose vulnerable code is in the changed files ([strict diff mode](/cli/bugpocer/#strict-diff-mode)).
+
 - **`--framework foundry|hardhat`**: Pin the framework for a multiframework repo (one with both a `foundry.toml` and a `hardhat.config.*`).
 
 See the [BugPoCer documentation](/cli/bugpocer/) for full details on these options.
@@ -215,7 +217,7 @@ olympix analyze [-w | --workspace-path <workspace directory>] [-p | --path <anal
 olympix generate-unit-tests [-w | --workspace-path <workspace directory>] [-ca | --confirm-all] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
 olympix generate-mutation-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-t | --t <timeout>] [-env | --include-dot-env] [--env-file <env file path>] [-ext | --extension .<extension-to-include>]
 olympix generate-bugscout-tests [-w | --workspace-path <workspace directory>] [-p | --path <solidity file path>] [-cm | --coverage-mode <path|branch>] [-cl | --chain-length <length>]
-olympix start-bp-session [-w | --workspace-path <workspace directory>] [--diff-base <git ref>] [--diff-target <git ref>]
+olympix start-bp-session [-w | --workspace-path <workspace directory>] [--diff-base <git ref>] [--diff-target <git ref>] [--strict]
 
 # Session management
 olympix list-bp-sessions

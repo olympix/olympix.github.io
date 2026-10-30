@@ -160,10 +160,10 @@ The CLI exits 0 straight after emitting the findings — no action is required. 
 
 BugPocer's multi-stage pipeline maps to the following event/action sequence.
 
-`bug-pocer` starts at session selection. `start-bp-session` skips `sessions_list`/`new_session` and begins directly at step 2 (`scope_review`, or `diff_review` in diff mode); the rest of the flow is identical and it accepts the same `--diff-base`/`--diff-target` flags.
+`bug-pocer` starts at session selection. `start-bp-session` skips `sessions_list`/`new_session` and begins directly at step 2 (`scope_review`, or `diff_review` in diff mode); the rest of the flow is identical and it accepts the same `--diff-base`/`--diff-target`/`--strict` flags.
 
 :::note[Diff mode]
-Add `--diff-base <git ref>` (optionally `--diff-target <git ref>`) to constrain the scan to changed code — see [Diff mode](/cli/bugpocer/#diff-mode). Two differences from the flow below: the scope step arrives as an immutable **`diff_review`** event (the whole diff is the scope) with actions `["confirm_diff", "disconnect"]` instead of `scope_review`; and an **empty diff** ends the run before scope, emitting a terminal `completed` event (`"No changed source files found…"`) instead of starting a session.
+Add `--diff-base <git ref>` (optionally `--diff-target <git ref>`, and `--strict` to keep only findings whose vulnerable code is in the changed files — see [Strict diff mode](/cli/bugpocer/#strict-diff-mode)) to constrain the scan to changed code — see [Diff mode](/cli/bugpocer/#diff-mode). Two differences from the flow below: the scope step arrives as an immutable **`diff_review`** event (the whole diff is the scope) with actions `["confirm_diff", "disconnect"]` instead of `scope_review`, and its `strict` field (`true`/`false`) reports whether strict mode is on; and an **empty diff** ends the run before scope, emitting a terminal `completed` event (`"No changed source files found…"`) instead of starting a session.
 :::
 
 :::note[Directed mode]
